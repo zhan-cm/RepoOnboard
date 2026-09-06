@@ -1,152 +1,648 @@
-RepoOnboard 自动分析当前项目，并打开一个本地 Web 页面。
+# RepoOnboard
 
-用户应该能够快速回答：
+> Turn unfamiliar repositories into interactive codebase maps.
 
-这是一个什么项目？
-使用了哪些主要技术？
-项目由哪些 Maven 模块组成？
-Spring Boot 应用入口在哪里？
-有哪些 Controller、Service、Repository、Mapper？
-项目暴露了哪些 HTTP API？
-主要组件之间是什么关系？
-哪些代码值得优先阅读？
-如果我要理解某个功能，应该从哪里开始？
-4. Target Users
-   Primary Users
-   刚接手陌生项目的开发者
-   实习生
-   新员工
-   阅读 GitHub 开源项目的开发者
-   学习 Spring Boot 项目的学生
-   想参与开源项目但不知道如何开始阅读源码的人
-   Possible Future Users
+---
 
-未来可以考虑：
+## 1. Project Overview
 
+**RepoOnboard** 是一个面向多语言代码仓库的 **Codebase Comprehension（代码库理解）与 Developer Onboarding（开发者上手）平台**。
+
+它通过静态分析项目源码、构建配置、框架元数据以及代码之间的结构关系，将一个陌生代码仓库转换为可交互的项目理解地图，帮助开发者快速回答：
+
+- 这是一个什么项目？
+- 项目使用了哪些技术？
+- 项目由哪些模块组成？
+- 应用入口在哪里？
+- 核心组件有哪些？
+- HTTP API 在哪里？
+- 主要组件之间如何依赖？
+- 一个功能通常从哪里进入系统？
+- 第一次阅读源码应该从哪里开始？
+
+RepoOnboard 的长期目标不是成为某一种语言或框架的专用分析器，而是：
+
+> **建立一个可扩展到多语言、多框架的软件项目理解平台。**
+
+---
+
+## 2. Core Problem
+
+开发者第一次接触陌生代码仓库时，通常需要进行大量人工探索。
+
+典型流程包括：
+
+- 阅读 README
+- 查看目录结构
+- 阅读构建配置
+- 判断项目技术栈
+- 找应用启动入口
+- 找核心模块
+- 查找 Controller / Router
+- 查找 Service / Provider
+- 查找 Repository / Mapper
+- 查找 HTTP API
+- 理解模块之间的依赖
+- 顺着代码调用关系不断跳转
+- 判断哪些文件更重要
+- 决定源码阅读顺序
+- 向熟悉项目的开发者询问系统结构
+
+对于中大型项目，这个过程可能需要数小时甚至数天。
+
+RepoOnboard 希望自动完成其中大量机械性的“项目侦察工作”，缩短：
+
+> **Developer Time-to-Understanding**
+
+即开发者从“完全不了解项目”到“形成基本系统认知”所需要的时间。
+
+---
+
+## 3. Product Positioning
+
+RepoOnboard 的核心定位是：
+
+> **Codebase Understanding Infrastructure for Developers**
+
+它不是：
+
+- 通用 AI Coding Agent
+- AI 代码生成器
+- IDE 替代品
+- 普通代码搜索工具
+- 单纯的代码可视化工具
+- 单纯的代码聊天机器人
+- 静态代码质量评分工具
+
+RepoOnboard 首先关注：
+
+> **理解一个项目。**
+
+而不是：
+
+> **修改一个项目。**
+
+---
+
+## 4. Long-Term Vision
+
+RepoOnboard 的长期目标是支持多种主流编程语言和应用框架。
+
+可能包括但不限于：
+
+### Java
+
+- Spring Boot
+- Quarkus
+- Micronaut
+- Maven
+- Gradle
+
+### JavaScript / TypeScript
+
+- Node.js
+- Express
+- NestJS
+- Next.js
+
+### Python
+
+- FastAPI
+- Django
+- Flask
+
+### Go
+
+- net/http
+- Gin
+- Fiber
+- Echo
+
+### Rust
+
+- Axum
+- Actix Web
+- Rocket
+
+未来还可以根据需求考虑：
+
+- C#
+- .NET
+- PHP
+- Laravel
+- Ruby
+- Rails
+- C / C++
+
+---
+
+## 5. Initial Implementation Strategy
+
+虽然长期目标是多语言，但 **RepoOnboard V0.1 不追求多语言支持**。
+
+首个版本只实现：
+
+> **Java + Maven + Spring Boot**
+
+原因：
+
+1. 控制初始实现复杂度。
+2. 优先把一个生态分析准确。
+3. 验证 RepoOnboard 的核心产品价值。
+4. 验证统一项目模型是否合理。
+5. 避免每一种语言都只支持一小部分，导致分析结果没有实际价值。
+
+因此：
+
+> **Multi-language 是产品愿景，而不是 V0.1 的功能要求。**
+
+---
+
+## 6. Architecture Extensibility Principle
+
+V0.1 虽然只支持 Spring Boot，但核心设计应避免与 Spring Boot 强耦合。
+
+例如 RepoOnboard Core 更应该理解：
+
+- Project
+- Module
+- Component
+- Endpoint
+- EntryPoint
+- Dependency
+- SourceLocation
+
+而不是将所有核心模型直接设计成：
+
+- SpringController
+- SpringService
+- SpringRepository
+- SpringMapper
+
+Spring Boot Analyzer 应负责将：
+
+```java
+@RestController
+public class UserController {
+}
+```
+
+转换成通用的软件语义，例如：
+
+```text
+Component
+
+name:
+UserController
+
+kind:
+CONTROLLER
+
+language:
+JAVA
+
+framework:
+SPRING_BOOT
+```
+
+未来其他语言同样可以转换成类似模型：
+
+```text
+Component
+
+name:
+UserRouter
+
+kind:
+ROUTER
+
+language:
+TYPESCRIPT
+
+framework:
+EXPRESS
+```
+
+但是必须遵循：
+
+> Extensible, not overengineered.
+
+V0.1 不应该为了未来多语言能力提前建立复杂插件系统、DSL、动态模块加载系统或过度抽象架构。
+
+## 7. Product Goal
+
+用户进入一个受支持的项目目录后：
+
+`repoonboard .`
+
+RepoOnboard 应自动：
+
+```text
+Detect Project
+      ↓
+Analyze Build System
+      ↓
+Analyze Source Code
+      ↓
+Detect Framework
+      ↓
+Extract Components
+      ↓
+Extract APIs
+      ↓
+Analyze Dependencies
+      ↓
+Build Project Model
+      ↓
+Generate Onboarding Map
+      ↓
+Open Local Web UI
+```
+
+最终帮助用户快速建立：
+
+Mental Model of the Codebase
+
+即对整个项目形成一张基本的“脑内地图”。
+
+## 8. Target Users
+
+### 8.1 New Developers
+
+刚加入一个现有项目的开发者。
+
+典型问题：
+
+项目从哪里开始看？
+
+### 8.2 Interns and Junior Developers
+
+刚进入团队的实习生或初级开发者。
+
+典型问题：
+
+Controller、Service、数据库到底是怎么串起来的？
+
+### 8.3 Open Source Contributors
+
+第一次准备参与某个 GitHub 开源项目的人。
+
+典型问题：
+
+我想提交第一个 PR，但是整个仓库太大，不知道从哪里开始。
+
+### 8.4 Students
+
+正在学习真实项目、软件架构或框架源码的学生。
+
+典型问题：
+
+一个真实 Spring Boot 项目到底是怎么组织的？
+
+### 8.5 Developers Taking Over Legacy Systems
+
+接手旧项目或历史项目的开发者。
+
+典型问题：
+
+为什么这个项目现在会长成这样？
+
+### 8.6 Future AI Tooling
+
+未来 RepoOnboard 生成的结构化项目模型也可以作为：
+
+```text
 AI Coding Agent
-Code Review 工具
-软件架构分析工具
-IDE 插件
+Code Review Agent
+Architecture Analysis Agent
+Refactoring Agent
+```
 
-这些不属于 V0.1 范围。
+的可靠上下文来源。
 
-5. V0.1 Scope
+但这不属于 V0.1。
 
-V0.1 只支持：
+## 9. V0.1 Scope
 
-Java + Maven + Spring Boot
+V0.1 支持：
 
-第一阶段的目标不是支持所有语言和框架，而是把 Spring Boot 项目分析做好。
+```text
+Language:
+Java
 
-6. Core Features
-   6.1 Project Overview
+Build System:
+Maven
 
-识别：
+Framework:
+Spring Boot
+```
 
-项目名称
-Maven groupId
-Maven artifactId
-Java 版本
-Spring Boot 版本
-Maven modules
-主要 dependencies
-Spring Boot Application 启动入口
+V0.1 的目标不是功能数量，而是：
+
+第一次真正让一个陌生 Spring Boot 项目更容易理解。
+
+## 10. V0.1 Core Capabilities
+
+### 10.1 Project Detection
+
+RepoOnboard 应能够识别：
+
+- 是否为 Maven 项目
+- 是否为 Spring Boot 项目
+- 单模块 / 多模块项目
+- 项目根目录
+- Source directories
+
+### 10.2 Project Overview
+
+提取基础项目元数据：
+
+- Project Name
+- groupId
+- artifactId
+- Java Version
+- Spring Boot Version
+- Maven Modules
+- Major Dependencies
+- Application Entry Point
 
 示例：
 
-6.2 Spring Component Discovery
+```text
+Project
 
-识别主要 Spring 组件：
+demo-shop
 
-@Controller
-@RestController
-@Service
-@Repository
-@Component
+Java:
+21
 
-如项目使用常见 Mapper 模式，可以支持：
+Spring Boot:
+3.5
 
-MyBatis Mapper
-MyBatis-Plus Mapper
+Build:
+Maven
 
-但 Mapper 支持不能影响核心 Spring 项目分析能力。
+Modules:
+4
 
-6.3 API Map
+Controllers:
+18
 
-识别 Controller 中的 HTTP API。
+Services:
+27
+
+Repositories:
+12
+
+HTTP APIs:
+83
+```
+
+## 11. Maven Module Analysis
+
+支持：
+
+- 单模块 Maven 项目
+- 多模块 Maven 项目
+- parent / child module 关系
+- dependency 信息
+- Java version
+- Spring Boot version
+- Module hierarchy
+
+例如：
+
+```text
+demo-shop
+
+├── shop-common
+├── shop-user
+├── shop-order
+└── shop-payment
+```
+
+## 12. Spring Component Discovery
+
+V0.1 至少识别：
+
+- `@Controller`
+- `@RestController`
+- `@Service`
+- `@Repository`
+- `@Component`
+
+可以根据实现成本逐步支持：
+
+- MyBatis Mapper
+- MyBatis-Plus Mapper
+
+但 Mapper 支持不能阻塞核心 Spring Boot 分析能力。
+
+## 13. API Map
+
+RepoOnboard 应识别 Spring MVC HTTP Endpoint。
 
 至少支持：
 
-@RequestMapping
-@GetMapping
-@PostMapping
-@PutMapping
-@DeleteMapping
-@PatchMapping
+- `@RequestMapping`
+- `@GetMapping`
+- `@PostMapping`
+- `@PutMapping`
+- `@DeleteMapping`
+- `@PatchMapping`
 
-每个 API 至少记录：
+每个 Endpoint 至少包含：
 
-HTTP Method
-完整 Path
-Controller
-Java Method
-Source Location
-
-例如：
-
-需要正确处理：
+- HTTP Method
+- Path
+- Controller
+- Java Method
+- Source File
+- Source Location
 
 例如：
 
-加：
+```text
+POST /api/users
 
-最终得到：
+UserController.createUser()
 
-6.4 Dependency Map
+src/main/java/.../UserController.java:73
+```
 
-建立主要 Spring 组件之间的静态依赖关系。
+必须正确处理：
 
-例如：
-
-V0.1 重点分析：
-
-Controller → Service
-Service → Service
-Service → Repository
-Service → Mapper
-Component → Component
-
-V0.1 不要求实现完整的方法级 Call Graph。
-
-6.5 Architecture View
-
-把主要组件关系转换成可视化结构。
+```text
+Class-level RequestMapping
++
+Method-level Mapping
+```
 
 例如：
 
-重点是帮助用户理解：
+```java
+@RequestMapping("/users")
+public class UserController {
 
-项目主要模块之间是怎么连接的。
+    @GetMapping("/{id}")
+    public User findById(...) {
+    }
+}
+```
 
-6.6 Start Here
+最终应识别为：
 
-自动生成推荐源码阅读顺序。
+`GET /users/{id}`
+
+## 14. Dependency Map
+
+RepoOnboard 应建立主要组件之间的静态依赖关系。
 
 例如：
 
-每个推荐项尽量给出理由：
+```text
+UserController
+      ↓
+UserService
+      ↓
+UserRepository
+```
 
-第一版允许采用可解释的启发式规则。
+V0.1 重点关注：
 
-不能只输出一个没有说明原因的排序结果。
+- `Controller → Service`
+- `Service → Service`
+- `Service → Repository`
+- `Service → Mapper`
+- `Component → Component`
 
-7. Local Web UI
+主要来源可以包括：
 
-RepoOnboard 的分析结果通过本地 Web 页面展示。
+- Constructor Injection
+- Field Injection
+- Type references
+- Framework metadata
 
-V0.1 暂定四个核心页面。
+具体实现策略由技术设计阶段确定。
 
-Overview
+## 15. Architecture Map
+
+RepoOnboard 应将主要组件关系转换成可交互的架构视图。
+
+例如：
+
+```text
+                UserController
+                      │
+                      ▼
+                 UserService
+                 /         \
+                ▼           ▼
+       UserRepository     RoleService
+             │                │
+             ▼                ▼
+          Database       RoleRepository
+```
+
+该视图的目标不是展示所有类。
+
+而是帮助开发者理解：
+
+系统最主要的软件结构。
+
+## 16. Entry Point Detection
+
+RepoOnboard 应识别重要应用入口。
+
+V0.1 至少包括：
+
+- Spring Boot Application Class
+- HTTP Controller
+- Major Configuration Classes
+
+例如：
+
+```java
+@SpringBootApplication
+public class DemoApplication {
+}
+```
+
+应识别为：
+
+`APPLICATION_ENTRY_POINT`
+
+## 17. Start Here
+
+RepoOnboard 应根据项目结构生成一个：
+
+Recommended Reading Path
+
+即推荐源码阅读顺序。
+
+示例：
+
+```text
+Start Here
+
+1. pom.xml
+2. DemoApplication.java
+3. SecurityConfig.java
+4. LoginController.java
+5. LoginService.java
+6. UserService.java
+7. UserRepository.java
+```
+
+每个推荐项应尽量附带解释。
+
+例如：
+
+```text
+LoginController.java
+
+Why read this?
+
+- Main authentication entry point
+- Exposes POST /login
+- Depends on LoginService
+```
+
+V0.1 可以使用：
+
+Explainable Heuristics
+
+即简单但可以解释的启发式算法。
+
+不要求使用 AI。
+
+## 18. Source Traceability
+
+RepoOnboard 的重要结论应尽可能能够回到真实源码。
+
+例如：
+
+```text
+POST /login
+      ↓
+LoginController.login()
+      ↓
+src/main/java/.../LoginController.java:42
+```
+
+用户应该能够知道：
+
+RepoOnboard 为什么得出这个结论。
+
+这是 RepoOnboard 与纯自然语言代码总结工具的重要区别。
+
+## 19. Local Web UI
+
+分析结果通过本地 Web UI 展示。
+
+V0.1 至少包含：
+
+### Overview
 
 回答：
 
@@ -154,226 +650,663 @@ Overview
 
 展示：
 
-技术栈
-Maven modules
-Spring Boot 版本
-Java 版本
-Component 数量
-API 数量
-Application 入口
-Architecture
+- Tech Stack
+- Maven Modules
+- Java Version
+- Spring Boot Version
+- Component Statistics
+- API Statistics
+- Application Entry Point
+
+### Architecture
 
 回答：
 
-主要代码是怎么组织和关联的？
+项目主要代码是如何组织的？
 
 展示：
+
+- Modules
+- Controllers
+- Services
+- Repositories
+- Mappers
+- Components
+- Major Dependencies
+
+### API Map
+
+回答：
+
+项目暴露了哪些 HTTP API？
+
+例如：
+
+```text
+GET      /users
+POST     /users
+GET      /users/{id}
+PUT      /users/{id}
+DELETE   /users/{id}
+```
+
+点击 Endpoint 后可以查看：
+
+- Controller
+- Method
+- Source File
+- Source Location
+
+### Start Here
+
+回答：
+
+第一次阅读这个项目，应该从哪里开始？
+
+展示：
+
+- Recommended Reading Path
+- 推荐原因
+- 关键入口文件
+
+## 20. Expected User Experience
+
+理想使用流程：
+
+`cd some-project`
+
+`repoonboard .`
+
+终端：
+
+```text
+RepoOnboard
+
+Detecting project...
+
+✓ Maven project detected
+✓ Spring Boot detected
+✓ Java 21 detected
+
+Analyzing...
+
+✓ 4 modules
+✓ 18 controllers
+✓ 27 services
+✓ 12 repositories
+✓ 83 API endpoints
+
+Building dependency graph...
+
+✓ Project model generated
+
+Opening RepoOnboard...
+```
+
+浏览器自动打开：
+
+`http://localhost:<port>`
+
+用户第一次使用不应该要求：
+
+- 注册
+- 登录
+- API Key
+- MySQL
+- Redis
+- Docker
+- 云服务器
+- SaaS 账号
+- 外部数据库
+- 向量数据库
+
+## 21. Product Principles
+
+### 21.1 Useful Before Intelligent
+
+RepoOnboard 首先必须有用。
+
+优先：
+
+- Correct
+- Reliable
+- Explainable
+- Useful
+
+而不是：
+
+- Looks Intelligent
+
+### 21.2 Static Analysis First
+
+核心信息优先从：
+
+- Source Code
+- AST
+- Build Metadata
+- Framework Metadata
+- Project Structure
+
+获得。
+
+### 21.3 Deterministic Before Generative
+
+如果一个结论可以通过确定性程序分析获得，则优先使用程序分析。
+
+例如：
+
+`@Controller`
+
+不应该让 LLM 猜它是不是 Controller。
+
+### 21.4 Local First
+
+RepoOnboard 默认本地运行。
+
+用户源码不应默认上传到任何服务器。
+
+### 21.5 Explainable
+
+重要结果尽量能够回答：
+
+Why?
+
+例如：
+
+```text
+Why is UserService important?
+
+- Used by 4 Controllers
+- Depends on 3 Repositories
+- Central component in user module
+```
+
+### 21.6 Fast First Experience
+
+理想情况下：
+
+`repoonboard .`
+
+即可开始使用。
+
+尽量减少安装和配置成本。
+
+### 21.7 Progressive Depth
+
+RepoOnboard 不应该第一屏展示所有代码细节。
+
+信息展示应遵循：
+
+```text
+Overview
+   ↓
+Architecture
+   ↓
+Module
+   ↓
+Component
+   ↓
+Source
+```
+
+即：
+
+从整体逐渐深入细节。
+
+### 21.8 Avoid Overengineering
+
+不要为了未来可能存在的需求提前构建：
+
+- 复杂插件系统
+- 微服务架构
+- 分布式系统
+- DSL
+- 云平台
+- 多租户系统
+- 复杂账号系统
+
+优先：
+
+- 简单
+- 清晰
+- 可测试
+- 可维护
+- 快速验证
+
+## 22. Multi-Language Design Principle
+
+RepoOnboard 长期支持多语言，但不能强迫所有语言使用完全相同的软件架构概念。
+
+例如：
+
+```text
+Spring Boot：
 
 Controller
 Service
 Repository
-Mapper
-Component
-Dependency Graph
-API Map
 
-回答：
+FastAPI：
 
-项目提供了哪些 API？
+Router
+Service
+Repository
 
-展示：
-
-点击 API 可以看到：
+NestJS：
 
 Controller
-Method
-Source file
-Source line
-Start Here
+Provider
+Repository
 
-回答：
+Go：
 
-如果第一次看这个项目，我应该从哪里开始？
+Handler
+Service
+Repository
+```
 
-展示推荐阅读路径和原因。
+RepoOnboard 应允许不同语言和框架保留自己的语义，同时映射到统一项目模型。
 
-8. Expected User Experience
+目标是：
 
-理想使用方式：
+> Unified where useful, framework-specific where necessary.
 
-输出：
+## 23. Core Conceptual Model
 
-然后自动打开：
+长期核心模型至少应考虑以下概念：
 
-用户第一次使用 RepoOnboard 时，不应该被要求：
+- `Project`
+- `Module`
+- `SourceFile`
+- `Component`
+- `Endpoint`
+- `EntryPoint`
+- `Dependency`
+- `SourceLocation`
 
-注册账号
-登录
-配置数据库
-配置 Redis
-配置云服务
-配置 API Key
-安装复杂基础设施
-9. Product Principles
-   9.1 Useful Before Intelligent
+未来可能扩展：
 
-优先保证：
+- `Function`
+- `Method`
+- `Class`
+- `Interface`
+- `DatabaseEntity`
+- `Event`
+- `Queue`
+- `ExternalService`
 
-分析结果真实
-稳定
-可验证
-对用户有实际帮助
+但 V0.1 不需要一次性实现所有类型。
 
-不要为了“看起来聪明”而生成无法从代码中验证的结论。
+## 24. AI Policy
 
-9.2 Static Analysis First
+### V0.1
 
-V0.1 优先通过：
+不依赖大语言模型。
 
-Maven metadata
-Java source code
-AST
-Spring annotations
-Source structure
+### Future
 
-获得分析结果。
+未来 AI 可以用于：
 
-9.3 Local First
+- Explain Architecture
+- Explain Module
+- Explain Business Flow
+- Generate Onboarding Guide
+- Answer Codebase Questions
+- Summarize complex structures
 
-RepoOnboard 默认本地运行。
+但是 AI 必须建立在 RepoOnboard 已经提取出的：
 
-项目源码不应默认上传到任何服务器。
+```text
+Project Model
++
+Dependency Graph
++
+Source Evidence
+```
 
-9.4 Explainable Results
+之上。
 
-重要分析结果应尽可能提供来源。
+AI 不应该成为项目结构分析的唯一来源。
 
-例如：
+RepoOnboard 不应退化成：
 
-用户应该能够追溯：
+“把整个仓库扔给 LLM，让它总结。”
 
-RepoOnboard 为什么得出这个结论。
-
-9.5 Fast First Experience
-
-理想体验：
-
-就能开始分析。
-
-尽量减少配置。
-
-9.6 Avoid Overengineering
-
-V0.1 不为未来可能存在的需求设计复杂系统。
-
-优先：
-
-简单
-清晰
-可测试
-可维护
-可以尽快在真实项目上验证
-10. Explicit Non-Goals for V0.1
+## 25. Explicit Non-Goals for V0.1
 
 V0.1 明确不做：
 
-通用 AI 聊天
-RAG
-向量数据库
-AI Agent
-MCP Server
-自动修改代码
-自动重构
-Code Review
-Bug 自动修复
-技术债评分
-完整方法级 Call Graph
-Git 历史分析
-Contributor 分析
-Star 分析
-用户账号
-云端同步
-SaaS
-团队协作
-VS Code 插件
-JetBrains 插件
-Python 支持
-JavaScript 支持
-Go 支持
-Rust 支持
-C/C++ 支持
+- 多语言同时支持
+- Python Analyzer
+- TypeScript Analyzer
+- Go Analyzer
+- Rust Analyzer
+- 通用 AI Chat
+- RAG
+- Vector Database
+- AI Agent
+- MCP Server
+- 自动写代码
+- 自动修改代码
+- 自动重构
+- Code Review
+- Bug 自动修复
+- 完整 Code Quality Platform
+- 技术债评分
+- 完整 Method-level Call Graph
+- 动态 Runtime Tracing
+- Git 历史分析
+- Contributor Analysis
+- Star Analysis
+- 用户系统
+- 团队协作
+- Cloud Sync
+- SaaS
+- VS Code Extension
+- JetBrains Plugin
 
-除非 PROJECT.md 被明确修改，否则不要擅自加入这些功能。
+除非 PROJECT.md 被明确修改，否则 Work / Codex 不应擅自将这些功能加入 V0.1。
 
-11. AI Policy
+## 26. Quality Requirements
 
-V0.1 不依赖大语言模型。
+核心分析能力必须尽量满足：
 
-未来可以考虑使用 AI：
+- Deterministic
+- Testable
+- Reproducible
+- Explainable
+- Offline-capable
+- Failure-tolerant
 
-解释已经分析出的项目结构
-根据真实代码关系回答问题
-生成自然语言 onboarding guide
+具体要求：
 
-但 AI 必须建立在可靠的结构化分析结果之上。
+- 不依赖网络即可完成核心源码分析。
+- 核心 Analyzer 应具有自动化测试。
+- 单个文件解析失败不应导致整个项目分析直接崩溃。
+- 分析失败应提供明确错误信息。
+- 用户能够追踪关键结果对应的源码位置。
+- 应持续使用真实开源项目进行验证。
+- 不应为了“看起来完整”输出大量低可信度关系。
 
-RepoOnboard 不应变成：
+## 27. Performance Expectations
 
-把整个仓库交给 LLM，然后让 LLM 自己猜项目结构。
+RepoOnboard 的首要目标不是极致性能。
 
-12. Quality Requirements
+但是应避免明显不可接受的扫描体验。
 
-核心分析逻辑必须：
+V0.1 应：
 
-可测试
-尽量确定性
-不依赖网络即可完成基础分析
-对常见 Spring Boot 项目结构具有合理兼容性
-分析失败时提供明确错误信息
-单个模块分析失败时尽量不要导致整个扫描失败
+- 支持普通中小型 Spring Boot 项目
+- 避免不必要的全量重复解析
+- 能够提供扫描进度
+- 分析失败时尽量继续处理其他文件
 
-核心分析模块应有自动化测试。
+未来可以根据真实数据再考虑：
 
-13. V0.1 Success Criteria
+- Incremental Analysis
+- Cache
+- Parallel Parsing
+
+V0.1 不提前实现复杂增量分析系统。
+
+## 28. V0.1 Success Criteria
+
+RepoOnboard V0.1 可以认为基本成立，需要至少满足：
 
 给定一个真实 Spring Boot Maven 项目：
 
-RepoOnboard 至少能够正确生成：
+`repoonboard .`
 
-Project Overview
-Maven Module Map
-Spring Component List
-HTTP API Map
-主要组件 Dependency Graph
-Start Here 阅读建议
-本地可视化页面
+能够生成：
 
-最核心的验收标准不是功能数量。
+- Project Overview
+- Maven Module Map
+- Spring Component Map
+- HTTP API Map
+- Major Dependency Graph
+- Application Entry Points
+- Start Here Reading Guide
+- Local Interactive Web UI
+
+最重要的验收标准不是：
+
+支持了多少功能。
 
 而是：
 
-一个第一次接触该项目的开发者，使用 RepoOnboard 后，能够比完全手动翻源码更快建立对项目结构的基本理解。
+一个第一次接触该项目的开发者，使用 RepoOnboard 后，能否明显比纯手动翻源码更快理解项目。
 
-14. Development Strategy
+## 29. Product Validation
 
-RepoOnboard 的开发顺序遵循：
+RepoOnboard 必须持续通过真实项目验证价值。
 
-每个开发阶段都应遵循：
+不能只针对人为构造的 Demo Project 工作。
 
-不要一次性开发完整产品。
+验证过程应至少包括：
 
-15. Project Management Files
+```text
+Fixture Projects
+↓
+Small Real Project
+↓
+Medium Real Project
+↓
+Large / Complex Project
+```
 
-RepoOnboard 长期维护以下三个核心文档。
+需要关注：
 
-PROJECT.md
+- 分析准确率
+- 信息噪音
+- Architecture Map 是否真的可读
+- API Map 是否完整
+- Start Here 是否真正帮助阅读
+- 用户是否更快理解项目
 
-保存稳定的：
+## 30. Development Strategy
 
-产品目标
-产品边界
-V0.1 Scope
-产品原则
-非目标
+RepoOnboard 的开发顺序：
+
+```text
+Analyze Correctly
+↓
+Model Clearly
+↓
+Present Clearly
+↓
+Validate on Real Repositories
+↓
+Increase Analysis Depth
+↓
+Add More Languages
+↓
+Consider AI
+```
+
+而不是：
+
+```text
+Add AI
+↓
+Add More Features
+↓
+Add More Languages
+↓
+最后再考虑准确性
+```
+
+## 31. Development Workflow
+
+每个功能遵循：
+
+```text
+Design
+↓
+Implement
+↓
+Unit Test
+↓
+Fixture Validation
+↓
+Real Repository Validation
+↓
+Fix
+↓
+Document
+```
+
+不要一次性实现整个 V0.1。
+
+每个开发任务应：
+
+- 范围明确
+- 可以测试
+- 可以独立验收
+- 尽量避免修改无关代码
+
+## 32. Project Management Files
+
+RepoOnboard 长期维护三个核心项目文件。
+
+### PROJECT.md
+
+记录稳定的：
+
+- Project Vision
+- Product Positioning
+- Product Scope
+- Product Principles
+- V0.1 Boundaries
+- Long-Term Direction
+
+PROJECT.md 不记录具体短期实现任务。
 
 除非产品方向发生变化，否则不要频繁修改。
+
+### DECISIONS.md
+
+记录已经确认的重要技术决策。
+
+每项至少记录：
+
+- Date
+- Decision
+- Reason
+- Alternatives Considered
+- Consequences
+
+例如未来可能记录：
+
+- Java Version
+- CLI Framework
+- Java AST Parser
+- Maven Parsing Strategy
+- Graph Representation
+- Web UI Technology
+- Visualization Library
+
+已经确定的技术问题不应在后续任务中反复重新设计。
+
+### TODO.md
+
+记录：
+
+- Current Milestone
+- Current Task
+- Pending Tasks
+- Completed Tasks
+- Known Issues
+- Deferred Work
+
+每次 Work / Codex 开发时，只处理明确指定的 TODO。
+
+如果发现其他问题：
+
+记录到 TODO，而不是顺手全部修复。
+
+## 33. Work / Codex Collaboration Rules
+
+在处理 RepoOnboard 时：
+
+- 首先阅读 PROJECT.md。
+- 如果存在 DECISIONS.md，则遵守已经确认的技术决策。
+- 如果存在 TODO.md，则只处理当前明确指定的任务。
+- 不擅自扩大 Scope。
+- 不提前实现未来功能。
+- 不因为未来多语言目标而过度设计 V0.1。
+- 不随意替换已经确认的技术栈。
+- 不进行与当前任务无关的大规模重构。
+- 新发现的问题优先记录，而不是自动展开处理。
+- 重要分析结果必须尽量来自可验证的源码信息。
+
+## 34. Current Stage
+
+RepoOnboard 当前处于：
+
+Technical Architecture Design
+
+目前不应立即开始完整产品实现。
+
+下一阶段首先确定：
+
+- Java Version
+- Build Tool Strategy
+- CLI Architecture
+- Maven Parsing Strategy
+- Java AST Strategy
+- Symbol Resolution Strategy
+- Generic Project Model
+- Dependency Graph Model
+- Spring Boot Analyzer Boundary
+- Serialization Format
+- Local Web UI Architecture
+- Graph Visualization Strategy
+- Testing Strategy
+- Fixture Strategy
+- V0.1 Milestones
+
+技术方案经过确认以后，再进入正式编码阶段。
+
+## 35. Project Direction Summary
+
+RepoOnboard 的长期方向：
+
+```text
+Any Repository
+↓
+Language / Framework Analyzer
+↓
+Unified Project Model
+↓
+Dependency / Architecture Graph
+↓
+Codebase Understanding Engine
+↓
+Interactive Onboarding Map
+```
+
+V0.1：
+
+```text
+Spring Boot Repository
+↓
+Java + Maven + Spring Analyzer
+↓
+Project Model
+↓
+Architecture / API / Dependency Analysis
+↓
+Interactive Onboarding Map
+```
+
+核心原则始终保持：
+
+> Understand first. Modify later.
+
+> Static analysis before generative AI.
+
+> Accurate before impressive.
+
+> One ecosystem done well before many ecosystems done poorly.
+
+这版我更建议作为真正长期使用的 `PROJECT.md`：**产品层面明确是多语言，工程层面 V0.1 明确只打 Java/S
