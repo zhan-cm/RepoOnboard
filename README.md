@@ -1,4 +1,3 @@
-````markdown
 # RepoOnboard
 
 > Turn unfamiliar repositories into interactive codebase maps.
