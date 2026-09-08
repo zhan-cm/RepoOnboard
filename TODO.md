@@ -99,7 +99,7 @@ Product Definition       ✓
 Architecture Constraints ✓
 Technical Decisions      ✓
 Project Scaffold         ✓
-Core Analysis            ○
+Core Analysis            ◐
 Web UI                   ○
 Real-world Validation    ○
 Public Release           ○
@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0201 — Maven Project Detection。**
+> **T-0202 — Basic Maven Metadata Extraction。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -693,7 +693,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -716,8 +716,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 根目录 `pom.xml` 检测器与显式 `MavenProjectDetection` 结果；检测证据使用扫描根相对位置，CLI 可区分 Maven 与非 Maven 目录。
+
+Validation: Java 21 `clean verify` 共运行 31 个测试并通过，其中 8 个覆盖检测器及 CLI 的 Maven/非 Maven 行为；真实 CLI 对两类目录均输出明确结果并以 0 退出。
 
 Goal:
 
@@ -726,9 +732,9 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] 能识别 pom.xml
-[ ] 非 Maven 项目有明确结果
-[ ] 不因为目录中存在无关文件而失败
+[x] 能识别 pom.xml
+[x] 非 Maven 项目有明确结果
+[x] 不因为目录中存在无关文件而失败
 ```
 
 ---
@@ -2712,18 +2718,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0201
-Maven Project Detection
+T-0202
+Basic Maven Metadata Extraction
 ```
 
 本阶段：
 
 > **M2 — Maven Project Analysis**
 
-M0、M1 已完成。接下来按默认依赖顺序执行：
+M0、M1 已完成，T-0201 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0201
+T-0202
 ```
 
 ---
@@ -2747,7 +2753,7 @@ Technical Decisions
 
 Implementation
 M1 Project Foundation — complete
-M2 Maven Project Analysis — next
+M2 Maven Project Analysis — in progress
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2758,6 +2764,6 @@ Release
 
 Next:
 
-> **T-0201 — Maven Project Detection.**
+> **T-0202 — Basic Maven Metadata Extraction.**
 
 ````

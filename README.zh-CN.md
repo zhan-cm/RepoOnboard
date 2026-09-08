@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / Maven 分析阶段**
 >
-> 工程基础以及共享的 Evidence / Diagnostic 契约已经建立。下一步进入 Maven 分析，首个可用版本尚未发布。
+> Maven 根项目检测已经可用。Maven 元数据与模块分析正在开发，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -74,6 +74,8 @@ cd unfamiliar-project
 repoonboard .
 ```
 
+当前阶段，该命令会验证目标目录，并报告根目录是否存在 `pom.xml`。Maven 元数据、模块和依赖暂未开始分析。
+
 RepoOnboard 将分析代码仓库，并生成类似以下的信息：
 
 ```text
@@ -133,7 +135,7 @@ RepoOnboard V0.1 不依赖大语言模型。如果未来引入 AI，也应让 AI
 ```text
 M0  技术架构                         ✓
 M1  工程基础                         ✓
-M2  Maven 分析                       下一步
+M2  Maven 分析                       进行中
 M3  Java 源码分析
 M4  Spring Boot 分析
 M5  API 与依赖分析

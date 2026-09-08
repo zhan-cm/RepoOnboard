@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Maven Analysis**
 >
-> The project foundation and shared evidence/diagnostic contracts are in place. Maven analysis is next, and the first usable release is not available yet.
+> Root Maven project detection is available. Maven metadata and module analysis are in progress, and the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -74,6 +74,8 @@ cd unfamiliar-project
 repoonboard .
 ```
 
+At the current stage, this command validates the target directory and reports whether a root `pom.xml` is present. Maven metadata, modules, and dependencies are not analyzed yet.
+
 RepoOnboard will analyze the repository and produce information such as:
 
 ```text
@@ -133,7 +135,7 @@ RepoOnboard V0.1 does not depend on an LLM. Future AI features, if introduced, s
 ```text
 M0  Technical Architecture                 ✓
 M1  Project Foundation                     ✓
-M2  Maven Analysis                         Next
+M2  Maven Analysis                         In Progress
 M3  Java Source Analysis
 M4  Spring Boot Analysis
 M5  API & Dependency Analysis

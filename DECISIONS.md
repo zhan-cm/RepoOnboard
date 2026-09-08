@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Maven Project Analysis**
 
-M0 技术架构设计与 M1 工程基础已经完成。T-0101 至 T-0105 已建立工程骨架、可重复构建、分层测试底座、最小 CLI，以及符合 ADR-0007、ADR-0015 的 Evidence 与 Diagnostic 契约。当前下一任务是 T-0201 Maven Project Detection。
+M0 技术架构设计与 M1 工程基础已经完成。T-0201 已通过根目录 `pom.xml` 和可追踪 Evidence 实现 Maven 项目检测，并接入最小 CLI。当前下一任务是 T-0202 Basic Maven Metadata Extraction。
 
 ---
 
@@ -2076,12 +2076,12 @@ Architecture Decisions
 
 Implementation
 ✓ M1 Project Foundation complete
-○ M2 Maven Project Analysis next
+◐ M2 Maven Project Analysis in progress
 ```
 
 下一步：
 
-> 完成 T-0201 — Maven Project Detection。
+> 完成 T-0202 — Basic Maven Metadata Extraction。
 
 M0、M1 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
