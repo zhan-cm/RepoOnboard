@@ -115,6 +115,11 @@ public final class RepoOnboardCommand implements Callable<Integer> {
     private void printModule(MavenModule module, int depth) {
         commandSpec.commandLine().getOut().printf("%s%s [%s] source: %s%n", "  ".repeat(depth),
                 module.baseDirectory(), display(module.metadata().artifactId()), display(module.sourceDirectory()));
+        for (var dependency : module.dependencies()) {
+            commandSpec.commandLine().getOut().printf("%sdependency: %s:%s:%s [%s]%n",
+                    "  ".repeat(depth + 1), display(dependency.groupId()), display(dependency.artifactId()),
+                    display(dependency.version()), display(dependency.scope()));
+        }
         module.children().forEach(child -> printModule(child, depth + 1));
     }
 

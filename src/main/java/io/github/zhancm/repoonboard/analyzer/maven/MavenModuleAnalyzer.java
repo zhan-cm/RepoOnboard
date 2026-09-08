@@ -92,7 +92,8 @@ public final class MavenModuleAnalyzer {
         Optional<String> parentCoordinates = parent == null ? Optional.empty()
                 : Optional.of(parent.getGroupId() + ":" + parent.getArtifactId() + ":" + parent.getVersion());
         return new MavenModule(source.sourceFileId(), relative(scanRoot, source.realFile().getParent()),
-                parentCoordinates, built.metadata(), sourceDirectory, children);
+                parentCoordinates, built.metadata(), sourceDirectory,
+                new MavenDependencyExtractor().extract(built, source, repository, diagnostics), children);
     }
 
     private MavenMetadataValue sourceDirectory(Path scanRoot, RestrictedPomSource source,
