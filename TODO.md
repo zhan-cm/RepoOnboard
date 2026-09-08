@@ -84,12 +84,12 @@ Implementation
 
 Current Phase:
 
-> **Phase 0 — Technical Architecture Design**
+> **Phase 1 — Project Foundation**
 
 Current Product Version:
 
 ```text
-V0.1 — Not Started
+V0.1 — In Progress
 ```
 
 Current Implementation Status:
@@ -97,7 +97,7 @@ Current Implementation Status:
 ```text
 Product Definition       ✓
 Architecture Constraints ✓
-Technical Decisions      ○
+Technical Decisions      ✓
 Project Scaffold         ○
 Core Analysis            ○
 Web UI                   ○
@@ -121,27 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **完成 V0.1 Technical Architecture Proposal，并确认核心技术决策。**
+> **T-0101 — Create Repository Scaffold。**
 
-正式编码开始前，至少需要确认：
-
-```text
-Java Runtime
-Build Strategy
-CLI Strategy
-Maven Analysis
-Java AST
-Symbol Resolution Scope
-Generic Project Model
-Analyzer Boundaries
-Dependency Model
-Serialization
-Local Web Architecture
-Frontend Strategy
-Visualization Strategy
-Testing Strategy
-Packaging Strategy
-```
+M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -240,18 +222,40 @@ M4 — Spring Boot Analysis
         ↓
 M5 — API & Dependency Analysis
         ↓
-M6 — Unified Project Model
+M6 — Report Assembly & Serialization
         ↓
 M7 — Local Web UI
         ↓
 M8 — Start Here
         ↓
-M9 — Real Repository Validation
+M9 — Regression & Real Repository Validation
         ↓
 M10 — Release Preparation
         ↓
 V0.1 Release
 ```
+
+## 9.1 Milestone Boundaries
+
+| Milestone | Entry dependency | Deliverable | Exit gate |
+| --- | --- | --- | --- |
+| M0 Architecture | Product scope defined | Reviewed proposal and ACCEPTED ADRs | T-0001 through T-0004 complete |
+| M1 Project Foundation | M0 complete | Reproducible build, minimal CLI, test base, core evidence/diagnostic contracts | Wrapper build and tests pass; CLI and core contracts have focused tests |
+| M2 Maven Analysis | M1 complete | Offline-capable Maven project/module/build metadata facts | Controlled Maven fixtures pass; no target lifecycle or network resolver is used |
+| M3 Java Source Analysis | M2 complete | Java source facts and module-aware declaration index | Java version/location/error fixtures pass; a broken file yields partial results |
+| M4 Spring Boot Analysis | M3 complete | Spring component, configuration, entry-point and injection facts | Supported annotations and injection patterns pass fixtures; T-0404 Mapper remains optional |
+| M5 API & Dependency Analysis | M4 required tasks complete | HTTP endpoint facts and confirmed typed component edges with evidence | Mapping/ambiguity fixtures pass; uncertain relationships remain unresolved |
+| M6 Report Assembly & Serialization | M5 complete | Stable AnalysisReport, identifiers, summary and versioned JSON | Deterministic snapshot and compatibility tests pass |
+| M7 Local Web UI | M6 complete | Local read-only UI for Overview, Modules, Architecture and APIs | Browser flow, evidence display, loopback server and local security checks pass |
+| M8 Start Here | M7 complete | Explainable reading guide and UI | Stable heuristic fixtures and explanation checks pass |
+| M9 Regression & Real Repository Validation | M8 complete | Audited fixture suite plus small/medium/large repository findings | Regression suite passes; real-repository accuracy, limits and onboarding results recorded |
+| M10 Release Preparation | M9 complete | Installable V0.1 release candidate, documentation and demo | Cross-platform smoke checks, license, cleanup and release checklist pass |
+
+## 9.2 Dependency and Test Rules
+
+Unless a task states an exception, tasks inside a milestone execute in task-ID order and depend on the previous task; the first task of each milestone depends on the previous milestone exit gate. A milestone closes only when all required tasks and its exit gate pass.
+
+Every analyzer task adds the smallest relevant automated fixture while the behavior is implemented. M9 audits and combines those fixtures and performs real-repository validation; it is not the first point at which analyzer behavior is tested. Optional tasks explicitly marked non-blocking do not prevent the next milestone.
 
 ---
 
@@ -264,7 +268,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 ---
@@ -274,8 +278,14 @@ Status:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: [V0.1 Technical Architecture Proposal](docs/architecture/V0.1-TECHNICAL-PROPOSAL.md)
+
+Validation: 文档完整性、范围和变更检查通过；未实现业务代码。技术方案为 PROPOSED，待 T-0002 评审；尚未执行原型、性能或真实仓库验证。
 
 Goal:
 
@@ -311,11 +321,11 @@ Packaging
 Acceptance Criteria:
 
 ```text
-[ ] 每项核心技术问题均有明确推荐方案
-[ ] 至少比较关键候选方案
-[ ] 明确最主要技术风险
-[ ] 未扩大 PROJECT.md V0.1 Scope
-[ ] 未开始正式业务代码实现
+[x] 每项核心技术问题均有明确推荐方案
+[x] 至少比较关键候选方案
+[x] 明确最主要技术风险
+[x] 未扩大 PROJECT.md V0.1 Scope
+[x] 未开始正式业务代码实现
 ```
 
 ---
@@ -325,8 +335,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: [T-0002 Architecture Review](docs/architecture/T-0002-ARCHITECTURE-REVIEW.md)
+
+Validation: 15 项技术选择已逐项评审；Maven 隔离实验 8 项断言通过。评审结论允许进入 ADR 起草，正式 ACCEPTED 状态仍需明确确认。
 
 Depends On:
 
@@ -354,10 +370,10 @@ Graph 技术是否必要
 Acceptance Criteria:
 
 ```text
-[ ] 所有关键技术选择经过 Review
-[ ] 明确哪些方案接受
-[ ] 明确哪些方案拒绝
-[ ] 明确哪些问题延后
+[x] 所有关键技术选择经过 Review
+[x] 明确哪些方案接受
+[x] 明确哪些方案拒绝
+[x] 明确哪些问题延后
 ```
 
 ---
@@ -367,8 +383,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: [Accepted Architecture Decision Records](DECISIONS.md#21-accepted-architecture-decision-records)
+
+Validation: ADR-0001 至 ADR-0016 均为 ACCEPTED；Decision Index、原始决策队列映射和当前摘要已同步更新。
 
 Depends On:
 
@@ -404,9 +426,9 @@ ADR-0010 — Testing Strategy
 Acceptance Criteria:
 
 ```text
-[ ] 所有关键 ACCEPTED 技术方案已形成 ADR
-[ ] PROPOSED 和 ACCEPTED 状态没有混淆
-[ ] DECISIONS.md Decision Index 已更新
+[x] 所有关键 ACCEPTED 技术方案已形成 ADR
+[x] PROPOSED 和 ACCEPTED 状态没有混淆
+[x] DECISIONS.md Decision Index 已更新
 ```
 
 ---
@@ -416,8 +438,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 本文件第 9.1、9.2 节及校准后的 M1–M10 任务边界。
+
+Validation: 里程碑入口、交付物、出口门槛、默认任务依赖和非阻塞例外均已明确；路线与 ADR-0001 至 ADR-0016 一致。
 
 Depends On:
 
@@ -442,6 +470,17 @@ M1 ~ M10
 依赖关系清晰
 ```
 
+Acceptance Criteria:
+
+```text
+[x] M1 ~ M10 均有明确入口、交付物和出口门槛
+[x] 同一 Milestone 内的默认任务依赖规则明确
+[x] 最小 Evidence / Diagnostic 契约前置到 M1
+[x] 自动化 fixture 随功能交付，M9 聚焦审计与真实仓库验证
+[x] Optional Mapper 不阻塞 M5
+[x] 未扩大 V0.1 Scope
+```
+
 ---
 
 # 11. M1 — Project Foundation
@@ -454,6 +493,18 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 只建立可重复工程、最小 CLI、测试底座和跨分析器共享的 Evidence / Diagnostic 契约；不实现 Maven、Java 或 Spring 分析。
+
+Exit Criteria:
+
+```text
+[ ] Maven Wrapper clean test 通过
+[ ] CLI 路径/help/错误码测试通过
+[ ] SourceLocation / Evidence / Diagnostic / AnalysisStatus 契约测试通过
 ```
 
 ---
@@ -479,11 +530,11 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] 项目可以正常构建
-[ ] 基础目录结构清晰
+[ ] 单 Java module 的基础目录结构清晰
+[ ] ADR-0008 的包边界有对应目录/包规划
 [ ] 没有不必要的模块
 [ ] README / PROJECT / DECISIONS / TODO 保留
-[ ] 基础测试可以运行
+[ ] 未提前实现 Maven / Java / Spring 分析能力
 ```
 
 ---
@@ -503,8 +554,8 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] clean build 成功
-[ ] test 可以执行
+[ ] Maven Wrapper 固定 Maven 3.9 系列并包含校验配置
+[ ] validate / compile / test 命令可以执行
 [ ] 构建环境可重复
 [ ] 不依赖 IDE 才能构建
 ```
@@ -572,6 +623,37 @@ Acceptance Criteria:
 
 ---
 
+## T-0105 — Establish Core Evidence and Diagnostic Contracts
+
+Status:
+
+```text
+[ ]
+```
+
+Goal:
+
+按照 ADR-0007、ADR-0015 建立后续 analyzer 共同使用的最小类型：
+
+```text
+SourceLocation
+Evidence
+Diagnostic
+AnalysisStatus
+```
+
+不在此任务提前实现完整 Project / Component / Endpoint 模型。
+
+Acceptance Criteria:
+
+```text
+[ ] Core 类型不依赖 Maven / JavaParser / Spring / Web 类型
+[ ] 行列号、未知位置和相对路径语义明确
+[ ] SUCCESS / PARTIAL / FAILED 与诊断严重级别有测试
+```
+
+---
+
 # 12. M2 — Maven Project Analysis
 
 Goal:
@@ -582,6 +664,19 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 只生成 Maven 项目、模块、构建坐标、源码根、依赖和 Spring Boot 构建证据；不解析 Java AST 或识别源码组件。
+
+Exit Criteria:
+
+```text
+[ ] 单模块、多模块、parent/BOM/profile/local repository fixtures 通过
+[ ] 所有 POM 来源经过受限读取层，恶意/越界输入有诊断
+[ ] 不执行目标 Maven lifecycle，不配置网络 resolver
+[ ] 缺失外部模型时保留 raw facts 和 PARTIAL 状态
 ```
 
 ---
@@ -631,12 +726,13 @@ Acceptance Criteria:
 
 ```text
 [ ] 普通单模块项目解析正确
-[ ] 缺失字段能够合理处理
+[ ] rawValue、resolvedValue、resolutionStatus 和 origin 可表达
+[ ] 缺失字段产生明确的未知状态或诊断
 ```
 
 ---
 
-## T-0203 — Maven Property Resolution
+## T-0203 — Restricted Maven Model and Property Resolution
 
 Status:
 
@@ -646,7 +742,7 @@ Status:
 
 Goal:
 
-正确处理常见：
+通过 ADR-0004 的受限读取层构建可用 Maven model，并正确处理常见：
 
 ```xml
 <!--${...}-->
@@ -660,6 +756,11 @@ Acceptance Criteria:
 [ ] Java version property 可解析
 [ ] Spring Boot version property 可解析
 [ ] 常见 parent property 可处理
+[ ] relativePath、local repository POM 和 BOM 均经过路径/来源校验
+[ ] DTD/外部实体、过大输入和越界来源被拒绝并产生诊断
+[ ] 显式 profile 与 activeByDefault 可控，宿主隐式 profile 不参与
+[ ] 缺失 parent/BOM 时保留 raw facts 和 PARTIAL 状态
+[ ] 使用最终锁定的 Maven 3.9 版本重跑 T-0002 API 行为测试
 ```
 
 ---
@@ -687,7 +788,8 @@ Acceptance Criteria:
 ```text
 [ ] 能识别多模块项目
 [ ] Module tree 正确
-[ ] 子模块 source root 可确定
+[ ] 子模块 base directory 归一化且不逃逸扫描根
+[ ] build.sourceDirectory 的声明/解析值可供 M3 使用
 ```
 
 ---
@@ -715,7 +817,7 @@ Acceptance Criteria:
 
 ---
 
-## T-0206 — Spring Boot Detection
+## T-0206 — Spring Boot Build Metadata Detection
 
 Status:
 
@@ -727,12 +829,16 @@ Goal:
 
 判断项目是否使用 Spring Boot。
 
+此任务只使用 Maven parent、BOM 和 dependency 等构建证据；源码注解证据属于 M4。
+
 Acceptance Criteria:
 
 ```text
 [ ] parent-based Spring Boot 项目可识别
 [ ] dependency-based Spring Boot 项目尽量可识别
 [ ] Spring Boot version 尽量正确解析
+[ ] “检测到 Spring Boot”与“版本已解析”分别表示
+[ ] 每个结论保留构建来源证据
 ```
 
 ---
@@ -747,6 +853,19 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 发现 Java 主源码并生成与框架无关的声明、成员、注解表达式和类型引用 facts；不解释 Spring 注解或构造组件依赖图。
+
+Exit Criteria:
+
+```text
+[ ] Java 8 / 11 / 17 / 21 常见语法 fixture 通过
+[ ] 源码位置、嵌套/同名类型和模块归属可追踪
+[ ] 单文件解析失败不终止其他文件并返回 PARTIAL
+[ ] 声明索引不因简单名称相同而误解析
 ```
 
 ---
@@ -854,9 +973,17 @@ Referenced Types
 
 为后续 dependency analysis 准备。
 
+Acceptance Criteria:
+
+```text
+[ ] 全限定名、显式 import、同包和唯一通配 import 可解析
+[ ] 无法确认或存在歧义的类型保持 unresolved
+[ ] 跨模块解析只使用确认的 Maven 可见关系
+```
+
 ---
 
-## T-0305 — Java Entry Point Detection
+## T-0305 — Java Declaration Index
 
 Status:
 
@@ -866,19 +993,14 @@ Status:
 
 Goal:
 
-识别基础 Java / Spring Boot application entry point。
-
-至少识别：
-
-```java
-//@SpringBootApplication
-```
+将每个模块中的 declared types 建立为 module-aware qualified-name index，为 M4/M5 提供受限项目内类型解析。
 
 Acceptance Criteria:
 
 ```text
-[ ] Application class 能识别
-[ ] Source Location 正确
+[ ] qualified-name 索引包含模块和源码位置
+[ ] 同名、嵌套和重复声明不会静默覆盖
+[ ] 不可见模块或外部类型不会被错误连边
 ```
 
 ---
@@ -893,6 +1015,19 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 把 M3 Java facts 映射成 Spring 组件、配置、应用入口和注入候选；不生成最终 HTTP Endpoint 或 Dependency graph。
+
+Exit Criteria:
+
+```text
+[ ] 标准 Spring 组件、配置和应用入口 fixture 通过
+[ ] 单构造器、@Autowired 构造器和字段注入候选可识别
+[ ] 多构造器、多实现和未知组合注解产生明确限制/歧义
+[ ] T-0401 至 T-0403 完成；T-0404 可延后
 ```
 
 ---
@@ -925,7 +1060,7 @@ Acceptance Criteria:
 
 ---
 
-## T-0402 — Configuration Class Detection
+## T-0402 — Configuration and Application Entry Point Detection
 
 Status:
 
@@ -937,9 +1072,18 @@ Status:
 
 ```java
 //@Configuration
+//@SpringBootApplication
 ```
 
-以及主要配置类。
+以及 Spring Boot application entry point。
+
+Acceptance Criteria:
+
+```text
+[ ] Configuration 与 application entry point 分类正确
+[ ] Source Location 和注解证据正确
+[ ] 只使用确认的 Spring 全限定注解，不按简单名称猜测
+```
 
 ---
 
@@ -970,6 +1114,8 @@ Acceptance Criteria:
 ```text
 [ ] 常见 Constructor Injection 正确
 [ ] 常见 @Autowired Field 正确
+[ ] 接口多实现不直接绑定某个实现
+[ ] 多构造器无法确认时保留候选和诊断
 ```
 
 ---
@@ -987,6 +1133,10 @@ Priority:
 ```text
 OPTIONAL FOR EARLY V0.1
 ```
+
+Dependency Exception:
+
+> 本任务不阻塞 M4 完成或 M5 开始。若延后，必须在 Known Issues / Deferred Work 中记录覆盖限制。
 
 支持：
 
@@ -1013,6 +1163,19 @@ Status:
 ○ NOT STARTED
 ```
 
+Boundary:
+
+> 基于 M3/M4 facts 生成 HTTP Endpoint 和已确认的组件依赖边；不负责最终报告 DTO、JSON 或 UI。
+
+Exit Criteria:
+
+```text
+[ ] 标准 Spring MVC method/path/condition fixture 通过
+[ ] 类级与方法级映射组合正确，ANY 和 unresolvedPath 明确
+[ ] 每条确定依赖边包含 evidence，歧义关系不伪造
+[ ] 循环、重复证据和 unresolved target 测试通过
+```
+
 ---
 
 ## T-0501 — Spring MVC Controller Mapping
@@ -1032,6 +1195,14 @@ Status:
 @PutMapping
 @DeleteMapping
 @PatchMapping
+```
+
+Acceptance Criteria:
+
+```text
+[ ] 只识别可确认的 Spring MVC 标准注解
+[ ] class-level 和 method-level 声明均保留 Source Evidence
+[ ] path 数组、HTTP method 和 mapping conditions 不被丢失
 ```
 
 ---
@@ -1070,6 +1241,9 @@ Acceptance Criteria:
 [ ] Controller 正确
 [ ] Handler method 正确
 [ ] Source Location 正确
+[ ] 无 method 限制的 RequestMapping 表示为 ANY
+[ ] 无法解析的表达式表示为 unresolvedPath
+[ ] params / headers / consumes / produces 可区分同路径 handler
 ```
 
 ---
@@ -1096,12 +1270,14 @@ Acceptance Criteria:
 
 ```text
 [ ] Fixture 项目关系正确
+[ ] 每条确定关系包含类型、方向和 Source Evidence
 [ ] 无法确认的关系不应伪造
+[ ] Maven 模块依赖与组件依赖分别表示
 ```
 
 ---
 
-## T-0504 — Dependency Evidence
+## T-0504 — Dependency Ambiguity and Evidence Consolidation
 
 Status:
 
@@ -1109,7 +1285,9 @@ Status:
 [ ]
 ```
 
-每条关键 dependency 尽量记录：
+合并同一关系的多个证据，并为无法确认的 dependency 记录 unresolved target、位置和原因。
+
+每条 dependency 记录：
 
 ```text
 Source File
@@ -1125,13 +1303,21 @@ FIELD_INJECTION
 TYPE_REFERENCE
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 重复边按稳定身份合并，Evidence 保留为集合
+[ ] 接口多实现、缺失类型和同名冲突不会生成猜测边
+[ ] 循环关系可保存且不会导致遍历失败
+```
+
 ---
 
-# 16. M6 — Unified Project Model
+# 16. M6 — Report Assembly & Serialization
 
 Goal:
 
-> 将 Maven、Java、Spring、API、Dependency 分析结果统一转换成稳定项目模型。
+> 将 Maven、Java、Spring、API、Dependency facts 装配成稳定、可序列化的 AnalysisReport。
 
 Status:
 
@@ -1139,9 +1325,22 @@ Status:
 ○ NOT STARTED
 ```
 
+Boundary:
+
+> 定义完整公开报告、稳定身份、统计和 JSON 契约；不实现 HTTP server 或页面。
+
+Exit Criteria:
+
+```text
+[ ] AnalysisReport 完整承载支持的 facts、evidence、diagnostics 和 coverage status
+[ ] IDs、集合顺序和语义快照在相同输入下稳定
+[ ] schemaVersion 兼容与未知主版本行为有测试
+[ ] JSON 不包含源码正文、默认绝对路径或未允许的配置属性
+```
+
 ---
 
-## T-0601 — Project Model
+## T-0601 — Project Model Assembly
 
 Status:
 
@@ -1160,6 +1359,9 @@ Endpoint
 EntryPoint
 Dependency
 SourceLocation
+Evidence
+Diagnostic
+AnalysisReport
 ```
 
 必须符合：
@@ -1167,6 +1369,14 @@ SourceLocation
 ```text
 Generic enough for future languages
 Simple enough for V0.1
+```
+
+Acceptance Criteria:
+
+```text
+[ ] M2 ~ M5 facts 可转换到公共模型
+[ ] Core model 不暴露 Maven / JavaParser / Spring 类型
+[ ] SUCCESS / PARTIAL / FAILED 与 diagnostics 一同保留
 ```
 
 ---
@@ -1194,6 +1404,14 @@ Dependency
 
 > UI 不依赖对象内存地址或不稳定排序。
 
+Acceptance Criteria:
+
+```text
+[ ] 相同语义输入得到相同 ID 与排序
+[ ] 重复声明和键冲突产生诊断，不静默覆盖
+[ ] 重命名和签名变化行为由 fixture 明确
+```
+
 ---
 
 ## T-0603 — Serialization
@@ -1213,6 +1431,8 @@ Acceptance Criteria:
 [ ] Debuggable
 [ ] Frontend friendly
 [ ] Source locations retained
+[ ] schemaVersion 存在且未知主版本明确失败
+[ ] 默认无源码正文、用户绝对路径或任意多态反序列化
 ```
 
 ---
@@ -1238,6 +1458,14 @@ Dependency count
 
 等 Overview 数据。
 
+Acceptance Criteria:
+
+```text
+[ ] 统计按稳定实体身份去重
+[ ] PARTIAL 分析标出统计覆盖限制
+[ ] Summary 与底层实体数量一致
+```
+
 ---
 
 # 17. M7 — Local Web UI
@@ -1250,6 +1478,19 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 只读取 M6 AnalysisReport，在 loopback 本地服务中展示四个核心信息视图；不重新分析仓库或提供任意文件服务。
+
+Exit Criteria:
+
+```text
+[ ] Overview、Module、Architecture、API 和 Evidence 浏览流程可用
+[ ] Architecture 默认使用筛选/邻域并有列表回退
+[ ] 服务绑定 loopback，路径/内容注入/关闭流程测试通过
+[ ] 前端资源随离线 JAR 构建产物提供，无运行时 CDN
 ```
 
 ---
@@ -1276,6 +1517,8 @@ Acceptance Criteria:
 [ ] CLI 可启动 UI
 [ ] UI 可以读取当前分析结果
 [ ] 默认不需要账号或外部服务器
+[ ] JDK HttpServer 仅绑定 127.0.0.1 并使用只读固定路由
+[ ] --no-open、端口占用、浏览器打开失败和 Ctrl+C 关闭行为明确
 ```
 
 ---
@@ -1350,6 +1593,14 @@ Component
 
 > 可读性优先于节点数量。
 
+Acceptance Criteria:
+
+```text
+[ ] Module graph 与 Component graph 不混用边类型
+[ ] 默认视图不会一次渲染无界全仓库图
+[ ] 图节点可回到详情和 Source Evidence
+```
+
 ---
 
 ## T-0705 — Architecture Filtering
@@ -1368,6 +1619,14 @@ By Component Type
 ```
 
 防止大项目直接生成“毛线球”。
+
+Acceptance Criteria:
+
+```text
+[ ] 模块、组件类型和一阶邻域筛选可组合
+[ ] 超过节点预算时显示隐藏数量并要求缩小范围
+[ ] 始终提供可搜索列表作为图的替代入口
+```
 
 ---
 
@@ -1391,6 +1650,14 @@ Source
 
 至少支持简单搜索 / 过滤。
 
+Acceptance Criteria:
+
+```text
+[ ] 可按 HTTP method、path 和 module 过滤
+[ ] ANY、unresolvedPath 和 mapping conditions 清晰展示
+[ ] Endpoint 可打开 handler 和两级 mapping Evidence
+```
+
 ---
 
 ## T-0707 — Source Navigation Information
@@ -1412,6 +1679,38 @@ Related Components
 
 V0.1 不要求直接集成 IDE。
 
+Acceptance Criteria:
+
+```text
+[ ] 位置使用扫描根相对路径和 1-based 行列
+[ ] 未知位置不显示伪造的 0 行
+[ ] Source/Diagnostic 内容以文本方式安全渲染
+```
+
+---
+
+## T-0708 — Local Web Boundary and Packaged UI Validation
+
+Status:
+
+```text
+[ ]
+```
+
+Goal:
+
+验证 ADR-0011、ADR-0012 的本地服务和前端发布边界。
+
+Acceptance Criteria:
+
+```text
+[ ] 路径穿越、错误 Host/Origin 和任意文件读取被拒绝
+[ ] CSP、no-store 和无通配 CORS 配置有效
+[ ] 恶意项目名、路径和诊断文本不会执行为页面内容
+[ ] 生产前端资源从 JAR 离线加载并与 schemaVersion 匹配
+[ ] 服务关闭后端口和资源释放
+```
+
 ---
 
 # 18. M8 — Start Here
@@ -1424,6 +1723,19 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 基于已经确认的 entry point、endpoint 和 dependency evidence 生成可解释阅读路径；不推断业务职责或使用 AI 排名。
+
+Exit Criteria:
+
+```text
+[ ] 推荐顺序由确定规则产生且相同输入稳定
+[ ] 每个推荐项包含可核对理由和 Source Evidence
+[ ] 按文件去重并限制默认展示数量
+[ ] PARTIAL 分析明确提示推荐依据不完整
 ```
 
 ---
@@ -1448,6 +1760,14 @@ Dependency Centrality
 Configuration Importance
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 规则只使用可验证 facts 和明确计数
+[ ] 根 POM、应用入口、配置、Controller、确定依赖邻域优先级有 fixture
+[ ] 不从类名生成业务语义结论
+```
+
 ---
 
 ## T-0802 — Recommended Reading Path
@@ -1468,6 +1788,14 @@ Status:
 ```
 
 推荐源码阅读顺序。
+
+Acceptance Criteria:
+
+```text
+[ ] 按文件去重，模块间顺序稳定
+[ ] 默认最多展示 10 项并可展开
+[ ] unresolved dependency 不参与确定排名
+```
 
 ---
 
@@ -1493,6 +1821,14 @@ Exposes 8 HTTP endpoints
 Central service used by 5 controllers
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 每个原因可回溯到 entry point、endpoint、role 或 dependency evidence
+[ ] 计数与 AnalysisReport 一致
+[ ] PARTIAL 情况包含覆盖限制说明
+```
+
 ---
 
 ## T-0804 — Start Here UI
@@ -1509,9 +1845,17 @@ Status:
 
 页面。
 
+Acceptance Criteria:
+
+```text
+[ ] 阅读顺序、原因、模块和 Source Location 可浏览
+[ ] 可从推荐项进入相关 API/组件详情
+[ ] 空结果和 PARTIAL 结果有明确说明
+```
+
 ---
 
-# 19. M9 — Fixture & Real Repository Validation
+# 19. M9 — Regression & Real Repository Validation
 
 Goal:
 
@@ -1523,9 +1867,23 @@ Status:
 ○ NOT STARTED
 ```
 
+Boundary:
+
+> 审计 M2 ~ M8 随功能建立的 fixture，并在固定 commit 的真实 Spring Boot Maven 仓库上验证准确性、性能和理解价值；不在此阶段首次补齐核心单元测试。
+
+Exit Criteria:
+
+```text
+[ ] 最小、多模块和复杂 fixture regression suite 全部通过
+[ ] 小型和中型真实仓库有人工核对的组件/API/依赖样本
+[ ] 大型试验记录解析、内存、耗时和图可读性限制
+[ ] Onboarding value 有可复现任务与观察结果
+[ ] 发现的问题已修复、标为 blocker 或记录为已知限制
+```
+
 ---
 
-## T-0901 — Minimal Spring Fixture
+## T-0901 — Audit Minimal Spring Regression Fixture
 
 Status:
 
@@ -1533,7 +1891,7 @@ Status:
 [ ]
 ```
 
-包含：
+审计在早期 analyzer 任务中建立的最小 Spring fixture，确保至少包含：
 
 ```text
 Controller
@@ -1542,9 +1900,17 @@ Repository
 API
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 预期输出覆盖位置、Evidence 和稳定 ID
+[ ] regression suite 不执行 fixture 应用或访问网络
+[ ] 所有支持行为由自动化断言验证
+```
+
 ---
 
-## T-0902 — Multi-module Fixture
+## T-0902 — Audit Multi-module Regression Fixture
 
 Status:
 
@@ -1560,9 +1926,17 @@ Module ownership
 Cross-module dependency
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] parent 与 aggregator 关系分别验证
+[ ] 模块可见性、源码归属和跨模块边有明确期望
+[ ] 缺失外部 parent/BOM 的 PARTIAL 路径被覆盖
+```
+
 ---
 
-## T-0903 — Complex Spring Fixture
+## T-0903 — Audit Complex Spring Regression Fixture
 
 Status:
 
@@ -1577,6 +1951,14 @@ Multiple Controllers
 Service-to-Service dependency
 Configuration
 Multiple API paths
+```
+
+Acceptance Criteria:
+
+```text
+[ ] 多构造器、接口多实现、条件映射和循环关系被覆盖
+[ ] unsupported/ambiguous 情况不产生猜测结果
+[ ] UI 和 Start Here 使用同一稳定报告快照
 ```
 
 ---
@@ -1601,6 +1983,14 @@ Dependencies
 UI readability
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 仓库 URL 与 commit 固定
+[ ] 人工核对一组 Component / Endpoint / Dependency 事实
+[ ] 记录误报、漏报、诊断、耗时和峰值内存
+```
+
 ---
 
 ## T-0905 — Medium Real Repository Validation
@@ -1618,6 +2008,14 @@ Noise
 Performance
 Graph readability
 Failure tolerance
+```
+
+Acceptance Criteria:
+
+```text
+[ ] 仓库 URL、commit 和环境固定
+[ ] 图筛选后仍可读，隐藏/未解析数量可见
+[ ] 关键误报必须修复或成为发布 blocker
 ```
 
 ---
@@ -1639,6 +2037,14 @@ Performance limits
 Parser limitations
 Graph usability issues
 Memory problems
+```
+
+Acceptance Criteria:
+
+```text
+[ ] 记录文件/模块规模、耗时和峰值内存
+[ ] 记录 parser、model 和 graph usability 的实际上限
+[ ] 不为试验仓库承诺完整支持
 ```
 
 ---
@@ -1667,6 +2073,14 @@ Status:
 找到推荐阅读入口的时间
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 使用固定任务和首次接触者场景
+[ ] 记录完成时间、正确性和主观理解反馈
+[ ] 明确 Start Here 是否带来可观察价值
+```
+
 ---
 
 # 20. M10 — Release Preparation
@@ -1679,6 +2093,19 @@ Status:
 
 ```text
 ○ NOT STARTED
+```
+
+Boundary:
+
+> 把已验证功能整理为可安装、可说明、可演示的 V0.1 发布候选；不增加新的分析能力。
+
+Exit Criteria:
+
+```text
+[ ] Windows/macOS/Linux 的 JAR 与启动脚本 smoke checks 通过
+[ ] README、安装、用法、支持范围和已知限制准确
+[ ] License、依赖许可、校验和和仓库清理完成
+[ ] Demo 与发布 checklist 可由陌生用户复现
 ```
 
 ---
@@ -1707,6 +2134,14 @@ cd project
 repoonboard .
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 可执行 JAR 包含前端资源并可离线分析 fixture
+[ ] Windows 和 POSIX 启动脚本验证通过
+[ ] Java 21 要求、校验和和安装步骤明确
+```
+
 ---
 
 ## T-1002 — Error Messages
@@ -1725,6 +2160,16 @@ Unsupported project
 Invalid source
 No Spring Boot detected
 Partial analysis
+```
+
+此任务审计并统一前面各阶段已有的 Diagnostic，不在发布阶段首次补做容错。
+
+Acceptance Criteria:
+
+```text
+[ ] 参数错误、FAILED、PARTIAL 使用一致退出码和文案
+[ ] 错误包含可操作上下文且不泄露配置秘密
+[ ] CLI 与 UI 对同一 Diagnostic 的含义一致
 ```
 
 ---
@@ -1751,6 +2196,14 @@ Roadmap
 Contribution
 ```
 
+Acceptance Criteria:
+
+```text
+[ ] 安装和命令可由干净环境复现
+[ ] 支持范围、PARTIAL 语义和已知限制准确
+[ ] Demo 链接与当前发布产物一致
+```
+
 ---
 
 ## T-1004 — Demo Repository
@@ -1762,6 +2215,14 @@ Status:
 ```
 
 准备一个可以稳定展示 RepoOnboard 效果的公开项目。
+
+Acceptance Criteria:
+
+```text
+[ ] 使用固定 commit，许可允许公开演示
+[ ] 覆盖 Overview、Architecture、API 和 Start Here
+[ ] 不为演示修改第三方仓库源码
+```
 
 ---
 
@@ -1793,6 +2254,14 @@ Start Here
 
 > 10～20 秒就理解 RepoOnboard 是什么。
 
+Acceptance Criteria:
+
+```text
+[ ] 使用真实发布候选和固定 demo 输入录制
+[ ] 展示扫描、Architecture、API 和 Start Here 主路径
+[ ] 不隐藏影响理解的 PARTIAL/限制提示
+```
+
 ---
 
 ## T-1006 — License
@@ -1806,6 +2275,14 @@ Status:
 确定开源 License。
 
 需要在正式公开前完成。
+
+Acceptance Criteria:
+
+```text
+[ ] 根 License 文件存在
+[ ] 分发依赖和前端资产许可已核对
+[ ] README 中的许可说明准确
+```
 
 ---
 
@@ -1825,6 +2302,14 @@ No local paths
 No temporary files
 No unnecessary generated files
 Clean commit history where appropriate
+```
+
+Acceptance Criteria:
+
+```text
+[ ] Secret、本地绝对路径和临时产物检查通过
+[ ] 发布文件、Wrapper、前端锁文件和许可文件完整
+[ ] git status 仅包含预期发布变更
 ```
 
 ---
@@ -2197,30 +2682,26 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0001
-Complete Technical Architecture Proposal
+T-0101
+Create Repository Scaffold
 ```
 
 本阶段：
 
-> 不开始正式业务代码开发。
+> **M1 — Project Foundation**
 
-完成：
-
-```text
-T-0001
-↓
-T-0002
-↓
-T-0003
-↓
-T-0004
-```
-
-后，才能进入：
+M0 已完成。接下来按默认依赖顺序执行：
 
 ```text
-M1 — Project Foundation
+T-0101
+↓
+T-0102
+↓
+T-0103
+↓
+T-0104
+↓
+T-0105
 ```
 
 ---
@@ -2237,10 +2718,10 @@ Architecture Constraints
 ████████████████████ 100%
 
 Technical Architecture
-░░░░░░░░░░░░░░░░░░░░   0%
+████████████████████ 100%
 
 Technical Decisions
-░░░░░░░░░░░░░░░░░░░░   0%
+████████████████████ 100%
 
 Implementation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2254,23 +2735,6 @@ Release
 
 Next:
 
-> **Design the architecture before writing the product.**
+> **T-0101 — Create Repository Scaffold.**
 
 ````
-
-这样你现在三个核心文件就完整了：
-
-```text
-RepoOnboard/
-│
-├── PROJECT.md
-│   └── 我们做什么 / 为什么做
-│
-├── DECISIONS.md
-│   └── 我们决定怎么做 / 为什么这么做
-│
-└── TODO.md
-    └── 现在做到哪 / 下一步具体做什么
-````
-
-而且现在 `TODO.md` 已经明确告诉 Work：**下一步只有 `T-0001 — Complete Technical Architecture Proposal`，目前不应该开始写正式业务代码。**
