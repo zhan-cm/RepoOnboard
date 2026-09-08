@@ -23,9 +23,9 @@ The long-term goal is simple:
 
 ## Status
 
-> **Early Development / Technical Architecture Design**
+> **Early Development / Project Foundation**
 
-RepoOnboard is currently in the architecture and design phase.
+RepoOnboard has completed its initial architecture decisions and is entering the project foundation phase.
 
 The first implementation has not been released yet.
 

@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **Technical Architecture Design**
+> **Project Foundation**
 
-目前尚未进入完整编码阶段。
+M0 技术架构设计已完成。当前下一任务是 T-0101，根据已接受 ADR 创建最小工程骨架。
 
 ---
 
@@ -154,30 +154,11 @@ TODO 不能自行改变架构。
 
 当前正式接受的具体技术栈决策：
 
-> **None yet.**
+> **ADR-0001 至 ADR-0016 已于 2026-09-08 接受。**
 
-以下内容目前仍待技术方案阶段确认：
+这些决策来自 T-0001 技术方案、T-0002 架构评审及随后明确的继续执行确认。具体约束、验证门槛和重新评估条件见 Decision Index 与正式 ADR。
 
-* Java Runtime Version
-* Build Configuration
-* CLI Framework
-* Maven Parsing Strategy
-* Java AST Parser
-* Symbol Resolution Strategy
-* Generic Project Model
-* Dependency Graph Representation
-* Spring Boot Analyzer Architecture
-* Serialization Format
-* Local Web Server
-* Frontend Architecture
-* Graph Visualization Library
-* Testing Stack
-* Packaging Strategy
-* Distribution Strategy
-
-在完成第一次 Technical Architecture Review 前：
-
-> **不得把候选方案写成已确认方案。**
+Release and Distribution 仍为 DEFERRED；精确依赖补丁版本、图阈值等可逆实现细节由对应任务在 ADR 约束内确定。
 
 ---
 
@@ -496,30 +477,32 @@ ADR：
 
 当前 Decision Index：
 
-| ID | Decision                             | Status | Date |
-| -- | ------------------------------------ | ------ | ---- |
-| —  | No technical decisions finalized yet | —      | —    |
-
-当技术方案确认以后，在这里维护索引。
-
-例如未来可能变成：
-
-| ID       | Decision               | Status   | Date       |
-| -------- | ---------------------- | -------- | ---------- |
-| ADR-0001 | Java Runtime Version   | ACCEPTED | YYYY-MM-DD |
-| ADR-0002 | CLI Framework          | ACCEPTED | YYYY-MM-DD |
-| ADR-0003 | Java AST Parser        | ACCEPTED | YYYY-MM-DD |
-| ADR-0004 | Maven Parsing Strategy | ACCEPTED | YYYY-MM-DD |
+| ID | Decision | Status | Date |
+| --- | --- | --- | --- |
+| ADR-0001 | Use Java 21 for the RepoOnboard Runtime | ACCEPTED | 2026-09-08 |
+| ADR-0002 | Build with Maven and Maven Wrapper | ACCEPTED | 2026-09-08 |
+| ADR-0003 | Use Picocli for the CLI | ACCEPTED | 2026-09-08 |
+| ADR-0004 | Parse Maven Projects through a Restricted Model Builder | ACCEPTED | 2026-09-08 |
+| ADR-0005 | Use JavaParser for Java Source Analysis | ACCEPTED | 2026-09-08 |
+| ADR-0006 | Limit Symbol Resolution to Confirmed Project-local Types | ACCEPTED | 2026-09-08 |
+| ADR-0007 | Use a Minimal Generic Project Model with Source Evidence | ACCEPTED | 2026-09-08 |
+| ADR-0008 | Keep Explicit Analyzer Boundaries in One Local Process | ACCEPTED | 2026-09-08 |
+| ADR-0009 | Represent Dependencies as Typed Directed Edges | ACCEPTED | 2026-09-08 |
+| ADR-0010 | Serialize Versioned Reports as JSON | ACCEPTED | 2026-09-08 |
+| ADR-0011 | Serve the Local UI with JDK HttpServer | ACCEPTED | 2026-09-08 |
+| ADR-0012 | Build the UI with Vue, Vite, and Cytoscape.js | ACCEPTED | 2026-09-08 |
+| ADR-0013 | Generate Start Here with Explainable Heuristics | ACCEPTED | 2026-09-08 |
+| ADR-0014 | Use Layered Fixture and Real-repository Testing | ACCEPTED | 2026-09-08 |
+| ADR-0015 | Preserve Partial Results and Structured Diagnostics | ACCEPTED | 2026-09-08 |
+| ADR-0016 | Package V0.1 as a JAR with Launcher Scripts | ACCEPTED | 2026-09-08 |
 
 ---
 
-# 11. Open Technical Decisions
+# 11. Technical Decision Queue and Resolution
 
-以下内容目前是：
+以下条目保留最初问题及评估背景。T-0003 后，它们的当前结论由对应 ADR 决定：
 
-> **Decision Queue**
-
-它们不是最终方案。
+> **D-01 至 D-19 已解决；D-20 仍为 DEFERRED。**
 
 ---
 
@@ -551,7 +534,7 @@ RepoOnboard 应尽可能分析不同 Java Version 的目标项目。
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0001
 ```
 
 ---
@@ -576,7 +559,7 @@ OPEN
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0002
 ```
 
 ---
@@ -603,7 +586,7 @@ repoonboard .
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0003
 ```
 
 ---
@@ -637,7 +620,7 @@ pom.xml
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0004
 ```
 
 ---
@@ -669,7 +652,7 @@ Integration Complexity
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0005
 ```
 
 ---
@@ -699,7 +682,7 @@ Near-compiler-level Resolution
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0006
 ```
 
 ---
@@ -730,7 +713,7 @@ SourceLocation
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0007
 ```
 
 ---
@@ -764,7 +747,7 @@ Maven Analyzer
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0008
 ```
 
 ---
@@ -801,7 +784,7 @@ Component → Component
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0009
 ```
 
 ---
@@ -826,7 +809,7 @@ Framework
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0007
 ```
 
 ---
@@ -850,7 +833,7 @@ Evidence
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0007
 ```
 
 ---
@@ -878,7 +861,7 @@ JSON
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0010
 ```
 
 ---
@@ -918,7 +901,7 @@ Generated Static Site
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0011
 ```
 
 ---
@@ -949,7 +932,7 @@ OPEN
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0012
 ```
 
 ---
@@ -975,7 +958,7 @@ Dependency Graph
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0012
 ```
 
 ---
@@ -1012,7 +995,7 @@ Why this file?
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0013
 ```
 
 ---
@@ -1041,7 +1024,7 @@ Real Repository Validation
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0014
 ```
 
 ---
@@ -1065,7 +1048,7 @@ RepoOnboard 分析真实仓库时必然遇到：
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0015
 ```
 
 ---
@@ -1094,7 +1077,7 @@ Native Image 等复杂方案不应默认成为首选。
 Status:
 
 ```text
-OPEN
+RESOLVED — ADR-0016
 ```
 
 ---
@@ -1615,7 +1598,463 @@ When should we reconsider it?
 
 ---
 
-# 21. Current Summary
+# 21. Accepted Architecture Decision Records
+
+以下 ADR 由 [V0.1 技术架构方案](docs/architecture/V0.1-TECHNICAL-PROPOSAL.md) 和 [T-0002 架构评审](docs/architecture/T-0002-ARCHITECTURE-REVIEW.md) 产生。状态变更遵循本文件第 14 节；实现中的具体补丁版本和低影响细节不能改变 ADR 的边界。
+
+## ADR-0001 — Use Java 21 for the RepoOnboard Runtime
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+RepoOnboard 需要统一的本地开发、测试和发布运行时。工具自身最低使用 Java 21，并以 `--release 21` 编译。该版本只约束 RepoOnboard；被分析项目的 Java 版本由解析器兼容矩阵决定。
+
+### Alternatives and Rationale
+
+Java 17 的安装覆盖更广，但会限制工具内部可用语言能力；高于 21 的版本会进一步提高用户门槛。Java 21 作为 LTS 在能力和可获得性之间更适合当前项目。
+
+### Consequences and Validation
+
+最终用户需要 Java 21，发布前必须在 Windows、macOS、Linux 验证启动。Java 8/11/17/21 目标源码通过 fixture 验证，不把运行 JDK 当作目标项目版本。若 Java 21 成为明显安装阻力或关键依赖要求更高版本，创建新 ADR 复审。
+
+---
+
+## ADR-0002 — Build with Maven and Maven Wrapper
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+RepoOnboard 使用 Maven 3.9 系列和 Maven Wrapper 构建。V0.1 初期保持一个 Java 构建模块，通过包边界组织代码；前端发布构建由 Maven 打包阶段显式整合，不要求普通 Java 单测每次构建前端。
+
+### Alternatives and Rationale
+
+Gradle 能完成同样任务，但引入第二套构建心智模型没有当前收益。多个 Maven 模块能强化编译隔离，也会增加依赖和发布配置。当前规模下 Maven 单模块最简单。
+
+### Consequences and Validation
+
+命令行构建必须可重复，Wrapper 版本和校验信息需要提交。M1 验证 clean/test/verify，前端加入后验证锁文件和资源打包。Maven 4 迁移、拆分模块或替换构建工具需要证据和新 ADR。
+
+---
+
+## ADR-0003 — Use Picocli for the CLI
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+命令 `repoonboard .` 需要稳定处理路径、帮助、版本、输出选项、端口、错误消息和退出码。CLI 使用 Picocli 4 系列；CLI 层只负责输入、进度和生命周期，不包含分析规则。
+
+### Alternatives and Rationale
+
+手写参数解析在单参数原型中更小，但随着选项和错误场景增加会形成重复基础设施。Spring Shell 超出当前非交互 CLI 的需要。Picocli 足够轻量且便于测试。
+
+### Consequences and Validation
+
+M1 验证 `.`、非法路径、help、version 和退出码；M7 再验证服务生命周期。若 CLI 永久保持单参数且 Picocli 显著影响包体或启动，才重新评估。
+
+---
+
+## ADR-0004 — Parse Maven Projects through a Restricted Model Builder
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+Maven 元数据涉及 parent、属性、profile、dependencyManagement 和多模块关系。分析器使用 Maven 3.9 Model Reader/Model Builder，但所有根 POM、相对 parent、BOM 和本地仓库 POM 都必须经过统一受限读取层。核心扫描不调用目标项目 Maven、不执行 lifecycle、插件、扩展或网络解析。
+
+Profile 只支持显式选择和 activeByDefault；不注册宿主 OS、JDK、文件或属性隐式 activator。模型构建失败时保留 raw model 和可用字段，字段带原始值、解析状态和来源。
+
+### Alternatives and Rationale
+
+纯 XML 适合读取简单字段，却无法可靠重建完整 Maven 继承语义。调用 `mvn help:effective-pom` 会依赖目标环境并可能执行不受控扩展。受限 Model Builder 能复用成熟语义，同时守住本地静态分析边界。
+
+### Consequences and Validation
+
+T-0002 实验验证了宿主 OS profile 和 `relativePath` 绕过解析器的风险，但只使用本地 Maven 3.6.1 API。M1/M2 必须用最终锁定的 3.9 版本验证有界 ModelSource、拒绝型 resolver、XXE/DTD、资源上限、缺 parent/BOM、profile 和无网络行为。无法实现这些约束时重新评审本 ADR。
+
+---
+
+## ADR-0005 — Use JavaParser for Java Source Analysis
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+Java 分析需要类、方法、字段、构造器、注解、类型引用和源码位置。使用 JavaParser 3 系列生成 AST，并立刻转成 RepoOnboard 内部 Java facts；第三方 AST 不进入公共模型或序列化结果。
+
+### Alternatives and Rationale
+
+Spoon 提供更丰富的分析与转换模型，但 V0.1 不修改源码。Eclipse JDT binding 能力强，环境配置也更接近编译器。当前只读、部分成功的提取范围下，JavaParser API 更直接。
+
+### Consequences and Validation
+
+T-0303 前用锁定版本验证 Java 8/11/17/21 常见语法、位置、损坏文件和解析恢复。若常见目标仓库出现系统性语法或位置错误，使用同一 fixture 比较 Spoon/JDT，并通过替代 ADR 决策。
+
+---
+
+## ADR-0006 — Limit Symbol Resolution to Confirmed Project-local Types
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+V0.1 建立模块可见的源码声明索引，按全限定名、显式 import、同包、唯一可确定的通配 import 和确认的 Maven 模块依赖解析类型。JavaSymbolSolver 只在共享 AST 上按需使用。歧义和缺失目标保留为 unresolved，不创建确定关系。
+
+### Alternatives and Rationale
+
+完全按简单类名匹配会产生误报；下载完整 classpath 或追求编译器级解析会扩大离线、性能和容错成本。项目内确认解析能支持主要组件关系，并符合准确优先原则。
+
+### Consequences and Validation
+
+接口注入不绑定到猜测实现，外部类型不创建仓库内节点。T-0304/T-0503 覆盖同名类型、嵌套声明、跨模块可见性、多实现和缺依赖。只有明确的用户价值被此范围阻塞时才提高解析深度。
+
+---
+
+## ADR-0007 — Use a Minimal Generic Project Model with Source Evidence
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+核心模型包含 Project、Module、SourceFile、Component、Endpoint、EntryPoint、Dependency、SourceLocation、Evidence、Diagnostic 和 AnalysisReport。模型使用 Java records/enums 表达稳定值，实体通过稳定结构身份引用；Spring 语义以 kind/framework 标识映射，不创建通用 AST。
+
+Endpoint 保存方法、路径、handler、条件、解析状态和类/方法级证据。源码位置使用 1-based 行列，未知值为空。默认报告使用扫描根相对路径，不包含整份源码或用户绝对路径。
+
+### Alternatives and Rationale
+
+Spring 专用核心会阻碍长期方向；通用语言类型系统会让 V0.1 复杂化；直接序列化解析器对象会形成技术锁定。最小语义模型服务当前界面，同时保留证据。
+
+### Consequences and Validation
+
+T-0601 固化字段，T-0602 用 fixture 确定 ID 编码、排序、冲突和重命名行为。ADR 只要求稳定身份不依赖内存地址或遍历顺序，暂不固定 SHA-256 等编码细节。新实体必须由当前产品需求驱动。
+
+---
+
+## ADR-0008 — Keep Explicit Analyzer Boundaries in One Local Process
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+RepoOnboard 在一个本地 Java 进程中按顺序编排 Maven、Java、Spring、关系整理、序列化和展示。代码按 `core.model`、`analyzer.maven`、`analyzer.java`、`analyzer.spring`、`analysis`、`serialization`、`web`、`cli` 边界组织。Core 不依赖框架/解析器类型，Spring 分析器消费 Java facts。
+
+### Alternatives and Rationale
+
+动态插件、多服务或多个发布单元会增加部署和错误边界；将所有逻辑放入一个扫描器又难以测试与扩展。单进程加显式包边界满足 V0.1。
+
+### Consequences and Validation
+
+M1 可增加架构依赖测试以防反向依赖。只有包边界持续无法约束耦合、构建时间或独立发布需求出现时，才考虑拆分 Maven 模块；动态插件留到第二生态出现后评估。
+
+---
+
+## ADR-0009 — Represent Dependencies as Typed Directed Edges
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+组件关系以带类型、解析状态和证据的有向边列表存储，查询时建立邻接表。Maven 模块/构建依赖与组件依赖分别建图。循环合法保存，未解析目标保留名称和诊断，默认不画为确定边。
+
+### Alternatives and Rationale
+
+图数据库和通用 Java 图算法库可以提供复杂查询，但 V0.1 只需要筛选、统计、邻域和基础中心性。简单集合模型更容易序列化和解释。
+
+### Consequences and Validation
+
+T-0503/T-0604 验证去重、多证据、循环、未解析关系和稳定排序。出现确需复杂算法且自有实现开始膨胀时，再评估 JGraphT 等图库。
+
+---
+
+## ADR-0010 — Serialize Versioned Reports as JSON
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+分析器与 UI 使用 UTF-8 JSON 交换数据，外层报告包含 `schemaVersion`。Java 端使用 Jackson 3 系列序列化显式 DTO；禁用任意多态类型反序列化，集合按稳定键输出。
+
+### Alternatives and Rationale
+
+数据库、二进制协议和专用图格式增加迁移及调试成本。JSON 可人工检查、适合浏览器并支持离线产物。Gson 可行，但 Jackson 更适合明确 DTO 和后续兼容配置。
+
+### Consequences and Validation
+
+T-0603 定义主/次版本兼容、快照和未知版本错误。M1 用最终版本验证 Java 21 兼容。若报告规模使解析或内存不可接受，应先测量和分片，再决定格式变化。
+
+---
+
+## ADR-0011 — Serve the Local UI with JDK HttpServer
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+CLI 分析完成后，用 JDK `HttpServer` 在 `127.0.0.1` 提供打包静态资源和当前只读报告接口，默认使用系统分配端口。服务不提供任意文件读取、不运行目标代码，浏览器打开失败时输出地址。
+
+### Alternatives and Rationale
+
+`file://` 对资源和数据加载限制较多；嵌入 Spring Boot 服务端会引入容器和额外生命周期。当前路由很少，JDK 自带服务器足够。
+
+### Consequences and Validation
+
+M7 验证路径穿越、Host/同源限制、内容安全策略、并发、端口、关闭和资源释放。若只读需求超出可维护范围，或 HttpServer 行为成为跨平台阻塞，再评估轻量服务器库。
+
+---
+
+## ADR-0012 — Build the UI with Vue, Vite, and Cytoscape.js
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+本地 UI 使用 Vue 3 + JavaScript + Vite，提供 Overview、Architecture、API Map、Start Here 和诊断入口。图交互使用 Cytoscape.js，默认先按模块、类型和组件邻域缩小结果，并始终提供列表视图。全部资源随 JAR 发布，不使用运行时 CDN。
+
+### Alternatives and Rationale
+
+原生 JavaScript 对静态页面足够，但四个视图的筛选和详情状态会分散；React/Vue 都可满足。Vue 的模板和响应式组织适合当前小团队。D3 和自绘 SVG 更底层，Cytoscape 提供现成图交互。
+
+### Consequences and Validation
+
+开发和发布构建需要 Node，最终用户不需要。M7/M9 用真实图验证可读性、节点预算和恶意文本渲染。复杂布局插件、TypeScript 和图阈值延后，以实际数据决定。
+
+---
+
+## ADR-0013 — Generate Start Here with Explainable Heuristics
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+Start Here 使用确定规则生成阅读路径：根 POM、应用入口、直接识别的配置、公开 API Controller，以及与前述组件存在确定边的 Service/Repository。推荐按文件去重并附带来源事实和计数，partial 分析必须标注依据不完整。
+
+### Alternatives and Rationale
+
+AI 排名、业务语义猜测或不透明分数不符合 V0.1。可解释启发式能说明为什么推荐，并便于 fixture 回归。
+
+### Consequences and Validation
+
+T-0801/T-0907 验证排序稳定性和真实上手价值。只有用户验证显示规则无帮助时才调整权重；任何新规则仍需可解释证据。
+
+---
+
+## ADR-0014 — Use Layered Fixture and Real-repository Testing
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+Java 端使用 JUnit Jupiter 6 系列。每个分析任务从单元测试和最小 fixture 开始，随后做集成、CLI 和固定 commit 的真实仓库验证。前端使用 Vitest；关键浏览流程在 M7 后用 Playwright。Fixture 不运行目标应用，不依赖远端下载目标依赖。
+
+### Alternatives and Rationale
+
+只测人工 fixture 无法代表真实 Maven/Spring 结构；只测真实仓库又难以定位回归。分层测试兼顾确定性和实际覆盖。
+
+### Consequences and Validation
+
+测试依赖随功能引入，不在 M1 一次搭完。真实仓库记录人工期望、误报、漏报、耗时和内存。若测试运行时间增长，先分层执行而不是删除关键准确性验证。
+
+---
+
+## ADR-0015 — Preserve Partial Results and Structured Diagnostics
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+每个阶段返回事实与结构化 Diagnostic，整体状态为 SUCCESS、PARTIAL 或 FAILED。单文件、子模块、缺 parent/BOM、未解析类型等局部问题产生可定位诊断并继续；只有输入无效或无法确定分析范围等情况才终止。
+
+### Alternatives and Rationale
+
+任何解析失败即终止会让真实仓库体验脆弱；吞掉错误又会把不完整结果伪装成准确结论。部分结果加显式覆盖状态更符合产品目标。
+
+### Consequences and Validation
+
+CLI 和 UI 必须显著展示 partial 状态，退出码区分参数错误、失败和部分成功。各 analyzer fixture 验证继续条件、诊断位置和不可继续边界；不允许用异常兜底掩盖编程缺陷。
+
+---
+
+## ADR-0016 — Package V0.1 as a JAR with Launcher Scripts
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-08
+```
+
+### Context and Decision
+
+V0.1 提供包含前端资源的可执行 JAR，以及 Windows 和 POSIX 启动脚本。发布物包含校验和和必要依赖许可信息；运行时要求 Java 21。具体公开渠道由发布阶段决定。
+
+### Alternatives and Rationale
+
+Native Image、自带 JRE、平台安装器和多个包管理器会扩大构建矩阵。JAR 与脚本是进入真实验证的最小可靠交付方式。
+
+### Consequences and Validation
+
+M10 在 Windows、macOS、Linux 做离线分析和启动冒烟测试。若 Java 安装成为主要采用障碍，再通过新 ADR 评估 jlink/jpackage、Native Image 或自带运行时。
+
+---
+
+# 22. Current Summary
 
 当前阶段：
 
@@ -1630,10 +2069,10 @@ Architecture Constraints
 ✓ Defined
 
 Technical Stack
-○ Not finalized
+✓ Accepted for V0.1
 
 Architecture Decisions
-○ Pending
+✓ ADR-0001 through ADR-0016 accepted
 
 Implementation
 ○ Not started
@@ -1641,47 +2080,8 @@ Implementation
 
 下一步：
 
-> 完成 RepoOnboard V0.1 Technical Architecture Proposal。
+> 完成 T-0101 — Create Repository Scaffold。
 
-技术方案经过 Review 后：
-
-1. 将确认的技术选择转换成正式 ADR。
-2. 更新 Decision Index。
-3. 创建 / 更新 TODO.md。
-4. 再开始正式项目骨架和编码工作。
+M0 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````
-
-这版 `DECISIONS.md` 有一个很重要的设计：**现在没有假装我们已经选好了技术栈。**
-
-所以等你把 `PROJECT.md + DECISIONS.md` 交给 Work 后，它应该先帮我们比较：
-
-```text
-JavaParser vs Spoon vs JDT
-Picocli 是否合适
-React/Vue/纯前端哪个合适
-JSON还是其他模型
-怎么做 Maven resolution
-Symbol Resolution 做到什么程度
-Core 和 Spring Analyzer 怎么分
-````
-
-真正决定以后，我们才把：
-
-```text
-D-05 — Java AST Strategy
-```
-
-转化成类似：
-
-```text
-ADR-0003 — Use JavaParser for Java Source Analysis
-
-Status: ACCEPTED
-```
-
-这样以后 Work 或 Codex 就不能每开一个任务又问一次：
-
-> “要不要换成 Spoon？”
-
-这恰恰是 `DECISIONS.md` 最能帮你**省 Work 额度、防止 AI 反复重新设计项目**的地方。
