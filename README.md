@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Maven Analysis**
 >
-> Maven detection, coordinate/property extraction, restricted offline parent/BOM resolution, and multi-module analysis are available. Dependency extraction is next; the first usable release is not available yet.
+> Maven detection, coordinate/property extraction, restricted offline parent/BOM resolution, multi-module analysis, and dependency extraction are available. Spring Boot build detection is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -74,7 +74,7 @@ cd unfamiliar-project
 repoonboard .
 ```
 
-At the current stage, this command detects a root `pom.xml`, displays its resolved coordinates, and prints the declared module hierarchy with source directories. The analyzer preserves raw values, property values, source locations, and diagnostics. Dependency output is not available yet.
+At the current stage, this command detects a root `pom.xml`, displays its resolved coordinates, and prints the module hierarchy, source directories, and dependencies. Each dependency retains groupId, artifactId, version, scope, raw/resolved values, and field source locations. Versions and scopes supplied by available parents or imported BOMs are supported; missing versions remain unknown with diagnostics. Only declared/inherited dependencies and active profiles are included, without downloading artifacts or computing a transitive graph. Unused dependencyManagement entries are not listed as dependencies.
 
 Module aggregation and parent inheritance are recorded separately. Nested and active-profile modules are supported. Module paths and `build.sourceDirectory` resolve inside the scan root; source directories need not exist yet. Missing, malformed, escaping, duplicate, or cyclic modules produce diagnostics while other modules continue. The default Java source directory is `src/main/java` relative to each module; declared and resolved custom values remain available for source analysis.
 

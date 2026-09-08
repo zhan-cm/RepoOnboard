@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0205 — Dependency Extraction。**
+> **T-0206 — Spring Boot Build Metadata Detection。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -853,8 +853,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 各模块依赖提取与 CLI 展示；groupId/artifactId/version/scope 保留原始值、解析值、状态及字段来源，支持离线 parent/BOM 管理和激活 profile，缺失版本保留诊断。
+
+Validation: Java 21 离线 `clean verify` 66 项测试通过；新增 4 项测试覆盖属性版本、默认/显式 scope、BOM 来源、管理条目隔离、缺失 parent、继承和 profile。CLI 自扫描正确输出 4 条依赖。
 
 Goal:
 
@@ -863,10 +869,10 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] dependency groupId
-[ ] artifactId
-[ ] version（如可解析）
-[ ] scope
+[x] dependency groupId
+[x] artifactId
+[x] version（如可解析）
+[x] scope
 ```
 
 ---
@@ -2736,18 +2742,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0205
-Dependency Extraction
+T-0206
+Spring Boot Build Metadata Detection
 ```
 
 本阶段：
 
 > **M2 — Maven Project Analysis**
 
-M0、M1 已完成，T-0201 至 T-0204 已完成。接下来按默认依赖顺序执行：
+M0、M1 已完成，T-0201 至 T-0205 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0205
+T-0206
 ```
 
 ---
@@ -2782,6 +2788,6 @@ Release
 
 Next:
 
-> **T-0205 — Dependency Extraction.**
+> **T-0206 — Spring Boot Build Metadata Detection.**
 
 ````

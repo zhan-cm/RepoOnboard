@@ -11,6 +11,7 @@ public record MavenModule(
         Optional<String> parentCoordinates,
         MavenProjectMetadata metadata,
         MavenMetadataValue sourceDirectory,
+        List<MavenDependency> dependencies,
         List<MavenModule> children) {
     public MavenModule {
         Objects.requireNonNull(pomFileId, "pomFileId");
@@ -19,5 +20,6 @@ public record MavenModule(
         Objects.requireNonNull(metadata, "metadata");
         Objects.requireNonNull(sourceDirectory, "sourceDirectory");
         children = List.copyOf(children);
+        dependencies = List.copyOf(dependencies);
     }
 }

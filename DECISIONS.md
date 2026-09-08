@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Maven Project Analysis**
 
-M0 技术架构设计与 M1 工程基础已经完成。T-0201 至 T-0204 已实现 Maven 检测、受限离线模型、属性与模块层级分析；字段保留 raw/resolved 值、解析状态、SourceLocation 和结构化 Diagnostic。当前下一任务是 T-0205 Dependency Extraction。
+M0 技术架构设计与 M1 工程基础已经完成。T-0201 至 T-0205 已实现 Maven 检测、受限离线模型、属性、模块层级和依赖提取；字段保留 raw/resolved 值、解析状态、SourceLocation 和结构化 Diagnostic。当前下一任务是 T-0206 Spring Boot Build Metadata Detection。
 
 ---
 
@@ -2081,7 +2081,7 @@ Implementation
 
 下一步：
 
-> 完成 T-0205 — Dependency Extraction。
+> 完成 T-0206 — Spring Boot Build Metadata Detection。
 
 M0、M1 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
