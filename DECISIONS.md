@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **Project Foundation**
+> **Maven Project Analysis**
 
-M0 技术架构设计已完成，T-0101 至 T-0104 已建立工程骨架、可重复构建、分层测试底座和最小 CLI。当前下一任务是 T-0105，根据 ADR-0007、ADR-0015 建立 Evidence 与 Diagnostic 契约。
+M0 技术架构设计与 M1 工程基础已经完成。T-0101 至 T-0105 已建立工程骨架、可重复构建、分层测试底座、最小 CLI，以及符合 ADR-0007、ADR-0015 的 Evidence 与 Diagnostic 契约。当前下一任务是 T-0201 Maven Project Detection。
 
 ---
 
@@ -2075,13 +2075,14 @@ Architecture Decisions
 ✓ ADR-0001 through ADR-0016 accepted
 
 Implementation
-◐ M1 Project Foundation in progress
+✓ M1 Project Foundation complete
+○ M2 Maven Project Analysis next
 ```
 
 下一步：
 
-> 完成 T-0105 — Establish Core Evidence and Diagnostic Contracts。
+> 完成 T-0201 — Maven Project Detection。
 
-M0 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0、M1 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````
