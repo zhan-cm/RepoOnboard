@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0102 — Configure Build。**
+> **T-0103 — Establish Testing Foundation。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -502,7 +502,7 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] Maven Wrapper clean test 通过
+[x] Maven Wrapper clean test 通过
 [ ] CLI 路径/help/错误码测试通过
 [ ] SourceLocation / Evidence / Diagnostic / AnalysisStatus 契约测试通过
 ```
@@ -550,8 +550,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: Java 21 单模块 `pom.xml`、Maven 3.9.16 only-script Wrapper、发行包 SHA-256 校验配置及跨平台脚本换行约束。
+
+Validation: Wrapper 自举成功；`validate`、`compile`、`test`、`clean test`、`clean verify` 均通过；连续两次 `clean package` 生成相同 SHA-256 的 JAR。
 
 Goal:
 
@@ -560,10 +566,10 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] Maven Wrapper 固定 Maven 3.9 系列并包含校验配置
-[ ] validate / compile / test 命令可以执行
-[ ] 构建环境可重复
-[ ] 不依赖 IDE 才能构建
+[x] Maven Wrapper 固定 Maven 3.9 系列并包含校验配置
+[x] validate / compile / test 命令可以执行
+[x] 构建环境可重复
+[x] 不依赖 IDE 才能构建
 ```
 
 ---
@@ -2688,8 +2694,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0102
-Configure Build
+T-0103
+Establish Testing Foundation
 ```
 
 本阶段：
@@ -2699,8 +2705,6 @@ Configure Build
 M0 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0102
-↓
 T-0103
 ↓
 T-0104
@@ -2739,6 +2743,6 @@ Release
 
 Next:
 
-> **T-0102 — Configure Build.**
+> **T-0103 — Establish Testing Foundation.**
 
 ````

@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Project Foundation**
 
-M0 技术架构设计已完成，T-0101 工程骨架已建立。当前下一任务是 T-0102，根据 ADR-0001、ADR-0002 配置可重复构建。
+M0 技术架构设计已完成，T-0101 工程骨架与 T-0102 可重复构建已建立。当前下一任务是 T-0103，根据 ADR-0014 建立测试底座。
 
 ---
 
@@ -2075,12 +2075,12 @@ Architecture Decisions
 ✓ ADR-0001 through ADR-0016 accepted
 
 Implementation
-○ Not started
+◐ M1 Project Foundation in progress
 ```
 
 下一步：
 
-> 完成 T-0102 — Configure Build。
+> 完成 T-0103 — Establish Testing Foundation。
 
 M0 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
