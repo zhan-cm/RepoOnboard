@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0103 — Establish Testing Foundation。**
+> **T-0104 — Create Minimal CLI Entry。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -579,8 +579,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: JUnit Jupiter 6.1.3 测试依赖、可复用 fixture 路径工具、最小 Maven 项目 fixture，以及可按 `fixture` 标签分层运行的测试结构。
+
+Validation: `clean test` 共运行 4 个测试并通过；非 fixture 单元层 3 个测试通过；fixture 层 1 个测试通过；无失败、错误或跳过。
 
 Goal:
 
@@ -589,9 +595,9 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] 至少一个 unit test
-[ ] 至少一个 fixture test
-[ ] CI 前可以本地运行
+[x] 至少一个 unit test
+[x] 至少一个 fixture test
+[x] CI 前可以本地运行
 ```
 
 ---
@@ -2694,8 +2700,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0103
-Establish Testing Foundation
+T-0104
+Create Minimal CLI Entry
 ```
 
 本阶段：
@@ -2705,8 +2711,6 @@ Establish Testing Foundation
 M0 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0103
-↓
 T-0104
 ↓
 T-0105
@@ -2743,6 +2747,6 @@ Release
 
 Next:
 
-> **T-0103 — Establish Testing Foundation.**
+> **T-0104 — Create Minimal CLI Entry.**
 
 ````
