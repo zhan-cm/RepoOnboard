@@ -73,6 +73,25 @@ class RepoOnboardCommandTest {
     }
 
     @Test
+    void printsModuleTreeAndPartialStatusForMissingChild(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>app</artifactId><version>1</version><packaging>pom</packaging>
+                <modules><module>child</module><module>missing</module></modules></project>
+                """);
+        Path child = Files.createDirectory(directory.resolve("child"));
+        Files.writeString(child.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>child</artifactId><version>1</version></project>
+                """);
+        CliResult result = execute(directory.toString());
+        assertEquals(3, result.exitCode());
+        assertTrue(result.out().contains("  child [child] source: child/src/main/java"));
+        assertTrue(result.out().contains("Analysis status: PARTIAL"));
+        assertTrue(result.err().contains("MAVEN_POM_SOURCE_UNAVAILABLE"));
+    }
+
+    @Test
     void selectsProfileAndReportsPartialAndFailedExitCodes(@TempDir Path directory) throws IOException {
         Files.writeString(directory.resolve("pom.xml"), """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>

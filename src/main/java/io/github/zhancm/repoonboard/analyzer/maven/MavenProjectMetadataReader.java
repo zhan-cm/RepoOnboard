@@ -37,10 +37,18 @@ import org.apache.maven.model.profile.DefaultProfileSelector;
 /** Builds bounded, offline Maven metadata while retaining raw source evidence. */
 public final class MavenProjectMetadataReader {
 
-    private static final String POM_FILE_NAME = "pom.xml";
     private static final String STAGE = "MAVEN_MODEL";
     private static final String MAVEN_PROPERTY_PREFIX = "${";
     private static final Pattern PROPERTY_EXPRESSION = Pattern.compile("\\$\\{([^{}]+)}");
+    private final String pomFileId;
+
+    public MavenProjectMetadataReader() {
+        this("pom.xml");
+    }
+
+    private MavenProjectMetadataReader(String pomFileId) {
+        this.pomFileId = pomFileId;
+    }
 
     public MavenProjectMetadata read(Path scanRoot) {
         return read(scanRoot, MavenModelOptions.defaults());
@@ -51,7 +59,7 @@ public final class MavenProjectMetadataReader {
             throw new IllegalArgumentException("scanRoot must be an existing directory");
         }
         Objects.requireNonNull(options, "options");
-        if (!Files.isRegularFile(scanRoot.resolve(POM_FILE_NAME))) {
+        if (!Files.isRegularFile(scanRoot.resolve(pomFileId))) {
             throw new IllegalArgumentException("scanRoot must contain a root pom.xml file");
         }
 
@@ -68,6 +76,16 @@ public final class MavenProjectMetadataReader {
             return failedMetadata(exception.code(), exception.getMessage());
         }
 
+        return build(repository, rootSource, options, true).metadata();
+    }
+
+    static BuiltModel buildSource(RestrictedPomRepository repository, RestrictedPomSource source,
+            MavenModelOptions options) {
+        return new MavenProjectMetadataReader(source.sourceFileId()).build(repository, source, options, false);
+    }
+
+    private BuiltModel build(RestrictedPomRepository repository, RestrictedPomSource rootSource,
+            MavenModelOptions options, boolean reportMissingProfiles) {
         List<Diagnostic> diagnostics = new ArrayList<>();
         ModelBuildingResult result = null;
         try {
@@ -78,7 +96,7 @@ public final class MavenProjectMetadataReader {
                 addDiagnostic(
                         diagnostics,
                         "MAVEN_MODEL_BUILD_FAILED",
-                        SourceLocation.file(POM_FILE_NAME),
+                        SourceLocation.file(pomFileId),
                         "Maven could not build a complete effective model from permitted local sources.");
             }
         }
@@ -89,7 +107,9 @@ public final class MavenProjectMetadataReader {
 
         List<String> activeProfileIds = activeProfileIds(result, repository, options);
         addRestrictedProfileDiagnostics(diagnostics, repository, options);
-        addMissingExplicitProfileDiagnostics(diagnostics, repository, options);
+        if (reportMissingProfiles) {
+            addMissingExplicitProfileDiagnostics(diagnostics, repository, options);
+        }
 
         Model rawModel = rootSource.rawModel();
         Model effectiveModel = result == null ? null : result.getEffectiveModel();
@@ -112,7 +132,7 @@ public final class MavenProjectMetadataReader {
         List<String> sourcePomIds = repository.sources().stream()
                 .map(RestrictedPomSource::sourceFileId)
                 .toList();
-        return new MavenProjectMetadata(
+        MavenProjectMetadata metadata = new MavenProjectMetadata(
                 groupId,
                 artifactId,
                 version,
@@ -121,9 +141,12 @@ public final class MavenProjectMetadataReader {
                 activeProfileIds,
                 sourcePomIds,
                 diagnostics);
+        return new BuiltModel(metadata, rawModel, effectiveModel);
     }
 
-    private static DefaultModelBuildingRequest request(
+    record BuiltModel(MavenProjectMetadata metadata, Model raw, Model effective) { }
+
+    private DefaultModelBuildingRequest request(
             RestrictedPomSource rootSource,
             RestrictedPomRepository repository,
             MavenModelOptions options) {
@@ -139,13 +162,13 @@ public final class MavenProjectMetadataReader {
                 .setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MAVEN_3_1);
     }
 
-    private static DefaultModelBuilder restrictedBuilder() {
+    private DefaultModelBuilder restrictedBuilder() {
         DefaultModelBuilder builder = new DefaultModelBuilderFactory().newInstance();
         builder.setProfileSelector(new DefaultProfileSelector());
         return builder;
     }
 
-    private static MavenMetadataValue value(
+    private MavenMetadataValue value(
             String field,
             Function<Model, String> getter,
             String defaultValue,
@@ -196,7 +219,7 @@ public final class MavenProjectMetadataReader {
         return missingValue(origin);
     }
 
-    private static RawValue declaration(
+    private RawValue declaration(
             String field,
             Function<Model, String> getter,
             InputLocation rootLocation,
@@ -205,10 +228,10 @@ public final class MavenProjectMetadataReader {
             RestrictedPomRepository repository) {
         if (rootLocation != null) {
             return new RawValue(
-                    optionalText(getter.apply(rawRoot)), rootLocation, POM_FILE_NAME);
+                    optionalText(getter.apply(rawRoot)), rootLocation, pomFileId);
         }
 
-        String sourceFileId = sourceFileId(effectiveLocation, POM_FILE_NAME, repository);
+        String sourceFileId = sourceFileId(effectiveLocation, pomFileId, repository);
         Optional<RestrictedPomSource> source = repository.sourceById(sourceFileId);
         if (source.isPresent()) {
             Model rawSourceModel = source.orElseThrow().rawModel();
@@ -220,10 +243,10 @@ public final class MavenProjectMetadataReader {
                     rawSourceLocation,
                     sourceFileId);
         }
-        return new RawValue(Optional.empty(), effectiveLocation, POM_FILE_NAME);
+        return new RawValue(Optional.empty(), effectiveLocation, pomFileId);
     }
 
-    private static Map<String, MavenMetadataValue> properties(
+    private Map<String, MavenMetadataValue> properties(
             Model rawRoot,
             Model effective,
             RestrictedPomRepository repository,
@@ -232,7 +255,7 @@ public final class MavenProjectMetadataReader {
         Map<String, RawProperty> rawProperties = new LinkedHashMap<>();
         // A BOM or a rejected relative parent is a read source, not an inheritance source.
         // Use the effective property's own location to recover its original declaration.
-        collectRawProperties(rawProperties, repository.sourceById(POM_FILE_NAME).orElseThrow(),
+        collectRawProperties(rawProperties, repository.sourceById(pomFileId).orElseThrow(),
                 activeProfileIds);
         Set<String> names = new TreeSet<>();
         if (effective != null) {
@@ -250,7 +273,7 @@ public final class MavenProjectMetadataReader {
             RawProperty raw = rawProperties.get(name);
             if (effective != null) {
                 InputLocation declared = nestedLocation(effectivePropertiesLocation, name);
-                String sourceId = sourceFileId(declared, POM_FILE_NAME, repository);
+                String sourceId = sourceFileId(declared, pomFileId, repository);
                 Model sourceModel = repository.sourceById(sourceId).orElseThrow().rawModel();
                 String original = sourceModel.getProperties().getProperty(name);
                 for (Profile profile : sourceModel.getProfiles()) {
@@ -274,7 +297,7 @@ public final class MavenProjectMetadataReader {
             if (location == null && effectivePropertiesLocation != null) {
                 location = effectivePropertiesLocation.getLocation(name);
             }
-            String sourceFileId = raw == null ? POM_FILE_NAME : raw.sourceFileId();
+            String sourceFileId = raw == null ? pomFileId : raw.sourceFileId();
             SourceLocation origin = sourceLocation(
                     "properties." + name, location, sourceFileId, repository);
             if (resolvedValue.isPresent()
@@ -300,7 +323,7 @@ public final class MavenProjectMetadataReader {
         return Collections.unmodifiableMap(resolvedProperties);
     }
 
-    private static void collectRawProperties(
+    private void collectRawProperties(
             Map<String, RawProperty> destination,
             RestrictedPomSource source,
             List<String> activeProfileIds) {
@@ -329,7 +352,7 @@ public final class MavenProjectMetadataReader {
         sourceProperties.forEach(destination::putIfAbsent);
     }
 
-    private static List<String> activeProfileIds(
+    private List<String> activeProfileIds(
             ModelBuildingResult result,
             RestrictedPomRepository repository,
             MavenModelOptions options) {
@@ -346,7 +369,7 @@ public final class MavenProjectMetadataReader {
         }
         if (result == null || result.getEffectiveModel() == null) {
             active.clear();
-            List<Profile> profiles = repository.sourceById(POM_FILE_NAME).orElseThrow()
+            List<Profile> profiles = repository.sourceById(pomFileId).orElseThrow()
                     .rawModel().getProfiles();
             boolean explicit = profiles.stream()
                     .anyMatch(profile -> options.activeProfileIds().contains(profile.getId()));
@@ -360,7 +383,7 @@ public final class MavenProjectMetadataReader {
         return List.copyOf(active);
     }
 
-    private static void addRestrictedProfileDiagnostics(
+    private void addRestrictedProfileDiagnostics(
             List<Diagnostic> diagnostics,
             RestrictedPomRepository repository,
             MavenModelOptions options) {
@@ -388,7 +411,7 @@ public final class MavenProjectMetadataReader {
         }
     }
 
-    private static void addMissingExplicitProfileDiagnostics(
+    private void addMissingExplicitProfileDiagnostics(
             List<Diagnostic> diagnostics,
             RestrictedPomRepository repository,
             MavenModelOptions options) {
@@ -404,13 +427,13 @@ public final class MavenProjectMetadataReader {
                 addDiagnostic(
                         diagnostics,
                         "MAVEN_PROFILE_NOT_FOUND",
-                        SourceLocation.file(POM_FILE_NAME),
+                        SourceLocation.file(pomFileId),
                         "An explicitly requested Maven profile was not found: " + requested);
             }
         }
     }
 
-    private static void addSourceProblems(
+    private void addSourceProblems(
             List<Diagnostic> diagnostics, List<PomSourceProblem> problems) {
         for (PomSourceProblem problem : problems) {
             addDiagnostic(
@@ -421,14 +444,14 @@ public final class MavenProjectMetadataReader {
         }
     }
 
-    private static void addModelProblems(
+    private void addModelProblems(
             List<Diagnostic> diagnostics,
             List<ModelProblem> problems,
             RestrictedPomRepository repository) {
         for (ModelProblem problem : problems) {
             String sourceFileId = problem.getSource();
             if (sourceFileId == null || !repository.recognizesSource(sourceFileId)) {
-                sourceFileId = POM_FILE_NAME;
+                sourceFileId = pomFileId;
             }
             SourceLocation location = new SourceLocation(
                     sourceFileId,
@@ -445,21 +468,21 @@ public final class MavenProjectMetadataReader {
         }
     }
 
-    private static boolean hasImplicitActivation(Activation activation) {
+    private boolean hasImplicitActivation(Activation activation) {
         return activation.getJdk() != null
                 || activation.getOs() != null
                 || activation.getProperty() != null
                 || activation.getFile() != null;
     }
 
-    private static boolean isActiveByDefaultOnly(Profile profile) {
+    private boolean isActiveByDefaultOnly(Profile profile) {
         Activation activation = profile.getActivation();
         return activation != null
                 && activation.isActiveByDefault()
                 && !hasImplicitActivation(activation);
     }
 
-    private static Optional<String> interpolate(
+    private Optional<String> interpolate(
             String value, Map<String, String> properties, Set<String> visiting) {
         if (visiting.size() > 64 || value.length() > 65_536) {
             return Optional.empty();
@@ -490,7 +513,7 @@ public final class MavenProjectMetadataReader {
         return result.contains(MAVEN_PROPERTY_PREFIX) ? Optional.empty() : Optional.of(result);
     }
 
-    private static Map<String, String> propertyStrings(
+    private Map<String, String> propertyStrings(
             Map<String, MavenMetadataValue> properties) {
         Map<String, String> values = new LinkedHashMap<>();
         for (Map.Entry<String, MavenMetadataValue> entry : properties.entrySet()) {
@@ -502,18 +525,18 @@ public final class MavenProjectMetadataReader {
         return values;
     }
 
-    private static Map<String, String> rawPropertyStrings(
+    private Map<String, String> rawPropertyStrings(
             Map<String, RawProperty> properties) {
         Map<String, String> values = new LinkedHashMap<>();
         properties.forEach((name, property) -> values.put(name, property.value()));
         return values;
     }
 
-    private static InputLocation nestedLocation(InputLocation parent, String key) {
+    private InputLocation nestedLocation(InputLocation parent, String key) {
         return parent == null ? null : parent.getLocation(key);
     }
 
-    private static SourceLocation sourceLocation(
+    private SourceLocation sourceLocation(
             String symbol,
             InputLocation inputLocation,
             String fallbackSourceFileId,
@@ -528,7 +551,7 @@ public final class MavenProjectMetadataReader {
                 Optional.of("project." + symbol));
     }
 
-    private static String sourceFileId(
+    private String sourceFileId(
             InputLocation inputLocation,
             String fallback,
             RestrictedPomRepository repository) {
@@ -541,14 +564,14 @@ public final class MavenProjectMetadataReader {
         return fallback;
     }
 
-    private static MavenProjectMetadata failedMetadata(String code, String message) {
-        SourceLocation pomLocation = SourceLocation.file(POM_FILE_NAME);
+    private MavenProjectMetadata failedMetadata(String code, String message) {
+        SourceLocation pomLocation = SourceLocation.file(pomFileId);
         Diagnostic diagnostic = new Diagnostic(
                 code,
                 DiagnosticSeverity.ERROR,
                 STAGE,
                 Optional.empty(),
-                Optional.of(POM_FILE_NAME),
+                Optional.of(pomFileId),
                 Optional.of(pomLocation),
                 message);
         MavenMetadataValue unavailable = missingValue(pomLocation);
@@ -559,11 +582,11 @@ public final class MavenProjectMetadataReader {
                 unavailable,
                 Map.of(),
                 List.of(),
-                List.of(POM_FILE_NAME),
+                List.of(pomFileId),
                 List.of(diagnostic));
     }
 
-    private static MavenMetadataValue missingValue(SourceLocation origin) {
+    private MavenMetadataValue missingValue(SourceLocation origin) {
         return new MavenMetadataValue(
                 Optional.empty(),
                 Optional.empty(),
@@ -571,7 +594,7 @@ public final class MavenProjectMetadataReader {
                 origin);
     }
 
-    private static void addDiagnostic(
+    private void addDiagnostic(
             List<Diagnostic> diagnostics,
             String code,
             SourceLocation location,
@@ -589,11 +612,11 @@ public final class MavenProjectMetadataReader {
         }
     }
 
-    private static OptionalInt positive(int value) {
+    private OptionalInt positive(int value) {
         return value > 0 ? OptionalInt.of(value) : OptionalInt.empty();
     }
 
-    private static Optional<String> optionalText(String value) {
+    private Optional<String> optionalText(String value) {
         return value == null || value.isBlank() ? Optional.empty() : Optional.of(value);
     }
 

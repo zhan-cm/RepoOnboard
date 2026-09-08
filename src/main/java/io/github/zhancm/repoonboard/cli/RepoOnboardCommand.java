@@ -4,7 +4,8 @@ import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetection;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenMetadataValue;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectMetadata;
-import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectMetadataReader;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
 import java.util.List;
 import java.io.PrintWriter;
@@ -72,11 +73,20 @@ public final class RepoOnboardCommand implements Callable<Integer> {
         if (detection.detected()) {
             commandSpec.commandLine().getOut().println("Maven project: detected (pom.xml)");
             MavenModelOptions defaults = MavenModelOptions.defaults();
-            MavenProjectMetadata metadata = new MavenProjectMetadataReader().read(resolvedTarget,
+            var analysis = new MavenModuleAnalyzer().analyze(resolvedTarget,
                     new MavenModelOptions(localRepository == null ? defaults.localRepository() : localRepository,
                             profiles, defaults.maximumPomBytes()));
-            printMetadata(metadata);
-            return switch (metadata.status()) {
+            analysis.root().ifPresent(root -> {
+                printMetadata(root.metadata());
+                commandSpec.commandLine().getOut().println("Maven modules:");
+                printModule(root, 0);
+            });
+            commandSpec.commandLine().getOut().printf("Analysis status: %s%n", analysis.status());
+            for (var diagnostic : analysis.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            return switch (analysis.status()) {
                 case SUCCESS -> CommandLine.ExitCode.OK;
                 case PARTIAL -> 3;
                 case FAILED -> CommandLine.ExitCode.SOFTWARE;
@@ -100,10 +110,12 @@ public final class RepoOnboardCommand implements Callable<Integer> {
         if (!metadata.activeProfileIds().isEmpty()) {
             commandSpec.commandLine().getOut().printf("Active profiles: %s%n", metadata.activeProfileIds());
         }
-        for (var diagnostic : metadata.diagnostics()) {
-            commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                    diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-        }
+    }
+
+    private void printModule(MavenModule module, int depth) {
+        commandSpec.commandLine().getOut().printf("%s%s [%s] source: %s%n", "  ".repeat(depth),
+                module.baseDirectory(), display(module.metadata().artifactId()), display(module.sourceDirectory()));
+        module.children().forEach(child -> printModule(child, depth + 1));
     }
 
     private static String display(MavenMetadataValue value) {
