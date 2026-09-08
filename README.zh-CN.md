@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / Maven 分析阶段**
 >
-> Maven 根项目检测与基础坐标提取已经可用。属性、parent 和模块解析正在开发，首个可用版本尚未发布。
+> Maven 根项目检测、坐标与属性提取、受限离线 parent/BOM 解析已经可用。下一步是模块分析，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -74,7 +74,17 @@ cd unfamiliar-project
 repoonboard .
 ```
 
-当前阶段，该命令会报告根目录是否存在 `pom.xml`，并显示基础 `groupId`、`artifactId`、`version` 和 `packaging`。Maven 属性、parent、模块和依赖暂未解析。
+当前阶段，该命令会检测根目录的 `pom.xml`，并显示解析后的 `groupId`、`artifactId`、`version` 和 `packaging`。分析器保留原始值、属性值、来源位置和诊断。模块与依赖输出尚未实现。
+
+Maven 模型解析完全离线。相对 parent 必须位于扫描根内；外部 parent 和导入的 BOM 可从本地 Maven 仓库读取。缺少模型时保留可用事实并返回 `PARTIAL`。导入 BOM 的属性不会被项目继承。
+
+```bash
+repoonboard . --profile dev --local-repository /path/to/local/maven/repository
+```
+
+`--profile` 支持重复指定或逗号分隔的 ID。只采用显式选中与 `activeByDefault` profile，不使用宿主 OS/JDK/文件/属性隐式激活或 Maven settings。默认缓存为 `~/.m2/repository`。分析不执行 Maven 插件、扩展、生命周期，也不下载远程 POM。
+
+所有 POM 来源均拒绝 DTD/外部实体及逃逸允许根目录的路径。默认限制为单份 POM 1 MiB、64 个不同 POM 来源、XML 嵌套深度 128。外部来源证据使用 `local-repository/` 标识，不暴露缓存绝对路径。CLI 退出码：`0` 成功、`1` 分析失败、`2` 参数错误、`3` 部分成功；诊断输出到标准错误。
 
 RepoOnboard 将分析代码仓库，并生成类似以下的信息：
 

@@ -73,6 +73,29 @@ class RepoOnboardCommandTest {
     }
 
     @Test
+    void selectsProfileAndReportsPartialAndFailedExitCodes(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>app</artifactId><version>${revision}</version>
+                <profiles><profile><id>manual</id><properties><revision>2</revision></properties>
+                </profile></profiles></project>
+                """);
+        CliResult success = execute(directory.toString(), "--profile", "manual",
+                "--local-repository", directory.resolve("empty-cache").toString());
+        assertEquals(0, success.exitCode());
+        assertTrue(success.out().contains("version: 2"));
+        assertTrue(success.out().contains("Active profiles: [manual]"));
+        CliResult partial = execute(directory.toString());
+        assertEquals(3, partial.exitCode());
+        assertTrue(partial.out().contains("PARTIAL"));
+        assertTrue(partial.err().contains("MAVEN_METADATA_UNRESOLVED"));
+        Files.writeString(directory.resolve("pom.xml"), "<project>");
+        CliResult failed = execute(directory.toString());
+        assertEquals(1, failed.exitCode());
+        assertTrue(failed.err().contains("MAVEN_POM_XML_INVALID"));
+    }
+
+    @Test
     void printsVersion() {
         CliResult result = execute("--version");
 

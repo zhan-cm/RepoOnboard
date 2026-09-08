@@ -5,6 +5,8 @@ import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenMetadataValue;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectMetadata;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectMetadataReader;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
+import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +14,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Spec;
 import picocli.CommandLine.Model.CommandSpec;
 
@@ -24,6 +27,12 @@ public final class RepoOnboardCommand implements Callable<Integer> {
 
     @Parameters(index = "0", paramLabel = "PATH", description = "Repository directory to inspect.")
     private Path target;
+
+    @Option(names = "--profile", split = ",", description = "Explicit Maven profile IDs (repeatable).")
+    private List<String> profiles = List.of();
+
+    @Option(names = "--local-repository", description = "Local POM cache (default: ~/.m2/repository).")
+    private Path localRepository;
 
     @Spec
     private CommandSpec commandSpec;
@@ -62,7 +71,16 @@ public final class RepoOnboardCommand implements Callable<Integer> {
         MavenProjectDetection detection = new MavenProjectDetector().detect(resolvedTarget);
         if (detection.detected()) {
             commandSpec.commandLine().getOut().println("Maven project: detected (pom.xml)");
-            printMetadata(new MavenProjectMetadataReader().read(resolvedTarget));
+            MavenModelOptions defaults = MavenModelOptions.defaults();
+            MavenProjectMetadata metadata = new MavenProjectMetadataReader().read(resolvedTarget,
+                    new MavenModelOptions(localRepository == null ? defaults.localRepository() : localRepository,
+                            profiles, defaults.maximumPomBytes()));
+            printMetadata(metadata);
+            return switch (metadata.status()) {
+                case SUCCESS -> CommandLine.ExitCode.OK;
+                case PARTIAL -> 3;
+                case FAILED -> CommandLine.ExitCode.SOFTWARE;
+            };
         } else {
             commandSpec.commandLine().getOut()
                     .println("Maven project: not detected (root pom.xml not found)");
@@ -79,6 +97,13 @@ public final class RepoOnboardCommand implements Callable<Integer> {
         commandSpec.commandLine().getOut()
                 .printf("  packaging: %s%n", display(metadata.packaging()));
         commandSpec.commandLine().getOut().printf("Metadata status: %s%n", metadata.status());
+        if (!metadata.activeProfileIds().isEmpty()) {
+            commandSpec.commandLine().getOut().printf("Active profiles: %s%n", metadata.activeProfileIds());
+        }
+        for (var diagnostic : metadata.diagnostics()) {
+            commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                    diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+        }
     }
 
     private static String display(MavenMetadataValue value) {
