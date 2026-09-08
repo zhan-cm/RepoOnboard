@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Project Foundation**
 
-M0 技术架构设计已完成。当前下一任务是 T-0101，根据已接受 ADR 创建最小工程骨架。
+M0 技术架构设计已完成，T-0101 工程骨架已建立。当前下一任务是 T-0102，根据 ADR-0001、ADR-0002 配置可重复构建。
 
 ---
 
@@ -2080,7 +2080,7 @@ Implementation
 
 下一步：
 
-> 完成 T-0101 — Create Repository Scaffold。
+> 完成 T-0102 — Configure Build。
 
 M0 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
