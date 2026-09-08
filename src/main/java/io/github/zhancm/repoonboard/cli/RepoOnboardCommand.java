@@ -1,5 +1,7 @@
 package io.github.zhancm.repoonboard.cli;
 
+import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetection;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +14,7 @@ import picocli.CommandLine.Model.CommandSpec;
 
 @Command(
         name = "repoonboard",
-        description = "Validate a repository path before analysis.",
+        description = "Detect a Maven project at a repository path.",
         mixinStandardHelpOptions = true,
         version = "RepoOnboard 0.1.0-SNAPSHOT")
 public final class RepoOnboardCommand implements Callable<Integer> {
@@ -54,8 +56,13 @@ public final class RepoOnboardCommand implements Callable<Integer> {
 
         commandSpec.commandLine().getOut().println("RepoOnboard");
         commandSpec.commandLine().getOut().printf("Target: %s%n", resolvedTarget);
-        commandSpec.commandLine().getOut()
-                .println("Status: target path validated; repository analysis is not available yet.");
+        MavenProjectDetection detection = new MavenProjectDetector().detect(resolvedTarget);
+        if (detection.detected()) {
+            commandSpec.commandLine().getOut().println("Maven project: detected (pom.xml)");
+        } else {
+            commandSpec.commandLine().getOut()
+                    .println("Maven project: not detected (root pom.xml not found)");
+        }
         return CommandLine.ExitCode.OK;
     }
 }

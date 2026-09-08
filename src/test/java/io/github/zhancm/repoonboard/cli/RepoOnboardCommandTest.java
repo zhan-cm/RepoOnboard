@@ -21,7 +21,19 @@ class RepoOnboardCommandTest {
 
         assertEquals(CommandLine.ExitCode.OK, result.exitCode());
         assertTrue(result.out().contains("Target: " + currentDirectory));
-        assertTrue(result.out().contains("repository analysis is not available yet"));
+        assertTrue(result.out().contains("Maven project: detected (pom.xml)"));
+        assertTrue(result.err().isEmpty());
+    }
+
+    @Test
+    void reportsANonMavenDirectoryClearly(@TempDir Path temporaryDirectory) throws IOException {
+        Files.writeString(temporaryDirectory.resolve("README.md"), "unrelated");
+
+        CliResult result = execute(temporaryDirectory.toString());
+
+        assertEquals(CommandLine.ExitCode.OK, result.exitCode());
+        assertTrue(result.out().contains("Maven project: not detected"));
+        assertTrue(result.out().contains("root pom.xml not found"));
         assertTrue(result.err().isEmpty());
     }
 
