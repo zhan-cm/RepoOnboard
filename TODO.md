@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0202 — Basic Maven Metadata Extraction。**
+> **T-0203 — Restricted Maven Model and Property Resolution。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -744,8 +744,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 基于 Maven Model 3.9.16 的根 POM 基础元数据读取器；`groupId`、`artifactId`、`version`、`packaging` 均保留 raw/resolved 值、解析状态和 SourceLocation，缺失、属性待解析和读取失败生成结构化 Diagnostic。
+
+Validation: Java 21 `clean verify` 共运行 36 个测试并通过，其中 6 个覆盖基础元数据、默认 packaging、缺失字段、属性表达式、损坏 POM 及 CLI 输出；真实 CLI 正确显示当前项目坐标并以 0 退出。
 
 Goal:
 
@@ -761,9 +767,9 @@ packaging
 Acceptance Criteria:
 
 ```text
-[ ] 普通单模块项目解析正确
-[ ] rawValue、resolvedValue、resolutionStatus 和 origin 可表达
-[ ] 缺失字段产生明确的未知状态或诊断
+[x] 普通单模块项目解析正确
+[x] rawValue、resolvedValue、resolutionStatus 和 origin 可表达
+[x] 缺失字段产生明确的未知状态或诊断
 ```
 
 ---
@@ -2718,18 +2724,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0202
-Basic Maven Metadata Extraction
+T-0203
+Restricted Maven Model and Property Resolution
 ```
 
 本阶段：
 
 > **M2 — Maven Project Analysis**
 
-M0、M1 已完成，T-0201 已完成。接下来按默认依赖顺序执行：
+M0、M1 已完成，T-0201、T-0202 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0202
+T-0203
 ```
 
 ---
@@ -2764,6 +2770,6 @@ Release
 
 Next:
 
-> **T-0202 — Basic Maven Metadata Extraction.**
+> **T-0203 — Restricted Maven Model and Property Resolution.**
 
 ````

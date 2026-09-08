@@ -22,6 +22,11 @@ class RepoOnboardCommandTest {
         assertEquals(CommandLine.ExitCode.OK, result.exitCode());
         assertTrue(result.out().contains("Target: " + currentDirectory));
         assertTrue(result.out().contains("Maven project: detected (pom.xml)"));
+        assertTrue(result.out().contains("groupId: io.github.zhancm"));
+        assertTrue(result.out().contains("artifactId: repoonboard"));
+        assertTrue(result.out().contains("version: 0.1.0-SNAPSHOT"));
+        assertTrue(result.out().contains("packaging: jar"));
+        assertTrue(result.out().contains("Metadata status: SUCCESS"));
         assertTrue(result.err().isEmpty());
     }
 
