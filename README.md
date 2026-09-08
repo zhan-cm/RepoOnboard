@@ -766,6 +766,24 @@ Installation instructions will be added once the first usable development build 
 
 ---
 
+# Development Build
+
+Building RepoOnboard requires JDK 21 or newer. A separate Maven installation or IDE is not required; the checked-in Maven Wrapper downloads Maven 3.9.16 and verifies the distribution checksum.
+
+On Windows:
+
+```powershell
+.\mvnw.cmd clean test
+```
+
+On macOS or Linux:
+
+```bash
+./mvnw clean test
+```
+
+---
+
 # Usage
 
 RepoOnboard is currently under development.
