@@ -1,0 +1,14 @@
+# Java and Maven build output
+target/
+*.class
+
+# IDE compiler output
+out/
+
+# RepoOnboard local analysis output
+.repoonboard/
+
+# Local logs and operating-system metadata
+*.log
+.DS_Store
+Thumbs.db

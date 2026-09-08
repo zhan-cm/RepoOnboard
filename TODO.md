@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0101 — Create Repository Scaffold。**
+> **T-0102 — Configure Build。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -492,7 +492,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -514,8 +514,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: `src/main/java/io/github/zhancm/repoonboard/` 的单模块包骨架及根 `.gitignore`。
+
+Validation: 9 个 package descriptor 使用 Java 21 `javac -Xlint:all -proc:none` 编译通过；结构检查确认没有产品实现类或多余模块。
 
 Depends On:
 
@@ -530,11 +536,11 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] 单 Java module 的基础目录结构清晰
-[ ] ADR-0008 的包边界有对应目录/包规划
-[ ] 没有不必要的模块
-[ ] README / PROJECT / DECISIONS / TODO 保留
-[ ] 未提前实现 Maven / Java / Spring 分析能力
+[x] 单 Java module 的基础目录结构清晰
+[x] ADR-0008 的包边界有对应目录/包规划
+[x] 没有不必要的模块
+[x] README / PROJECT / DECISIONS / TODO 保留
+[x] 未提前实现 Maven / Java / Spring 分析能力
 ```
 
 ---
@@ -2682,8 +2688,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0101
-Create Repository Scaffold
+T-0102
+Configure Build
 ```
 
 本阶段：
@@ -2693,8 +2699,6 @@ Create Repository Scaffold
 M0 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0101
-↓
 T-0102
 ↓
 T-0103
@@ -2724,7 +2728,7 @@ Technical Decisions
 ████████████████████ 100%
 
 Implementation
-░░░░░░░░░░░░░░░░░░░░   0%
+M1 Project Foundation — in progress
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2735,6 +2739,6 @@ Release
 
 Next:
 
-> **T-0101 — Create Repository Scaffold.**
+> **T-0102 — Configure Build.**
 
 ````
