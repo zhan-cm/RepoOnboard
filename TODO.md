@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0204 — Multi-module Maven Analysis。**
+> **T-0205 — Dependency Extraction。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -818,8 +818,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 共享受限 POM 快照的递归模块分析器；区分聚合层级与 parent 坐标，保留每个模块的元数据、归一化 base directory 及源码目录声明/解析值和位置；CLI 展示模块树并汇总部分成功诊断。
+
+Validation: Java 21 离线 `clean verify` 62 项测试通过。新增固定多模块 fixture 与 9 项回归，覆盖嵌套/独立 parent、profile、缺失/损坏/越界模块、重复与循环、源码目录继承、位置证据和 CLI。
 
 Goal:
 
@@ -834,10 +840,10 @@ Module Hierarchy
 Acceptance Criteria:
 
 ```text
-[ ] 能识别多模块项目
-[ ] Module tree 正确
-[ ] 子模块 base directory 归一化且不逃逸扫描根
-[ ] build.sourceDirectory 的声明/解析值可供 M3 使用
+[x] 能识别多模块项目
+[x] Module tree 正确
+[x] 子模块 base directory 归一化且不逃逸扫描根
+[x] build.sourceDirectory 的声明/解析值可供 M3 使用
 ```
 
 ---
@@ -2730,18 +2736,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0204
-Multi-module Maven Analysis
+T-0205
+Dependency Extraction
 ```
 
 本阶段：
 
 > **M2 — Maven Project Analysis**
 
-M0、M1 已完成，T-0201 至 T-0203 已完成。接下来按默认依赖顺序执行：
+M0、M1 已完成，T-0201 至 T-0204 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0204
+T-0205
 ```
 
 ---
@@ -2776,6 +2782,6 @@ Release
 
 Next:
 
-> **T-0204 — Multi-module Maven Analysis.**
+> **T-0205 — Dependency Extraction.**
 
 ````

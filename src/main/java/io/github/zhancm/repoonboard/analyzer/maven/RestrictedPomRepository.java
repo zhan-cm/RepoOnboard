@@ -48,6 +48,10 @@ final class RestrictedPomRepository {
         return source(scanRoot.resolve(ROOT_POM_ID), scanRoot, Origin.SCAN_ROOT);
     }
 
+    RestrictedPomSource moduleSource(Path pom) throws RestrictedPomException {
+        return source(pom, scanRoot, Origin.SCAN_ROOT);
+    }
+
     Optional<RestrictedPomSource> localRepositorySource(
             String groupId, String artifactId, String version) {
         if (!validGroupId(groupId) || !validCoordinatePart(artifactId)

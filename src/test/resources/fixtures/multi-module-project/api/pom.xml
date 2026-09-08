@@ -1,0 +1,15 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>example</groupId>
+    <artifactId>workspace</artifactId>
+    <version>1</version>
+  </parent>
+  <artifactId>api</artifactId>
+  <properties>
+    <code.directory>code/java</code.directory>
+  </properties>
+  <build>
+    <sourceDirectory>${code.directory}</sourceDirectory>
+  </build>
+</project>

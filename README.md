@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Maven Analysis**
 >
-> Root Maven detection, coordinate/property extraction, and restricted offline parent/BOM resolution are available. Module analysis is next; the first usable release is not available yet.
+> Maven detection, coordinate/property extraction, restricted offline parent/BOM resolution, and multi-module analysis are available. Dependency extraction is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -74,7 +74,9 @@ cd unfamiliar-project
 repoonboard .
 ```
 
-At the current stage, this command detects a root `pom.xml` and displays its resolved `groupId`, `artifactId`, `version`, and `packaging`. The analyzer preserves raw values, property values, source locations, and diagnostics. Modules and dependency output are not available yet.
+At the current stage, this command detects a root `pom.xml`, displays its resolved coordinates, and prints the declared module hierarchy with source directories. The analyzer preserves raw values, property values, source locations, and diagnostics. Dependency output is not available yet.
+
+Module aggregation and parent inheritance are recorded separately. Nested and active-profile modules are supported. Module paths and `build.sourceDirectory` resolve inside the scan root; source directories need not exist yet. Missing, malformed, escaping, duplicate, or cyclic modules produce diagnostics while other modules continue. The default Java source directory is `src/main/java` relative to each module; declared and resolved custom values remain available for source analysis.
 
 Maven model resolution is offline. Relative parents must stay inside the scan root; external parents and imported BOMs may be read from the local Maven repository. Missing models retain available facts and produce `PARTIAL` results. BOM properties are not inherited by the importing project.
 
