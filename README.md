@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Project Foundation**
 >
-> The architecture and build foundation are in place, but the first usable release is not available yet.
+> The architecture, build and test foundations, and a minimal path-validation CLI are in place, but the first usable release is not available yet.
 
 ## Why RepoOnboard?
 

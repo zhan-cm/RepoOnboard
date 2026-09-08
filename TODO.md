@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0104 — Create Minimal CLI Entry。**
+> **T-0105 — Establish Core Evidence and Diagnostic Contracts。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -503,7 +503,7 @@ Exit Criteria:
 
 ```text
 [x] Maven Wrapper clean test 通过
-[ ] CLI 路径/help/错误码测试通过
+[x] CLI 路径/help/错误码测试通过
 [ ] SourceLocation / Evidence / Diagnostic / AnalysisStatus 契约测试通过
 ```
 
@@ -607,8 +607,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 基于 Picocli 4.7.7 的 `RepoOnboardCommand`，支持必填目标目录、`--help`、`--version`、路径校验、基础状态输出和稳定退出码。
+
+Validation: `clean test` 与 `clean verify` 共运行 10 个测试并通过，其中 6 个覆盖 CLI；真实 Java 进程验证 `.`、help、version 均以 0 退出，不存在路径输出明确错误并以 2 退出。
 
 Goal:
 
@@ -633,10 +639,10 @@ repoonboard .
 Acceptance Criteria:
 
 ```text
-[ ] 可以从 CLI 启动
-[ ] "." 能解析为当前目录
-[ ] 非法路径有明确错误信息
-[ ] CLI 有基础 help
+[x] 可以从 CLI 启动
+[x] "." 能解析为当前目录
+[x] 非法路径有明确错误信息
+[x] CLI 有基础 help
 ```
 
 ---
@@ -2700,8 +2706,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0104
-Create Minimal CLI Entry
+T-0105
+Establish Core Evidence and Diagnostic Contracts
 ```
 
 本阶段：
@@ -2711,8 +2717,6 @@ Create Minimal CLI Entry
 M0 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0104
-↓
 T-0105
 ```
 
@@ -2747,6 +2751,6 @@ Release
 
 Next:
 
-> **T-0104 — Create Minimal CLI Entry.**
+> **T-0105 — Establish Core Evidence and Diagnostic Contracts.**
 
 ````

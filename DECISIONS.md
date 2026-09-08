@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Project Foundation**
 
-M0 技术架构设计已完成，T-0101 工程骨架、T-0102 可重复构建与 T-0103 分层测试底座已建立。当前下一任务是 T-0104，根据 ADR-0003 创建最小 CLI 入口。
+M0 技术架构设计已完成，T-0101 至 T-0104 已建立工程骨架、可重复构建、分层测试底座和最小 CLI。当前下一任务是 T-0105，根据 ADR-0007、ADR-0015 建立 Evidence 与 Diagnostic 契约。
 
 ---
 
@@ -2080,7 +2080,7 @@ Implementation
 
 下一步：
 
-> 完成 T-0104 — Create Minimal CLI Entry。
+> 完成 T-0105 — Establish Core Evidence and Diagnostic Contracts。
 
 M0 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
