@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Maven Analysis**
 >
-> Root Maven project detection and basic coordinate extraction are available. Property, parent, and module resolution are in progress, and the first usable release is not available yet.
+> Root Maven detection, coordinate/property extraction, and restricted offline parent/BOM resolution are available. Module analysis is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -74,7 +74,17 @@ cd unfamiliar-project
 repoonboard .
 ```
 
-At the current stage, this command reports whether a root `pom.xml` is present and displays its basic `groupId`, `artifactId`, `version`, and `packaging`. Maven properties, parents, modules, and dependencies are not resolved yet.
+At the current stage, this command detects a root `pom.xml` and displays its resolved `groupId`, `artifactId`, `version`, and `packaging`. The analyzer preserves raw values, property values, source locations, and diagnostics. Modules and dependency output are not available yet.
+
+Maven model resolution is offline. Relative parents must stay inside the scan root; external parents and imported BOMs may be read from the local Maven repository. Missing models retain available facts and produce `PARTIAL` results. BOM properties are not inherited by the importing project.
+
+```bash
+repoonboard . --profile dev --local-repository /path/to/local/maven/repository
+```
+
+`--profile` accepts repeated or comma-separated IDs. Only explicit and `activeByDefault` profiles participate; host OS/JDK/file/property activation and Maven settings are not used. The default cache is `~/.m2/repository`. Analysis does not execute Maven plugins, extensions, or lifecycle steps, or fetch remote POMs.
+
+All POM sources reject DTD/external entities and paths escaping their allowed roots. Default limits are 1 MiB per POM, 64 distinct POM sources, and XML nesting depth 128. External source evidence uses `local-repository/` identifiers without exposing the cache's absolute path. CLI exit codes: `0` success, `1` failed analysis, `2` invalid arguments, `3` partial analysis; diagnostics are printed to standard error.
 
 RepoOnboard will analyze the repository and produce information such as:
 

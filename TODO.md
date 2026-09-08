@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0203 — Restricted Maven Model and Property Resolution。**
+> **T-0204 — Multi-module Maven Analysis。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -779,8 +779,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: Maven 3.9.16 受限 Model Builder；统一有界 POM 来源、离线 parent/BOM、属性来源保留与可控 profile；CLI 支持 `--profile`、`--local-repository` 及 PARTIAL/FAILED 诊断和退出码。
+
+Validation: Java 21 离线 `clean verify` 53 项测试通过；原 T-0002 API 实验以 3.9.16 依赖复跑，8 项断言全部通过；真实 CLI 扫描自身成功。新增测试覆盖 BOM 属性隔离、拒绝 parent、profile 来源、DTD、输入/来源/深度上限及零远程请求。
 
 Goal:
 
@@ -795,14 +801,14 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] Java version property 可解析
-[ ] Spring Boot version property 可解析
-[ ] 常见 parent property 可处理
-[ ] relativePath、local repository POM 和 BOM 均经过路径/来源校验
-[ ] DTD/外部实体、过大输入和越界来源被拒绝并产生诊断
-[ ] 显式 profile 与 activeByDefault 可控，宿主隐式 profile 不参与
-[ ] 缺失 parent/BOM 时保留 raw facts 和 PARTIAL 状态
-[ ] 使用最终锁定的 Maven 3.9 版本重跑 T-0002 API 行为测试
+[x] Java version property 可解析
+[x] Spring Boot version property 可解析
+[x] 常见 parent property 可处理
+[x] relativePath、local repository POM 和 BOM 均经过路径/来源校验
+[x] DTD/外部实体、过大输入和越界来源被拒绝并产生诊断
+[x] 显式 profile 与 activeByDefault 可控，宿主隐式 profile 不参与
+[x] 缺失 parent/BOM 时保留 raw facts 和 PARTIAL 状态
+[x] 使用最终锁定的 Maven 3.9 版本重跑 T-0002 API 行为测试
 ```
 
 ---
@@ -2724,18 +2730,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0203
-Restricted Maven Model and Property Resolution
+T-0204
+Multi-module Maven Analysis
 ```
 
 本阶段：
 
 > **M2 — Maven Project Analysis**
 
-M0、M1 已完成，T-0201、T-0202 已完成。接下来按默认依赖顺序执行：
+M0、M1 已完成，T-0201 至 T-0203 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0203
+T-0204
 ```
 
 ---
@@ -2770,6 +2776,6 @@ Release
 
 Next:
 
-> **T-0203 — Restricted Maven Model and Property Resolution.**
+> **T-0204 — Multi-module Maven Analysis.**
 
 ````

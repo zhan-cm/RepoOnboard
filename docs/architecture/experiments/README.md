@@ -1,5 +1,7 @@
 # T-0002 Maven API 隔离实验
 
+T-0203 复验（2026-09-08）：使用生产依赖 Maven Model Builder **3.9.16** 与 Java **21.0.12**，通过本项目测试运行的 classpath 执行下方同一 Java 实验。8 项断言全部 PASS，退出码 0。产品实现另有 53 项自动化回归通过，包含受限本地 parent/BOM、属性来源隔离、输入限额以及监听服务器确认的零远程请求。下文保留最初 3.6.1 实验背景与其自身局限。
+
 用途：验证架构评审中的具体 API 假设。这里没有 RepoOnboard 产品分析器、根构建配置或可发布程序；不要运行这些 POM 的 Maven lifecycle。
 
 环境与实测：2026-09-08，Windows 11，Java/Javac 21.0.6，Apache Maven 3.6.1 分发包。Java 源文件启动模式使用该分发包的 lib，不安装依赖、不调用 mvn、不使用网络解析器。Maven 3 模型接口产生 4 条 deprecation 警告，运行退出码为 0；这只验证了 Maven 3 API 的行为假设，不代表推荐的 Maven 3.9 依赖版本或 Maven 4 API 已通过验证。
