@@ -84,7 +84,7 @@ Implementation
 
 Current Phase:
 
-> **Phase 1 — Project Foundation**
+> **Phase 2 — Maven Analysis**
 
 Current Product Version:
 
@@ -98,7 +98,7 @@ Current Implementation Status:
 Product Definition       ✓
 Architecture Constraints ✓
 Technical Decisions      ✓
-Project Scaffold         ○
+Project Scaffold         ✓
 Core Analysis            ○
 Web UI                   ○
 Real-world Validation    ○
@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0105 — Establish Core Evidence and Diagnostic Contracts。**
+> **T-0201 — Maven Project Detection。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -492,7 +492,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 Boundary:
@@ -504,7 +504,7 @@ Exit Criteria:
 ```text
 [x] Maven Wrapper clean test 通过
 [x] CLI 路径/help/错误码测试通过
-[ ] SourceLocation / Evidence / Diagnostic / AnalysisStatus 契约测试通过
+[x] SourceLocation / Evidence / Diagnostic / AnalysisStatus 契约测试通过
 ```
 
 ---
@@ -652,8 +652,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-08
+
+Deliverable: 无框架依赖的 `SourceLocation`、`Evidence`、`Diagnostic`、`DiagnosticSeverity` 与 `AnalysisStatus` 契约，包含扫描根相对路径、1-based 可选位置和诊断状态聚合规则。
+
+Validation: Java 21 `clean verify` 共运行 24 个测试并通过，其中 14 个聚焦核心契约；无失败、错误或跳过。
 
 Goal:
 
@@ -671,9 +677,9 @@ AnalysisStatus
 Acceptance Criteria:
 
 ```text
-[ ] Core 类型不依赖 Maven / JavaParser / Spring / Web 类型
-[ ] 行列号、未知位置和相对路径语义明确
-[ ] SUCCESS / PARTIAL / FAILED 与诊断严重级别有测试
+[x] Core 类型不依赖 Maven / JavaParser / Spring / Web 类型
+[x] 行列号、未知位置和相对路径语义明确
+[x] SUCCESS / PARTIAL / FAILED 与诊断严重级别有测试
 ```
 
 ---
@@ -2706,18 +2712,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0105
-Establish Core Evidence and Diagnostic Contracts
+T-0201
+Maven Project Detection
 ```
 
 本阶段：
 
-> **M1 — Project Foundation**
+> **M2 — Maven Project Analysis**
 
-M0 已完成。接下来按默认依赖顺序执行：
+M0、M1 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0105
+T-0201
 ```
 
 ---
@@ -2740,7 +2746,8 @@ Technical Decisions
 ████████████████████ 100%
 
 Implementation
-M1 Project Foundation — in progress
+M1 Project Foundation — complete
+M2 Maven Project Analysis — next
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2751,6 +2758,6 @@ Release
 
 Next:
 
-> **T-0105 — Establish Core Evidence and Diagnostic Contracts.**
+> **T-0201 — Maven Project Detection.**
 
 ````

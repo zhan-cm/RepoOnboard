@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Project Foundation**
+> **Status: Early Development / Maven Analysis**
 >
-> The architecture, build and test foundations, and a minimal path-validation CLI are in place, but the first usable release is not available yet.
+> The project foundation and shared evidence/diagnostic contracts are in place. Maven analysis is next, and the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -132,8 +132,8 @@ RepoOnboard V0.1 does not depend on an LLM. Future AI features, if introduced, s
 
 ```text
 M0  Technical Architecture                 ✓
-M1  Project Foundation                     In Progress
-M2  Maven Analysis
+M1  Project Foundation                     ✓
+M2  Maven Analysis                         Next
 M3  Java Source Analysis
 M4  Spring Boot Analysis
 M5  API & Dependency Analysis
