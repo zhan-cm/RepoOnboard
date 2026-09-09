@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0302 — Java File Discovery。**
+> **T-0303 — Basic AST Parsing。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -975,8 +975,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 在确认的 Java 主源码根内稳定枚举 `.java` 文件，保留扫描根相对路径、模块 POM 与模块目录归属；跳过构建/生成目录与符号链接，并在源码根不可用或模块归属重叠时返回可追踪的部分结果。
+
+Validation: Java 21 `test` 共 82 项通过；5 项 Java 文件发现测试覆盖稳定枚举、模块归属、构建/生成目录排除、不可用源码根恢复与重叠模块归属歧义。
 
 Goal:
 
@@ -985,9 +991,9 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] 能枚举 Java files
-[ ] Source path 可追踪
-[ ] Module ownership 可识别
+[x] 能枚举 Java files
+[x] Source path 可追踪
+[x] Module ownership 可识别
 ```
 
 ---
@@ -2754,18 +2760,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0302
-Java File Discovery
+T-0303
+Basic AST Parsing
 ```
 
 本阶段：
 
 > **M3 — Java Source Analysis**
 
-M0、M1、M2 已完成，T-0301 已完成。接下来按默认依赖顺序执行：
+M0、M1、M2 已完成，T-0301 与 T-0302 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0302
+T-0303
 ```
 
 ---
@@ -2801,6 +2807,6 @@ Release
 
 Next:
 
-> **T-0302 — Java File Discovery.**
+> **T-0303 — Basic AST Parsing.**
 
 ````

@@ -27,7 +27,27 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("version: 0.1.0-SNAPSHOT"));
         assertTrue(result.out().contains("packaging: jar"));
         assertTrue(result.out().contains("Metadata status: SUCCESS"));
+        assertTrue(result.out().contains("Java source roots: 1"));
+        assertTrue(result.out().contains("Java source files:"));
         assertTrue(result.err().isEmpty());
+    }
+
+    @Test
+    void reportsDiscoveredJavaFiles(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>app</artifactId><version>1</version></project>
+                """);
+        Path source = directory.resolve("src/main/java/example");
+        Files.createDirectories(source);
+        Files.writeString(source.resolve("App.java"), "package example; class App {}");
+
+        CliResult result = execute(directory.toString());
+
+        assertEquals(0, result.exitCode());
+        assertTrue(result.out().contains("Java source roots: 1"));
+        assertTrue(result.out().contains("src/main/java (pom.xml)"));
+        assertTrue(result.out().contains("Java source files: 1"));
     }
 
     @Test
