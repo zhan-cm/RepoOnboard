@@ -84,7 +84,7 @@ Implementation
 
 Current Phase:
 
-> **Phase 3 — Java Source Analysis**
+> **Phase 4 — Spring Boot Analysis**
 
 Current Product Version:
 
@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0305 — Java Declaration Index。**
+> **T-0401 — Spring Component Detection。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -918,7 +918,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 Boundary:
@@ -931,7 +931,7 @@ Exit Criteria:
 [x] Java 8 / 11 / 17 / 21 常见语法 fixture 通过
 [x] 源码位置、嵌套/同名类型和模块归属可追踪
 [x] 单文件解析失败不终止其他文件并返回 PARTIAL
-[ ] 声明索引不因简单名称相同而误解析
+[x] 声明索引不因简单名称相同而误解析
 ```
 
 ---
@@ -1078,8 +1078,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 建立稳定的 module-aware qualified-name/simple-name 声明索引，条目保留类型种类、模块 POM 与源码位置；同模块重复声明产生 WARNING，跨模块同限定名产生 INFO，所有候选均保留，并由解析器按 Maven 可见性筛选。
+
+Validation: Java 21 `test` 共 90 项通过；2 项新增索引测试覆盖嵌套类型、跨包同名、同模块重复、跨模块同限定名，以及不可见模块/外部类型不误解析。
 
 Goal:
 
@@ -1088,9 +1094,9 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] qualified-name 索引包含模块和源码位置
-[ ] 同名、嵌套和重复声明不会静默覆盖
-[ ] 不可见模块或外部类型不会被错误连边
+[x] qualified-name 索引包含模块和源码位置
+[x] 同名、嵌套和重复声明不会静默覆盖
+[x] 不可见模块或外部类型不会被错误连边
 ```
 
 ---
@@ -2772,18 +2778,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0305
-Java Declaration Index
+T-0401
+Spring Component Detection
 ```
 
 本阶段：
 
-> **M3 — Java Source Analysis**
+> **M4 — Spring Boot Analysis**
 
-M0、M1、M2 已完成，T-0301 至 T-0304 已完成。接下来按默认依赖顺序执行：
+M0 至 M3 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0305
+T-0401
 ```
 
 ---
@@ -2808,7 +2814,8 @@ Technical Decisions
 Implementation
 M1 Project Foundation — complete
 M2 Maven Project Analysis — complete
-M3 Java Source Analysis — in progress
+M3 Java Source Analysis — complete
+M4 Spring Boot Analysis — not started
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2819,6 +2826,6 @@ Release
 
 Next:
 
-> **T-0305 — Java Declaration Index.**
+> **T-0401 — Spring Component Detection.**
 
 ````

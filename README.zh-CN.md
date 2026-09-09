@@ -6,9 +6,9 @@
 
 RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手工具**，帮助开发者在修改陌生项目之前，先建立清晰、可靠的整体认知。
 
-> **状态：早期开发 / Java 源码分析阶段**
+> **状态：早期开发 / 下一阶段为 Spring Boot 分析**
 >
-> Maven 分析、Spring Boot 构建识别、Java 源码 facts 和保守的项目内类型引用解析已经可用。下一步是模块感知的声明索引，首个可用版本尚未发布。
+> Maven 分析、Spring Boot 构建识别、Java 源码 facts、保守的项目内类型解析和模块感知声明索引已经可用。下一步是 Spring 组件识别，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -150,7 +150,7 @@ RepoOnboard V0.1 不依赖大语言模型。如果未来引入 AI，也应让 AI
 M0  技术架构                         ✓
 M1  工程基础                         ✓
 M2  Maven 分析                       ✓
-M3  Java 源码分析
+M3  Java 源码分析                    ✓
 M4  Spring Boot 分析
 M5  API 与依赖分析
 M6  报告组装与序列化
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供早期 Maven 仓库和 Java 源码分析流程，包括已确认的项目内类型引用。声明索引、Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
+当前 CLI 已提供早期 Maven 仓库和 Java 源码分析流程，包括已确认的项目内类型引用和模块感知声明索引。Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
 
 ## 项目文档
 

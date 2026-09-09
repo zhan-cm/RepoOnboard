@@ -3,6 +3,7 @@ package io.github.zhancm.repoonboard.analyzer.java;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenDependency;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalysis;
+import io.github.zhancm.repoonboard.core.model.Diagnostic;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,29 +19,37 @@ import java.util.Set;
 public final class JavaTypeReferenceResolver {
 
     public JavaParseAnalysis resolve(JavaParseAnalysis parsed, MavenModuleAnalysis modules) {
+        return resolve(parsed, modules, JavaDeclarationIndex.build(parsed));
+    }
+
+    public JavaParseAnalysis resolve(
+            JavaParseAnalysis parsed,
+            MavenModuleAnalysis modules,
+            JavaDeclarationIndex index) {
         Objects.requireNonNull(parsed, "parsed");
         Objects.requireNonNull(modules, "modules");
+        Objects.requireNonNull(index, "index");
 
         Map<String, MavenModule> modulesByPom = new LinkedHashMap<>();
         modules.root().ifPresent(root -> collectModules(root, modulesByPom));
         Map<String, List<String>> pomsByCoordinate = coordinates(modulesByPom.values());
-        Map<String, List<Declaration>> declarations = declarations(parsed);
-
         List<JavaCompilationUnitFact> resolvedUnits = parsed.compilationUnits().stream()
                 .map(unit -> resolveUnit(
                         unit,
-                        declarations,
+                        index,
                         visibleModules(unit.sourceFile().modulePomFileId(), modulesByPom, pomsByCoordinate)))
                 .toList();
-        return new JavaParseAnalysis(resolvedUnits, parsed.diagnostics());
+        Set<Diagnostic> diagnostics = new LinkedHashSet<>(parsed.diagnostics());
+        diagnostics.addAll(index.diagnostics());
+        return new JavaParseAnalysis(resolvedUnits, List.copyOf(diagnostics));
     }
 
     private static JavaCompilationUnitFact resolveUnit(
             JavaCompilationUnitFact unit,
-            Map<String, List<Declaration>> declarations,
+            JavaDeclarationIndex index,
             Set<String> visibleModules) {
         List<JavaTypeReferenceFact> references = unit.typeReferences().stream()
-                .map(reference -> resolveReference(reference, unit, declarations, visibleModules))
+                .map(reference -> resolveReference(reference, unit, index, visibleModules))
                 .toList();
         return new JavaCompilationUnitFact(
                 unit.sourceFile(), unit.packageName(), unit.imports(), unit.types(), references);
@@ -49,11 +58,11 @@ public final class JavaTypeReferenceResolver {
     private static JavaTypeReferenceFact resolveReference(
             JavaTypeReferenceFact reference,
             JavaCompilationUnitFact unit,
-            Map<String, List<Declaration>> declarations,
+            JavaDeclarationIndex index,
             Set<String> visibleModules) {
         String name = reference.name();
 
-        Resolution exact = resolution(List.of(name), declarations, visibleModules);
+        Resolution exact = qualifiedResolution(name, unit, index, visibleModules);
         if (exact.declared()) {
             return apply(reference, exact);
         }
@@ -61,7 +70,7 @@ public final class JavaTypeReferenceResolver {
         List<String> explicitCandidates = new ArrayList<>();
         boolean hasMatchingExplicitImport = false;
         for (JavaImportFact importFact : unit.imports()) {
-            if (importFact.staticImport() || importFact.wildcard()) {
+            if (importFact.wildcard()) {
                 continue;
             }
             String importedSimpleName = simpleName(importFact.name());
@@ -70,7 +79,7 @@ public final class JavaTypeReferenceResolver {
                 explicitCandidates.add(importFact.name() + name.substring(importedSimpleName.length()));
             }
         }
-        Resolution explicit = resolution(explicitCandidates, declarations, visibleModules);
+        Resolution explicit = resolution(explicitCandidates, index, visibleModules);
         if (hasMatchingExplicitImport) {
             return apply(reference, explicit);
         }
@@ -78,18 +87,18 @@ public final class JavaTypeReferenceResolver {
         if (unit.packageName().isPresent()) {
             Resolution samePackage = resolution(
                     List.of(unit.packageName().orElseThrow() + "." + name),
-                    declarations,
+                    index,
                     visibleModules);
-            if (samePackage.declared()) {
+            if (samePackage.visibleDeclarations() > 0) {
                 return apply(reference, samePackage);
             }
         }
 
         List<String> wildcardCandidates = unit.imports().stream()
-                .filter(importFact -> !importFact.staticImport() && importFact.wildcard())
+                .filter(JavaImportFact::wildcard)
                 .map(importFact -> importFact.name() + "." + name)
                 .toList();
-        return apply(reference, resolution(wildcardCandidates, declarations, visibleModules));
+        return apply(reference, resolution(wildcardCandidates, index, visibleModules));
     }
 
     private static JavaTypeReferenceFact apply(JavaTypeReferenceFact reference, Resolution resolution) {
@@ -104,17 +113,17 @@ public final class JavaTypeReferenceResolver {
 
     private static Resolution resolution(
             Collection<String> candidates,
-            Map<String, List<Declaration>> declarations,
+            JavaDeclarationIndex index,
             Set<String> visibleModules) {
         boolean declared = false;
         int visibleDeclarations = 0;
         Set<String> visibleQualifiedNames = new LinkedHashSet<>();
         for (String candidate : new LinkedHashSet<>(candidates)) {
-            List<Declaration> matches = declarations.getOrDefault(candidate, List.of());
+            List<JavaDeclarationEntry> matches = index.findQualifiedName(candidate);
             if (!matches.isEmpty()) {
                 declared = true;
             }
-            for (Declaration declaration : matches) {
+            for (JavaDeclarationEntry declaration : matches) {
                 if (visibleModules.contains(declaration.modulePomFileId())) {
                     visibleDeclarations++;
                     visibleQualifiedNames.add(declaration.qualifiedName());
@@ -124,15 +133,23 @@ public final class JavaTypeReferenceResolver {
         return new Resolution(declared, visibleDeclarations, visibleQualifiedNames);
     }
 
-    private static Map<String, List<Declaration>> declarations(JavaParseAnalysis parsed) {
-        Map<String, List<Declaration>> declarations = new LinkedHashMap<>();
-        for (JavaCompilationUnitFact unit : parsed.compilationUnits()) {
-            for (JavaTypeFact type : unit.types()) {
-                declarations.computeIfAbsent(type.qualifiedName(), ignored -> new ArrayList<>())
-                        .add(new Declaration(unit.sourceFile().modulePomFileId(), type.qualifiedName()));
+    private static Resolution qualifiedResolution(
+            String candidate,
+            JavaCompilationUnitFact unit,
+            JavaDeclarationIndex index,
+            Set<String> visibleModules) {
+        List<JavaDeclarationEntry> eligible = index.findQualifiedName(candidate).stream()
+                .filter(entry -> entry.packageName().isPresent() || unit.packageName().isEmpty())
+                .toList();
+        int visibleDeclarations = 0;
+        Set<String> visibleQualifiedNames = new LinkedHashSet<>();
+        for (JavaDeclarationEntry declaration : eligible) {
+            if (visibleModules.contains(declaration.modulePomFileId())) {
+                visibleDeclarations++;
+                visibleQualifiedNames.add(declaration.qualifiedName());
             }
         }
-        return declarations;
+        return new Resolution(!eligible.isEmpty(), visibleDeclarations, visibleQualifiedNames);
     }
 
     private static Set<String> visibleModules(
@@ -192,9 +209,6 @@ public final class JavaTypeReferenceResolver {
     private static String simpleName(String qualifiedName) {
         int separator = qualifiedName.lastIndexOf('.');
         return separator < 0 ? qualifiedName : qualifiedName.substring(separator + 1);
-    }
-
-    private record Declaration(String modulePomFileId, String qualifiedName) {
     }
 
     private record Resolution(

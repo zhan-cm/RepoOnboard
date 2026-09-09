@@ -44,6 +44,7 @@ class JavaTypeReferenceResolverTest {
         java("src/main/java/wildcard/one/Unique.java", "package wildcard.one; class Unique {}\n");
         java("src/main/java/wildcard/one/Duplicate.java", "package wildcard.one; class Duplicate {}\n");
         java("src/main/java/wildcard/two/Duplicate.java", "package wildcard.two; class Duplicate {}\n");
+        java("src/main/java/String.java", "class String {}\n");
 
         JavaCompilationUnitFact app = resolved().compilationUnits().stream()
                 .filter(unit -> unit.sourceFile().relativePath().endsWith("demo/App.java"))
