@@ -1200,8 +1200,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 从已确认的 Spring 组件与配置类中提取构造器和 `@Autowired` 字段注入候选；单构造器与唯一标注构造器可确认，多构造器歧义保留全部候选，项目内接口类型只解析到接口声明而不猜测实现。Setter、Lombok 生成构造器、静态字段和泛型容器注入会产生明确的范围诊断。
+
+Validation: Java 21 `test` 共 98 项通过；固定注入 fixture 与 3 项相关测试覆盖单构造器、唯一 `@Autowired` 构造器、字段注入、多构造器、多实现接口、同名伪注解、Setter、Lombok、静态字段和泛型限制。
 
 至少分析：
 
@@ -1220,10 +1226,10 @@ Lombok generated constructor
 Acceptance Criteria:
 
 ```text
-[ ] 常见 Constructor Injection 正确
-[ ] 常见 @Autowired Field 正确
-[ ] 接口多实现不直接绑定某个实现
-[ ] 多构造器无法确认时保留候选和诊断
+[x] 常见 Constructor Injection 正确
+[x] 常见 @Autowired Field 正确
+[x] 接口多实现不直接绑定某个实现
+[x] 多构造器无法确认时保留候选和诊断
 ```
 
 ---

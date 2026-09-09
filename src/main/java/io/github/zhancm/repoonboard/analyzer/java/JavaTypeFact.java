@@ -13,6 +13,7 @@ public record JavaTypeFact(
         JavaTypeKind kind,
         List<JavaAnnotationFact> annotations,
         List<JavaFieldFact> fields,
+        List<JavaConstructorFact> constructors,
         List<JavaMethodFact> methods,
         SourceLocation location) {
 
@@ -26,6 +27,7 @@ public record JavaTypeFact(
         kind = Objects.requireNonNull(kind, "kind");
         annotations = List.copyOf(Objects.requireNonNull(annotations, "annotations"));
         fields = List.copyOf(Objects.requireNonNull(fields, "fields"));
+        constructors = List.copyOf(Objects.requireNonNull(constructors, "constructors"));
         methods = List.copyOf(Objects.requireNonNull(methods, "methods"));
         location = Objects.requireNonNull(location, "location");
     }
