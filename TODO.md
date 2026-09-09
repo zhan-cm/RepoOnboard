@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0601 — Project Model Assembly。**
+> **T-0602 — Stable Identifiers。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1495,7 +1495,7 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 至少包含：
@@ -1524,9 +1524,9 @@ Simple enough for V0.1
 Acceptance Criteria:
 
 ```text
-[ ] M2 ~ M5 facts 可转换到公共模型
-[ ] Core model 不暴露 Maven / JavaParser / Spring 类型
-[ ] SUCCESS / PARTIAL / FAILED 与 diagnostics 一同保留
+[x] M2 ~ M5 facts 可转换到公共模型
+[x] Core model 不暴露 Maven / JavaParser / Spring 类型
+[x] SUCCESS / PARTIAL / FAILED 与 diagnostics 一同保留
 ```
 
 ---
@@ -2844,8 +2844,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0601
-Project Model Assembly
+T-0602
+Stable Identifiers
 ```
 
 本阶段：
@@ -2855,7 +2855,7 @@ Project Model Assembly
 M0 至 M5 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
 
 ```text
-T-0601
+T-0602
 ```
 
 ---
@@ -2894,6 +2894,6 @@ Release
 
 Next:
 
-> **T-0601 — Project Model Assembly.**
+> **T-0602 — Stable Identifiers.**
 
 ````
