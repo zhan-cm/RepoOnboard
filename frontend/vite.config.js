@@ -3,6 +3,10 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
+  test: {
+    environment: 'happy-dom',
+    restoreMocks: true
+  },
   build: {
     outDir: '../target/generated-resources/frontend',
     emptyOutDir: true,

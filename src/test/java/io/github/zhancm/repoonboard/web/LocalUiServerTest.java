@@ -45,7 +45,7 @@ class LocalUiServerTest {
 
             HttpResponse<String> style = get(server.uri().resolve("assets/app.css"));
             assertEquals(200, style.statusCode());
-            assertTrue(style.body().contains("app-frame"));
+            assertTrue(style.body().contains("app-shell"));
 
             HttpResponse<String> response = get(server.uri().resolve("api/report"));
             assertEquals(200, response.statusCode());

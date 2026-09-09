@@ -5,10 +5,10 @@
 RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 
 - M0 至 M6 已完成。
-- **T-0701 — Local UI Bootstrap & Minimal App Shell** 已完成。
-- 当前下一任务是 **T-0702 — Visual System & Product Shell**。
-- T-0702 只建立共用视觉系统与正式产品 Shell，不提前实现 Overview 或其他业务页面。
-- Java 21 / Maven 3.9.16 `clean verify` 当前共 136 项测试通过；Vite production build 与 JAR 内 HTML、CSS、JavaScript 资源检查通过，真实 CLI loopback 会话和 Ctrl+C 端口释放已验证。
+- **T-0701、T-0702** 已完成，本地 UI 运行闭环、视觉系统和可复用产品 Shell 已建立。
+- 当前下一任务是 **T-0703 — Repository Overview**。
+- T-0703 只使用现有 `AnalysisReport` 呈现项目概览，不提前实现 Module Explorer 或其他后续页面。
+- Java 21 / Maven 3.9.16 `clean verify` 当前运行 19 项前端测试和 136 项 Java 测试并全部通过；Vite production build、JAR 资源、本地 CLI 生命周期及 1440、1024、500 CSS viewport 实际渲染已验证。
 
 ## 2. 已完成任务
 
@@ -47,10 +47,11 @@ RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 ### M7 — Local Web UI
 
 - **T-0701**：CLI 现在组装统一 `AnalysisReport`，启动只绑定 `127.0.0.1` 且使用系统分配端口的 JDK `HttpServer`，通过固定只读路由提供 `/api/report` 和随包发布的 Vue 3 最小 App Shell。CLI 支持默认打开浏览器、`--no-open`、浏览器失败时输出手动地址，以及 Ctrl+C 关闭与资源释放。
+- **T-0702**：建立集中 design tokens、全局基础样式和响应式产品 Shell；新增可复用 Sidebar、Context Header、Page Layout、Inspector 与 loading/empty/error/ready 状态组件，并加入 skip link、可见键盘焦点、文本对比度门禁和 reduced-motion 支持。宽屏采用三栏布局，紧凑桌面尺寸折叠 Inspector，窄屏导航可横向滚动。
 
 ## 3. 当前实现能力
 
-项目已经能够在本地、离线优先地分析 Java 21 / Maven / Spring Boot 仓库，并通过最小 Web 外壳交付结果：
+项目已经能够在本地、离线优先地分析 Java 21 / Maven / Spring Boot 仓库，并通过响应式 Web 产品 Shell 交付结果：
 
 - 从 CLI 接收仓库路径、显式 profile、本地 Maven 仓库位置和 `--no-open`。
 - 检测并受限解析 Maven 项目、模块、坐标、源码目录、依赖和 Spring Boot 构建信号；局部失败尽量保留可用事实。
@@ -59,7 +60,9 @@ RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 - 对确认、歧义和未解析关系分别表达，并为重要结果保留来源证据和诊断。
 - 将全部分析结果组装为稳定、确定排序的 `AnalysisReport`，生成派生 Summary，并以 schema `1.1` JSON 序列化。
 - 分析成功后在系统分配的 loopback 端口启动本地服务；`/api/report` 返回本次报告，固定静态路由返回打包的前端资源，未知路径和非只读请求不会访问用户文件。
-- 最小 App Shell 能显示 RepoOnboard 框架、禁用的后续导航占位、仓库上下文、加载/错误状态、报告状态和 schema 版本。
+- 产品 Shell 能显示仓库上下文、报告状态与 schema 版本，并提供可复用 Sidebar、Context Header、Page Layout 和 Inspector 基础；尚未实现业务页面。
+- loading、empty、error、ready 具有统一组件、文案层级和 live-region 语义；键盘用户可使用 skip link 和清晰的 `:focus-visible` 状态。
+- 集中 tokens 管理色彩、字体、间距、边框、圆角、阴影和布局尺寸；响应式布局覆盖宽屏、紧凑桌面与窄屏模式。
 - 浏览器无法自动打开时服务保持运行并给出地址；Ctrl+C 后服务线程和端口释放。
 
 ## 4. 当前架构与核心模块
@@ -92,7 +95,9 @@ RepoOnboard
 - **`web/LocalUiLauncher`**：CLI 与 UI 生命周期之间的最小接口。
 - **`web/LocalUiApplication`**：协调本地服务、浏览器启动、`--no-open`、关闭钩子和等待生命周期。
 - **`web/LocalUiServer`**：使用 JDK `HttpServer` 绑定 `127.0.0.1`，只提供固定前端资源与当前报告，不暴露通用文件系统路由。
-- **`frontend`**：Vue 3 + JavaScript + Vite 应用；当前只有 T-0701 最小 App Shell。Maven `generate-resources` 阶段使用锁文件安装依赖并把 production bundle 复制到 JAR classpath。
+- **`frontend/src/components`**：`AppShell`、`SidebarNav`、`ContextHeader`、`PageLayout`、`InspectorPanel`、`StatePanel` 构成可复用展示骨架；`App.vue` 只负责报告加载和当前空白工作区组合。
+- **`frontend/src/styles`**：`tokens.css` 集中视觉变量，`base.css` 提供全局与无障碍基础，`shell.css` 负责组件和多 viewport 布局。
+- **前端构建与测试**：Vue 3 + JavaScript + Vite；Vitest + happy-dom 测试在 Maven `generate-resources` 阶段随锁文件安装、测试和生产构建，产物复制到 JAR classpath。
 
 ## 5. 重要技术决策
 
@@ -101,7 +106,7 @@ RepoOnboard
 - **ADR-0007 至 ADR-0009**：公共模型保持最小且框架中立；分析器与展示边界明确；依赖为有类型、有方向、带状态和证据的边。
 - **ADR-0010**：报告使用 UTF-8、版本化 JSON、显式 DTO、稳定排序和受限反序列化；当前 schema `1.1`。
 - **ADR-0011**：本地服务使用 JDK `HttpServer` 并只绑定 loopback；默认使用系统分配端口，固定只读路由，不提供任意文件读取。
-- **ADR-0012**：前端使用 Vue 3 + JavaScript + Vite；Cytoscape.js 留给后续图视图；所有生产资源随 JAR 提供，不使用运行时 CDN。开发/发布构建需要 Node，最终用户不需要。
+- **ADR-0012**：前端使用 Vue 3 + JavaScript + Vite，测试使用 Vitest；Cytoscape.js 留给后续图视图；所有生产资源随 JAR 提供，不使用运行时 CDN。开发/发布构建需要 Node，最终用户不需要。
 - **ADR-0013 至 ADR-0015**：Start Here 采用可解释确定性启发式；测试按 unit → fixture → integration → real repository 分层；局部失败优先返回部分成功。
 - **ADR-0016 / ADR-0017**：V0.1 交付 JAR 和启动脚本，保持 Web-first、Desktop-ready；桌面容器、安装器和自带 Runtime 延后到 V0.2 候选。
 - V0.1 继续只支持 Java + Maven + Spring Boot，不引入 LLM、RAG、云服务、数据库、遥测或自动改码能力。
@@ -113,13 +118,14 @@ RepoOnboard
 - API mapping 声明与 Endpoint 组合分离；组件依赖只为唯一确认的项目内目标生成确认边。
 - 序列化通过显式 DTO 与 Core Model 隔离，Summary 从实体即时派生而不是保存第二份可变计数。
 - T-0701 已把原先独立存在的分析、报告、序列化和展示边界连接起来；CLI 不再停留在纯文本摘要，而是在保留终端输出后启动本地只读 UI。
+- T-0702 将临时单文件样式替换为集中视觉系统和可复用 Shell 组件，后续业务页面必须复用这些边界，而不是自建竞争样式。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
 ## 7. 已知限制 / 技术债
 
 - **Mapper 未实现**：T-0404 的 MyBatis / MyBatis-Plus Mapper 专用识别仍为可选延后项。
 - **分析范围有限**：不支持 Java/Maven/Spring Boot 以外的生态；Maven 不联网、不执行插件/生命周期、不计算传递依赖；Java/Spring 采用保守静态分析，不覆盖运行时代理、反射和动态注册。
-- **UI 仍是最小外壳**：尚无正式 design tokens、可复用 Shell 组件、Overview、Module Explorer、Architecture、API Map、证据浏览或源码导航。
+- **业务视图尚未实现**：视觉系统和产品 Shell 已可用，但尚无 Overview、Module Explorer、Architecture、API Map、证据浏览或源码导航。
 - **Web 边界仍需里程碑级加固**：当前已固定 loopback 与只读路由并设置基础响应头；Host/Origin/CSP、恶意文本、并发和完整打包边界验证属于 T-0709。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **发布尚未就绪**：当前仍为 `0.1.0-SNAPSHOT`，安装体验、许可、演示资源和正式 V0.1 Release 尚未完成。
@@ -127,7 +133,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M7**：T-0702 Visual System & Product Shell；T-0703 Repository Overview；T-0704 Module Explorer；T-0705 Architecture Workspace；T-0706 Architecture Exploration & Filtering；T-0707 API Map；T-0708 Source Navigation；T-0709 Local Web Boundary and Packaged UI Validation。
+- **M7**：T-0703 Repository Overview；T-0704 Module Explorer；T-0705 Architecture Workspace；T-0706 Architecture Exploration & Filtering；T-0707 API Map；T-0708 Source Navigation；T-0709 Local Web Boundary and Packaged UI Validation。
 - **M8**：T-0801 至 T-0804，完成可解释 Start Here 排序、阅读路径、解释和 UI。
 - **M9**：T-0901 至 T-0907，完成综合 fixture、真实仓库和 onboarding 价值验证。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
@@ -137,10 +143,10 @@ RepoOnboard
 
 下一项应开发：
 
-> **T-0702 — Visual System & Product Shell**
+> **T-0703 — Repository Overview**
 
-只在现有最小 App Shell 上集中定义 design tokens、字体、颜色、间距、边框/圆角，并建立可复用 Sidebar、Context Header、Page Layout、Inspector 基础结构以及统一 loading/empty/error 状态。验证键盘焦点、对比度和普通浏览器/桌面尺寸 viewport；不要实现 Overview 或其他后续业务页面，也不要引入 Desktop runtime。
+只使用 `AnalysisReport` 和派生 Summary 中已经存在的事实实现 Overview：呈现仓库身份、分析状态/覆盖限制、模块/文件/组件/Endpoint/EntryPoint/Dependency 统计及可用技术元数据，并为缺失信息提供明确空状态。复用 T-0702 的 Shell、tokens 和状态组件；不要实现 Module Explorer、Architecture、API Map、Source Navigation 或 Desktop runtime。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 已完成，包含受限离线 Maven 分析、模块感知 JavaParser facts、Spring 组件/配置/入口/注入/组合注解、MVC Endpoint、证据驱动的组件依赖和 schema `1.1` `AnalysisReport`。T-0701 已完成：CLI 会组装报告，通过仅绑定 `127.0.0.1`、系统分配端口、固定只读路由的 JDK `HttpServer` 提供 `/api/report` 与打包 Vue 最小 App Shell；支持默认浏览器、`--no-open`、失败回退和 Ctrl+C 资源释放。当前 UI 只显示仓库上下文、导航占位、loading/error 和连接状态，没有正式视觉系统或业务页面。当前下一任务是 **T-0702 — Visual System & Product Shell**；只实现共享视觉 tokens、可复用 Shell/Inspector/状态组件及可访问性与 viewport 稳定性，不提前实现 T-0703 Overview、Desktop runtime 或后续功能。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 已完成，包含受限离线 Maven 分析、模块感知 JavaParser facts、Spring 组件/配置/入口/注入/组合注解、MVC Endpoint、证据驱动的组件依赖和 schema `1.1` `AnalysisReport`。T-0701 已完成 CLI → `AnalysisReport` → 仅绑定 `127.0.0.1` 的固定只读服务 → 打包 Vue UI 的运行闭环，支持 `--no-open`、失败回退和 Ctrl+C 释放。T-0702 已完成集中 design tokens、全局基础样式、响应式 `AppShell`、`SidebarNav`、`ContextHeader`、`PageLayout`、`InspectorPanel`、统一 `StatePanel`、键盘焦点和对比度测试；Maven 构建会运行 Vitest。当前下一任务是 **T-0703 — Repository Overview**：只从现有报告事实和 Summary 呈现概览与缺失状态，必须复用现有视觉系统，不提前实现 Module Explorer、Architecture、API Map、Source Navigation、Desktop runtime 或后续功能。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
