@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0501 — Spring MVC Controller Mapping。**
+> **T-0601 — Project Model Assembly。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1282,8 +1282,12 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+✓ COMPLETED
 ```
+
+Completed: 2026-09-09
+
+Validation: Java 21 `clean verify` 通过；共 108 项测试，覆盖 Spring MVC 方法、路径和条件组合，以及确定、重复、歧义、未解析和循环组件依赖关系。
 
 Boundary:
 
@@ -1292,10 +1296,10 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] 标准 Spring MVC method/path/condition fixture 通过
-[ ] 类级与方法级映射组合正确，ANY 和 unresolvedPath 明确
-[ ] 每条确定依赖边包含 evidence，歧义关系不伪造
-[ ] 循环、重复证据和 unresolved target 测试通过
+[x] 标准 Spring MVC method/path/condition fixture 通过
+[x] 类级与方法级映射组合正确，ANY 和 unresolvedPath 明确
+[x] 每条确定依赖边包含 evidence，歧义关系不伪造
+[x] 循环、重复证据和 unresolved target 测试通过
 ```
 
 ---
@@ -1422,8 +1426,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 按稳定的源、目标、关系类型与状态合并重复组件依赖，Evidence 去重并稳定排序；未解析类型、非组件类型、歧义构造器及重复组件目标保留为非确定 dependency facts 和结构化诊断。确认边可生成模块感知的稳定邻接表，循环关系原样保存。
+
+Validation: Java 21 `clean verify` 共 108 项通过；dependency fixture 与 4 项专项测试覆盖构造器/字段重复证据、接口多实现、缺失类型、同名组件冲突、确定环与循环安全遍历。
 
 合并同一关系的多个证据，并为无法确认的 dependency 记录 unresolved target、位置和原因。
 
@@ -1446,9 +1456,9 @@ TYPE_REFERENCE
 Acceptance Criteria:
 
 ```text
-[ ] 重复边按稳定身份合并，Evidence 保留为集合
-[ ] 接口多实现、缺失类型和同名冲突不会生成猜测边
-[ ] 循环关系可保存且不会导致遍历失败
+[x] 重复边按稳定身份合并，Evidence 保留为集合
+[x] 接口多实现、缺失类型和同名冲突不会生成猜测边
+[x] 循环关系可保存且不会导致遍历失败
 ```
 
 ---
@@ -2834,18 +2844,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0501
-Spring MVC Controller Mapping
+T-0601
+Project Model Assembly
 ```
 
 本阶段：
 
-> **M5 — API & Dependency Analysis**
+> **M6 — Report Assembly & Serialization**
 
-M0 至 M4 已完成；可选 T-0404 已按非阻塞规则延后。接下来按默认依赖顺序执行：
+M0 至 M5 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
 
 ```text
-T-0501
+T-0601
 ```
 
 ---
@@ -2872,7 +2882,8 @@ M1 Project Foundation — complete
 M2 Maven Project Analysis — complete
 M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
-M5 API & Dependency Analysis — next
+M5 API & Dependency Analysis — complete
+M6 Report Assembly & Serialization — next
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2883,6 +2894,6 @@ Release
 
 Next:
 
-> **T-0501 — Spring MVC Controller Mapping.**
+> **T-0601 — Project Model Assembly.**
 
 ````

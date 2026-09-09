@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / API & Dependency Analysis Next**
+> **Status: Early Development / Report Assembly & Serialization Next**
 >
-> Maven analysis, Java source facts, Spring components, configurations, Boot application entry points, and dependency-injection candidates are available. HTTP API and confirmed dependency-edge analysis are next; the first usable release is not available yet.
+> Maven analysis, Java source facts, Spring components, configurations, Boot application entry points, HTTP endpoints, and component dependencies are available. Stable report assembly and JSON serialization are next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -152,7 +152,7 @@ M1  Project Foundation                     ✓
 M2  Maven Analysis                         ✓
 M3  Java Source Analysis                   ✓
 M4  Spring Boot Analysis                  ✓
-M5  API & Dependency Analysis
+M5  API & Dependency Analysis             ✓
 M6  Report Assembly & Serialization
 M7  Local Web UI
 M8  Start Here
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, and injection-candidate facts with source evidence. Confirmable project-local composed annotations are followed; conflicts and unsupported injection patterns remain explicit diagnostics rather than guessed results. MyBatis/MyBatis-Plus mapper classification is deferred, so mapper interfaces currently appear only as ordinary Java declarations. APIs, dependency graphs, and the Web UI are still under development.
+The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable reports, JSON output, and the Web UI are still under development.
 
 ## Documentation
 

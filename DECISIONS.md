@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **API & Dependency Analysis — next**
+> **Report Assembly & Serialization — next**
 
-M0 至 M4 已完成。标准与项目内可确认的组合 Spring stereotype、配置类和 Boot 应用入口均映射为带源码证据的 facts；构造器和字段注入候选会保留确认、歧义与未解析状态，不会把多实现接口猜测为某个实现。可选 T-0404 Mapper Detection 已按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0501 Spring MVC Controller Mapping。
+M0 至 M5 已完成。Spring MVC 类级/方法级 mapping 已组合为保留方法、路径、条件和两级 Evidence 的 Endpoint facts；注入候选已整理为带状态和合并 Evidence 的有向组件依赖，只有唯一确认的项目内组件目标形成确定边，循环会被保留。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0601 Project Model Assembly。
 
 ---
 
@@ -2079,13 +2079,14 @@ Implementation
 ✓ M2 Maven Project Analysis complete
 ✓ M3 Java Source Analysis complete
 ✓ M4 Spring Boot Analysis complete
-○ M5 API & Dependency Analysis next
+✓ M5 API & Dependency Analysis complete
+○ M6 Report Assembly & Serialization next
 ```
 
 下一步：
 
-> 完成 T-0501 — Spring MVC Controller Mapping。
+> 完成 T-0601 — Project Model Assembly。
 
-M0 至 M4 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0 至 M5 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````
