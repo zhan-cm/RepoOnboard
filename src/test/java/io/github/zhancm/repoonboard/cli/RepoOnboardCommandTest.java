@@ -35,6 +35,8 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Java declaration index:"));
         assertTrue(result.out().contains("Java type references:"));
         assertTrue(result.out().contains("Spring components: 0"));
+        assertTrue(result.out().contains("Spring configurations: 0"));
+        assertTrue(result.out().contains("Spring application entry points: 0"));
         assertTrue(result.err().isEmpty());
     }
 
@@ -49,6 +51,8 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("SERVICE: 1"));
         assertTrue(result.out().contains("REPOSITORY: 1"));
         assertTrue(result.out().contains("COMPONENT: 2"));
+        assertTrue(result.out().contains("Spring configurations: 2"));
+        assertTrue(result.out().contains("Spring application entry points: 1"));
     }
 
     @Test

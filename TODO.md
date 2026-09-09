@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0402 — Configuration and Application Entry Point Detection。**
+> **T-0403 — Dependency Injection Detection。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1167,8 +1167,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 识别确认的 `org.springframework.context.annotation.Configuration` 与 `org.springframework.boot.autoconfigure.SpringBootApplication`；后者同时生成配置类和应用入口 facts，均保留模块、类型位置和注解 Evidence，同名伪注解及歧义 import 不命中。
+
+Validation: Java 21 `test` 共 95 项通过；2 项新增测试和扩展 Spring fixture 覆盖配置类、Boot 应用入口、位置证据、同名伪注解、通配 import 歧义及 CLI 统计。
 
 识别：
 
@@ -1182,9 +1188,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] Configuration 与 application entry point 分类正确
-[ ] Source Location 和注解证据正确
-[ ] 只使用确认的 Spring 全限定注解，不按简单名称猜测
+[x] Configuration 与 application entry point 分类正确
+[x] Source Location 和注解证据正确
+[x] 只使用确认的 Spring 全限定注解，不按简单名称猜测
 ```
 
 ---
@@ -2784,18 +2790,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0402
-Configuration and Application Entry Point Detection
+T-0403
+Dependency Injection Detection
 ```
 
 本阶段：
 
 > **M4 — Spring Boot Analysis**
 
-M0 至 M3 与 T-0401 已完成。接下来按默认依赖顺序执行：
+M0 至 M3 与 T-0401、T-0402 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0402
+T-0403
 ```
 
 ---
@@ -2832,6 +2838,6 @@ Release
 
 Next:
 
-> **T-0402 — Configuration and Application Entry Point Detection.**
+> **T-0403 — Dependency Injection Detection.**
 
 ````
