@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Java Source Analysis**
+> **Status: Early Development / Spring Boot Analysis Next**
 >
-> Maven analysis, Spring Boot build detection, Java source facts, and conservative project-local type-reference resolution are available. The module-aware declaration index is next; the first usable release is not available yet.
+> Maven analysis, Spring Boot build detection, Java source facts, conservative project-local type resolution, and the module-aware declaration index are available. Spring component detection is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -150,7 +150,7 @@ RepoOnboard V0.1 does not depend on an LLM. Future AI features, if introduced, s
 M0  Technical Architecture                 ✓
 M1  Project Foundation                     ✓
 M2  Maven Analysis                         ✓
-M3  Java Source Analysis
+M3  Java Source Analysis                   ✓
 M4  Spring Boot Analysis
 M5  API & Dependency Analysis
 M6  Report Assembly & Serialization
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides an early Maven repository and Java source analysis workflow, including confirmed project-local type references. The declaration index, Spring component, API, dependency-graph, and Web UI analysis are still under development.
+The current CLI provides an early Maven repository and Java source analysis workflow, including confirmed project-local type references and a module-aware declaration index. Spring component, API, dependency-graph, and Web UI analysis are still under development.
 
 ## Documentation
 

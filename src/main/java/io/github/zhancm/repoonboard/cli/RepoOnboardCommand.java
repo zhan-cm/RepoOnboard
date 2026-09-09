@@ -1,6 +1,7 @@
 package io.github.zhancm.repoonboard.cli;
 
 import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaDeclarationIndex;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
 import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceResolver;
 import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceStatus;
@@ -90,7 +91,9 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             var sourceRoots = new JavaSourceRootDiscoverer().discover(resolvedTarget, analysis);
             var javaFiles = new JavaFileDiscoverer().discover(resolvedTarget, sourceRoots);
             var javaParse = new JavaSourceParser().parse(resolvedTarget, javaFiles);
-            var javaFacts = new JavaTypeReferenceResolver().resolve(javaParse, analysis);
+            var declarationIndex = JavaDeclarationIndex.build(javaParse);
+            var javaFacts = new JavaTypeReferenceResolver().resolve(
+                    javaParse, analysis, declarationIndex);
             commandSpec.commandLine().getOut()
                     .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
             for (var sourceRoot : sourceRoots.sourceRoots()) {
@@ -104,6 +107,10 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     .mapToLong(unit -> unit.types().size())
                     .sum();
             commandSpec.commandLine().getOut().printf("Java declarations: %d%n", declarationCount);
+            commandSpec.commandLine().getOut().printf(
+                    "Java declaration index: %d entries (ambiguous qualified names: %d)%n",
+                    declarationIndex.declarations().size(),
+                    declarationIndex.ambiguousQualifiedNameCount());
             long referenceCount = javaFacts.compilationUnits().stream()
                     .mapToLong(unit -> unit.typeReferences().size())
                     .sum();

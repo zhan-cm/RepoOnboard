@@ -31,6 +31,7 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Java source files:"));
         assertTrue(result.out().contains("Java compilation units:"));
         assertTrue(result.out().contains("Java declarations:"));
+        assertTrue(result.out().contains("Java declaration index:"));
         assertTrue(result.out().contains("Java type references:"));
         assertTrue(result.err().isEmpty());
     }
@@ -53,6 +54,7 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Java source files: 1"));
         assertTrue(result.out().contains("Java compilation units: 1"));
         assertTrue(result.out().contains("Java declarations: 1"));
+        assertTrue(result.out().contains("Java declaration index: 1 entries"));
         assertTrue(result.out().contains("Java type references:"));
     }
 
