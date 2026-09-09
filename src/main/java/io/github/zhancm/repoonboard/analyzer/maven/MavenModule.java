@@ -12,6 +12,7 @@ public record MavenModule(
         MavenProjectMetadata metadata,
         MavenMetadataValue sourceDirectory,
         List<MavenDependency> dependencies,
+        SpringBootBuild springBoot,
         List<MavenModule> children) {
     public MavenModule {
         Objects.requireNonNull(pomFileId, "pomFileId");
@@ -21,5 +22,6 @@ public record MavenModule(
         Objects.requireNonNull(sourceDirectory, "sourceDirectory");
         children = List.copyOf(children);
         dependencies = List.copyOf(dependencies);
+        Objects.requireNonNull(springBoot, "springBoot");
     }
 }

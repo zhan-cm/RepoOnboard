@@ -6,9 +6,9 @@
 
 RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手工具**，帮助开发者在修改陌生项目之前，先建立清晰、可靠的整体认知。
 
-> **状态：早期开发 / Maven 分析阶段**
+> **状态：早期开发 / Java 源码分析阶段**
 >
-> Maven 检测、坐标与属性提取、受限离线 parent/BOM 解析、多模块分析和依赖提取已经可用。下一步是 Spring Boot 构建识别，首个可用版本尚未发布。
+> Maven 分析与 Spring Boot 构建识别已经可用。下一步是 Java 源码分析，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -115,6 +115,8 @@ src/main/java/.../UserController.java:73
 
 ## 计划界面
 
+Spring Boot 构建识别使用模块声明的 `org.springframework.boot:spring-boot-starter-parent`、导入的 `spring-boot-dependencies` BOM，或已解析/继承的 Boot 核心与 starter 依赖。每条证据保留来源和版本位置。检测与版本解析分别表达；已知版本冲突时返回未知版本和诊断。构建证据不等于已发现应用入口。没有可识别依赖的间接 parent/BOM 链暂不分类。
+
 ### 项目概览
 
 汇总技术栈、模块、组件、HTTP 接口和应用入口。
@@ -147,7 +149,7 @@ RepoOnboard V0.1 不依赖大语言模型。如果未来引入 AI，也应让 AI
 ```text
 M0  技术架构                         ✓
 M1  工程基础                         ✓
-M2  Maven 分析                       进行中
+M2  Maven 分析                       ✓
 M3  Java 源码分析
 M4  Spring Boot 分析
 M5  API 与依赖分析
@@ -180,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前构建只验证工程基础，尚未提供可用的代码仓库分析流程。
+当前 CLI 已提供早期 Maven 仓库分析流程。Java 源码、Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
 
 ## 项目文档
 
@@ -195,7 +197,7 @@ RepoOnboard 面向加入现有项目的开发者、开源贡献者、学生、�
 
 ## 参与贡献
 
-RepoOnboard 仍处于工程基础阶段。等实现适合外部参与后，项目会补充贡献指南。在此之前，所有变更都应遵守项目范围和已经接受的技术决策。
+RepoOnboard 仍处于早期开发阶段。等实现适合外部参与后，项目会补充贡献指南。在此之前，所有变更都应遵守项目范围和已经接受的技术决策。
 
 ## 许可证
 

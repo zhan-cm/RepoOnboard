@@ -84,7 +84,7 @@ Implementation
 
 Current Phase:
 
-> **Phase 2 — Maven Analysis**
+> **Phase 3 — Java Source Analysis**
 
 Current Product Version:
 
@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0206 — Spring Boot Build Metadata Detection。**
+> **T-0301 — Source Root Discovery。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -693,7 +693,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 Boundary:
@@ -703,10 +703,10 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] 单模块、多模块、parent/BOM/profile/local repository fixtures 通过
-[ ] 所有 POM 来源经过受限读取层，恶意/越界输入有诊断
-[ ] 不执行目标 Maven lifecycle，不配置网络 resolver
-[ ] 缺失外部模型时保留 raw facts 和 PARTIAL 状态
+[x] 单模块、多模块、parent/BOM/profile/local repository fixtures 通过
+[x] 所有 POM 来源经过受限读取层，恶意/越界输入有诊断
+[x] 不执行目标 Maven lifecycle，不配置网络 resolver
+[x] 缺失外部模型时保留 raw facts 和 PARTIAL 状态
 ```
 
 ---
@@ -882,8 +882,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: Spring Boot parent、导入 BOM、核心/starter dependency 构建证据识别，检测与版本解析独立表达，保留来源和版本位置；CLI 展示证据与未知/冲突版本诊断。
+
+Validation: Java 21 离线 `clean verify` 72 项测试通过。新增 6 项回归覆盖缺失 parent/BOM、属性版本、版本冲突、同名/普通 Spring 反例、未激活 profile 和 CLI。
 
 Goal:
 
@@ -894,11 +900,11 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] parent-based Spring Boot 项目可识别
-[ ] dependency-based Spring Boot 项目尽量可识别
-[ ] Spring Boot version 尽量正确解析
-[ ] “检测到 Spring Boot”与“版本已解析”分别表示
-[ ] 每个结论保留构建来源证据
+[x] parent-based Spring Boot 项目可识别
+[x] dependency-based Spring Boot 项目尽量可识别
+[x] Spring Boot version 尽量正确解析
+[x] “检测到 Spring Boot”与“版本已解析”分别表示
+[x] 每个结论保留构建来源证据
 ```
 
 ---
@@ -2742,18 +2748,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0206
-Spring Boot Build Metadata Detection
+T-0301
+Source Root Discovery
 ```
 
 本阶段：
 
-> **M2 — Maven Project Analysis**
+> **M3 — Java Source Analysis**
 
-M0、M1 已完成，T-0201 至 T-0205 已完成。接下来按默认依赖顺序执行：
+M0、M1、M2 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0206
+T-0301
 ```
 
 ---
@@ -2777,7 +2783,8 @@ Technical Decisions
 
 Implementation
 M1 Project Foundation — complete
-M2 Maven Project Analysis — in progress
+M2 Maven Project Analysis — complete
+M3 Java Source Analysis — next
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2788,6 +2795,6 @@ Release
 
 Next:
 
-> **T-0206 — Spring Boot Build Metadata Detection.**
+> **T-0301 — Source Root Discovery.**
 
 ````

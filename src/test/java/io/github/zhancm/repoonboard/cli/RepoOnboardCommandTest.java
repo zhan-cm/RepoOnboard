@@ -73,6 +73,21 @@ class RepoOnboardCommandTest {
     }
 
     @Test
+    void printsSpringBootEvidenceAndUnknownVersion(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>app</artifactId><version>1</version><dependencies><dependency>
+                <groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId>
+                <version>${unavailable}</version></dependency></dependencies></project>
+                """);
+        CliResult result = execute(directory.toString());
+        assertEquals(3, result.exitCode());
+        assertTrue(result.out().contains("Spring Boot build: detected; version: <unknown or conflicting>"));
+        assertTrue(result.out().contains("DEPENDENCY spring-boot-starter-web (pom.xml)"));
+        assertTrue(result.err().contains("SPRING_BOOT_VERSION_UNRESOLVED"));
+    }
+
+    @Test
     void printsModuleTreeAndPartialStatusForMissingChild(@TempDir Path directory) throws IOException {
         Files.writeString(directory.resolve("pom.xml"), """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>

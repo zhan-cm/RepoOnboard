@@ -120,6 +120,14 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     "  ".repeat(depth + 1), display(dependency.groupId()), display(dependency.artifactId()),
                     display(dependency.version()), display(dependency.scope()));
         }
+        if (module.springBoot().detected()) {
+            commandSpec.commandLine().getOut().printf("%sSpring Boot build: detected; version: %s%n",
+                    "  ".repeat(depth + 1), module.springBoot().version().orElse("<unknown or conflicting>"));
+            for (var signal : module.springBoot().evidence()) {
+                commandSpec.commandLine().getOut().printf("%s%s %s (%s)%n", "  ".repeat(depth + 2),
+                        signal.kind(), signal.artifactId(), signal.origin().sourceFileId());
+            }
+        }
         module.children().forEach(child -> printModule(child, depth + 1));
     }
 
