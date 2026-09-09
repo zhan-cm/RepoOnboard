@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaDeclarationIndex;
 import io.github.zhancm.repoonboard.analyzer.java.JavaParseAnalysis;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceResolver;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
 import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
@@ -99,6 +101,47 @@ class SpringComponentAnalyzerTest {
                 diagnostic.code().equals("SPRING_COMPONENT_NAME_UNRESOLVED")));
     }
 
+    @Test
+    void resolvesProjectLocalCompositionAndRejectsConflictingRoles() throws IOException {
+        Files.writeString(temporaryDirectory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>fixture</groupId>
+                <artifactId>composed</artifactId><version>1</version></project>
+                """);
+        write("src/main/java/demo/ApplicationService.java", """
+                package demo;
+                import org.springframework.stereotype.Service;
+                @Service public @interface ApplicationService {}
+                """);
+        write("src/main/java/demo/ConflictingRole.java", """
+                package demo;
+                import org.springframework.stereotype.Repository;
+                import org.springframework.stereotype.Service;
+                @Repository @Service public @interface ConflictingRole {}
+                """);
+        write("src/main/java/demo/CheckoutService.java", """
+                package demo;
+                @ApplicationService public class CheckoutService {}
+                """);
+        write("src/main/java/demo/ConflictingService.java", """
+                package demo;
+                @ConflictingRole public class ConflictingService {}
+                """);
+
+        SpringComponentAnalysis analysis = new SpringComponentAnalyzer().analyze(
+                parse(temporaryDirectory, temporaryDirectory.resolve("cache")));
+
+        assertEquals(AnalysisStatus.PARTIAL, analysis.status());
+        assertEquals(1, analysis.components().size());
+        SpringComponentFact component = analysis.components().getFirst();
+        assertEquals("demo.CheckoutService", component.qualifiedName());
+        assertEquals(SpringComponentKind.SERVICE, component.kind());
+        assertEquals("checkoutService", component.name().orElseThrow());
+        assertEquals("SPRING_COMPOSED_COMPONENT_ANNOTATION", component.evidence().getFirst().type());
+        assertEquals(2, component.evidence().getFirst().relatedLocations().size());
+        assertTrue(analysis.diagnostics().stream().anyMatch(diagnostic ->
+                diagnostic.code().equals("SPRING_COMPONENT_KIND_AMBIGUOUS")));
+    }
+
     private static void assertComponent(
             Map<String, SpringComponentFact> components,
             String qualifiedName,
@@ -114,7 +157,9 @@ class SpringComponentAnalyzerTest {
                 root, new MavenModelOptions(cache, List.of(), 1_048_576));
         var sourceRoots = new JavaSourceRootDiscoverer().discover(root, maven);
         var files = new JavaFileDiscoverer().discover(root, sourceRoots);
-        return new JavaSourceParser().parse(root, files);
+        JavaParseAnalysis parsed = new JavaSourceParser().parse(root, files);
+        return new JavaTypeReferenceResolver().resolve(
+                parsed, maven, JavaDeclarationIndex.build(parsed));
     }
 
     private void write(String relativePath, String contents) throws IOException {

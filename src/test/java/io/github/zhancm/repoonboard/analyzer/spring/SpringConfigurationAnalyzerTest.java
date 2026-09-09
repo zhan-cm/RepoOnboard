@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaDeclarationIndex;
 import io.github.zhancm.repoonboard.analyzer.java.JavaParseAnalysis;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceResolver;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
 import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
@@ -74,11 +76,43 @@ class SpringConfigurationAnalyzerTest {
                 diagnostic.code().equals("SPRING_CONFIGURATION_ANNOTATION_AMBIGUOUS")));
     }
 
+    @Test
+    void detectsProjectLocalComposedConfiguration() throws IOException {
+        Files.writeString(temporaryDirectory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>fixture</groupId>
+                <artifactId>composed-config</artifactId><version>1</version></project>
+                """);
+        Path annotation = temporaryDirectory.resolve("src/main/java/demo/ModuleConfiguration.java");
+        Files.createDirectories(annotation.getParent());
+        Files.writeString(annotation, """
+                package demo;
+                import org.springframework.context.annotation.Configuration;
+                @Configuration public @interface ModuleConfiguration {}
+                """);
+        Files.writeString(annotation.getParent().resolve("FeatureConfiguration.java"), """
+                package demo;
+                @ModuleConfiguration public class FeatureConfiguration {}
+                """);
+
+        SpringConfigurationAnalysis analysis = new SpringConfigurationAnalyzer().analyze(
+                parse(temporaryDirectory, temporaryDirectory.resolve("cache")));
+
+        assertEquals(AnalysisStatus.SUCCESS, analysis.status());
+        assertEquals(1, analysis.configurations().size());
+        assertEquals("demo.FeatureConfiguration",
+                analysis.configurations().getFirst().qualifiedName());
+        assertEquals("SPRING_COMPOSED_CONFIGURATION_ANNOTATION",
+                analysis.configurations().getFirst().evidence().getFirst().type());
+        assertTrue(analysis.entryPoints().isEmpty());
+    }
+
     private static JavaParseAnalysis parse(Path root, Path cache) {
         var maven = new MavenModuleAnalyzer().analyze(
                 root, new MavenModelOptions(cache, List.of(), 1_048_576));
         var sourceRoots = new JavaSourceRootDiscoverer().discover(root, maven);
         var files = new JavaFileDiscoverer().discover(root, sourceRoots);
-        return new JavaSourceParser().parse(root, files);
+        JavaParseAnalysis parsed = new JavaSourceParser().parse(root, files);
+        return new JavaTypeReferenceResolver().resolve(
+                parsed, maven, JavaDeclarationIndex.build(parsed));
     }
 }
