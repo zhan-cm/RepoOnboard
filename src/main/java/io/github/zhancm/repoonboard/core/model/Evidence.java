@@ -19,8 +19,9 @@ public record Evidence(
     public Evidence {
         type = requireText(type, "type");
         location = Objects.requireNonNull(location, "location");
-        relatedLocations = List.copyOf(
-                Objects.requireNonNull(relatedLocations, "relatedLocations"));
+        relatedLocations = Objects.requireNonNull(relatedLocations, "relatedLocations").stream()
+                .sorted(ModelValues.SOURCE_LOCATION_ORDER)
+                .toList();
         ruleId = requireText(ruleId, "ruleId");
     }
 

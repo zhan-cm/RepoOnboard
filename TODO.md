@@ -84,7 +84,7 @@ Implementation
 
 Current Phase:
 
-> **Phase 4 — Spring Boot Analysis**
+> **Phase 6 — Report Assembly & Serialization**
 
 Current Product Version:
 
@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0602 — Stable Identifiers。**
+> **T-0603 — Serialization。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1472,7 +1472,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -1482,8 +1482,8 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] AnalysisReport 完整承载支持的 facts、evidence、diagnostics 和 coverage status
-[ ] IDs、集合顺序和语义快照在相同输入下稳定
+[x] AnalysisReport 完整承载支持的 facts、evidence、diagnostics 和 coverage status
+[x] IDs、集合顺序和语义快照在相同输入下稳定
 [ ] schemaVersion 兼容与未知主版本行为有测试
 [ ] JSON 不包含源码正文、默认绝对路径或未允许的配置属性
 ```
@@ -1536,8 +1536,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: `StableIdentifiers` 定义 Project、Module、SourceFile、Component、EntryPoint、Endpoint、Dependency 的结构身份；`AnalysisReport` 与核心集合执行确定排序，报告装配器对重复语义键保留全部实体、分配稳定后缀并生成 `REPORT_ID_COLLISION` 诊断。
+
+Validation: Java 21 离线 `clean verify` 共 113 项测试通过；固定 Spring fixture 验证输入倒序时报告、ID 和排序不变，重复组件键不被静默覆盖，组件重命名、Endpoint handler/HTTP 签名及 dependency target 变化会产生新 ID。
 
 为：
 
@@ -1557,9 +1563,9 @@ Dependency
 Acceptance Criteria:
 
 ```text
-[ ] 相同语义输入得到相同 ID 与排序
-[ ] 重复声明和键冲突产生诊断，不静默覆盖
-[ ] 重命名和签名变化行为由 fixture 明确
+[x] 相同语义输入得到相同 ID 与排序
+[x] 重复声明和键冲突产生诊断，不静默覆盖
+[x] 重命名和签名变化行为由 fixture 明确
 ```
 
 ---
@@ -2844,8 +2850,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0602
-Stable Identifiers
+T-0603
+Serialization
 ```
 
 本阶段：
@@ -2855,7 +2861,7 @@ Stable Identifiers
 M0 至 M5 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
 
 ```text
-T-0602
+T-0603
 ```
 
 ---
@@ -2883,7 +2889,7 @@ M2 Maven Project Analysis — complete
 M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
-M6 Report Assembly & Serialization — next
+M6 Report Assembly & Serialization — in progress
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2894,6 +2900,6 @@ Release
 
 Next:
 
-> **T-0602 — Stable Identifiers.**
+> **T-0603 — Serialization.**
 
 ````

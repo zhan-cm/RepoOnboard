@@ -6,7 +6,6 @@ import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyFact;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentFact;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringConfigurationFact;
-import io.github.zhancm.repoonboard.analyzer.spring.SpringDependencyStatus;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointFact;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringEntryPointFact;
 import io.github.zhancm.repoonboard.core.model.AnalysisReport;
@@ -27,13 +26,14 @@ import io.github.zhancm.repoonboard.core.model.Project;
 import io.github.zhancm.repoonboard.core.model.ResolutionStatus;
 import io.github.zhancm.repoonboard.core.model.SourceFile;
 import io.github.zhancm.repoonboard.core.model.SourceLocation;
+import io.github.zhancm.repoonboard.core.model.StableIdentifiers;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /** Maps analyzer-specific facts to the stable, analyzer-neutral public model. */
@@ -52,7 +52,7 @@ public final class ProjectModelAssembler {
                 .toList();
         List<SourceFile> sourceFiles = input.java().compilationUnits().stream()
                 .map(unit -> new SourceFile(
-                        "source:" + unit.sourceFile().relativePath(),
+                        StableIdentifiers.sourceFile(unit.sourceFile().relativePath()),
                         requiredModuleId(moduleIds, unit.sourceFile().modulePomFileId()),
                         unit.sourceFile().relativePath(),
                         Language.JAVA,
@@ -69,13 +69,14 @@ public final class ProjectModelAssembler {
         List<EntryPoint> entryPoints = input.springConfiguration().entryPoints().stream()
                 .map(fact -> toEntryPoint(fact, moduleIds))
                 .toList();
-        List<Dependency> dependencies = new ArrayList<>();
-        mavenModules.forEach(module -> dependencies.addAll(toMavenDependencies(module, moduleIds)));
+        List<Dependency> assembledDependencies = new ArrayList<>();
+        mavenModules.forEach(
+                module -> assembledDependencies.addAll(toMavenDependencies(module, moduleIds)));
         input.springDependencies().dependencies().stream()
                 .map(fact -> toComponentDependency(fact, moduleIds))
-                .forEach(dependencies::add);
+                .forEach(assembledDependencies::add);
 
-        List<Diagnostic> diagnostics = Stream.of(
+        List<Diagnostic> diagnostics = new ArrayList<>(Stream.of(
                         input.maven().diagnostics(),
                         input.java().diagnostics(),
                         input.springComponents().diagnostics(),
@@ -83,20 +84,30 @@ public final class ProjectModelAssembler {
                         input.springEndpoints().diagnostics(),
                         input.springDependencies().diagnostics())
                 .flatMap(List::stream)
+                .toList());
+        modules = stabilizeModules(modules, diagnostics);
+        sourceFiles = sourceFiles.stream().sorted(Comparator.comparing(SourceFile::id)).toList();
+        components = stabilizeComponents(components, diagnostics);
+        endpoints = stabilizeEndpoints(endpoints, diagnostics);
+        entryPoints = entryPoints.stream().sorted(Comparator.comparing(EntryPoint::id)).toList();
+        List<Dependency> dependencies = stabilizeDependencies(assembledDependencies, diagnostics);
+        List<Diagnostic> stableDiagnostics = diagnostics.stream()
+                .sorted(DIAGNOSTIC_ORDER)
                 .toList();
         String projectName = value(root.metadata().artifactId()).orElse("repository");
         Evidence projectEvidence = evidence(
                 "MAVEN_PROJECT", SourceLocation.file(root.pomFileId()), "maven.project.root");
         return new AnalysisReport(
-                new Project("project", projectName, BuildSystem.MAVEN, List.of(projectEvidence)),
+                new Project(StableIdentifiers.project(root.pomFileId()), projectName,
+                        BuildSystem.MAVEN, List.of(projectEvidence)),
                 modules,
                 sourceFiles,
                 components,
                 endpoints,
                 entryPoints,
                 List.copyOf(dependencies),
-                AnalysisStatus.fromDiagnostics(diagnostics),
-                diagnostics);
+                AnalysisStatus.fromDiagnostics(stableDiagnostics),
+                stableDiagnostics);
     }
 
     private static io.github.zhancm.repoonboard.core.model.Module toModule(
@@ -150,22 +161,22 @@ public final class ProjectModelAssembler {
 
     private static Endpoint toEndpoint(SpringEndpointFact fact, Map<String, String> moduleIds) {
         String componentId = componentId(fact.modulePomFileId(), fact.controllerQualifiedName());
-        String pathKey = fact.path().orElse("<unresolved>");
+        EndpointConditions conditions = new EndpointConditions(
+                fact.conditions().params(),
+                fact.conditions().headers(),
+                fact.conditions().consumes(),
+                fact.conditions().produces(),
+                fact.conditions().unresolved());
         return new Endpoint(
-                "endpoint:" + componentId + ":" + fact.httpMethod() + ":" + pathKey + ":"
-                        + fact.handlerMethod(),
+                StableIdentifiers.endpoint(componentId, fact.handlerMethod(), fact.httpMethod().name(),
+                        fact.path(), fact.unresolvedPath(), conditions),
                 requiredModuleId(moduleIds, fact.modulePomFileId()),
                 componentId,
                 fact.httpMethod().name(),
                 fact.path(),
                 fact.unresolvedPath(),
                 fact.handlerMethod(),
-                new EndpointConditions(
-                        fact.conditions().params(),
-                        fact.conditions().headers(),
-                        fact.conditions().consumes(),
-                        fact.conditions().produces(),
-                        fact.conditions().unresolved()),
+                conditions,
                 Framework.SPRING_BOOT,
                 fact.location(),
                 fact.evidence());
@@ -174,7 +185,9 @@ public final class ProjectModelAssembler {
     private static EntryPoint toEntryPoint(
             SpringEntryPointFact fact, Map<String, String> moduleIds) {
         return new EntryPoint(
-                "entry-point:" + componentId(fact.modulePomFileId(), fact.qualifiedName()),
+                StableIdentifiers.entryPoint(
+                        requiredModuleId(moduleIds, fact.modulePomFileId()),
+                        fact.qualifiedName(), fact.kind().name()),
                 requiredModuleId(moduleIds, fact.modulePomFileId()),
                 fact.qualifiedName(),
                 fact.kind().name(),
@@ -186,14 +199,16 @@ public final class ProjectModelAssembler {
     private static List<Dependency> toMavenDependencies(
             MavenModule module, Map<String, String> moduleIds) {
         List<Dependency> result = new ArrayList<>();
-        for (int index = 0; index < module.dependencies().size(); index++) {
-            MavenDependency dependency = module.dependencies().get(index);
+        for (MavenDependency dependency : module.dependencies()) {
             String coordinates = coordinate(dependency);
             SourceLocation location = dependency.artifactId().origin();
+            String sourceId = requiredModuleId(moduleIds, module.pomFileId());
+            Optional<String> targetId = Optional.of(StableIdentifiers.externalArtifact(coordinates));
             result.add(new Dependency(
-                    "dependency:maven:" + moduleId(module.pomFileId()) + ":" + coordinates + ":" + index,
-                    requiredModuleId(moduleIds, module.pomFileId()),
-                    Optional.of("artifact:" + coordinates),
+                    StableIdentifiers.dependency(
+                            DependencyKind.MAVEN_DECLARATION, sourceId, targetId, coordinates),
+                    sourceId,
+                    targetId,
                     coordinates,
                     DependencyKind.MAVEN_DECLARATION,
                     ResolutionStatus.CONFIRMED,
@@ -213,9 +228,10 @@ public final class ProjectModelAssembler {
             case AMBIGUOUS_INJECTION, AMBIGUOUS_TARGET -> ResolutionStatus.AMBIGUOUS;
             case UNRESOLVED_TARGET -> ResolutionStatus.UNRESOLVED;
         };
-        String targetKey = targetId.orElse(fact.declaredTargetType());
         return new Dependency(
-                "dependency:component:" + sourceId + ":" + targetKey,
+                StableIdentifiers.dependency(
+                        DependencyKind.COMPONENT_INJECTION, sourceId, targetId,
+                        fact.declaredTargetType()),
                 sourceId,
                 targetId,
                 fact.declaredTargetType(),
@@ -260,14 +276,112 @@ public final class ProjectModelAssembler {
     }
 
     private static String moduleId(String pomFileId) {
-        return "module:" + pomFileId;
+        return StableIdentifiers.module(pomFileId);
     }
 
     private static String componentId(String pomFileId, String qualifiedName) {
-        return "component:" + moduleId(pomFileId) + ":" + qualifiedName;
+        return StableIdentifiers.component(moduleId(pomFileId), qualifiedName);
     }
 
     private static Evidence evidence(String type, SourceLocation location, String ruleId) {
         return new Evidence(type, location, List.of(), ruleId);
+    }
+
+    private static final Comparator<Diagnostic> DIAGNOSTIC_ORDER = Comparator
+            .comparing(Diagnostic::code)
+            .thenComparing(diagnostic -> diagnostic.moduleId().orElse(""))
+            .thenComparing(diagnostic -> diagnostic.fileId().orElse(""))
+            .thenComparing(diagnostic -> diagnostic.location()
+                    .flatMap(location -> location.startLine().isPresent()
+                            ? Optional.of(location.startLine().getAsInt()) : Optional.empty())
+                    .orElse(0))
+            .thenComparing(Diagnostic::message);
+
+    private static List<io.github.zhancm.repoonboard.core.model.Module> stabilizeModules(
+            List<io.github.zhancm.repoonboard.core.model.Module> values,
+            List<Diagnostic> diagnostics) {
+        List<io.github.zhancm.repoonboard.core.model.Module> sorted = values.stream()
+                .sorted(Comparator.comparing(io.github.zhancm.repoonboard.core.model.Module::id)
+                .thenComparing(io.github.zhancm.repoonboard.core.model.Module::pomFileId)
+                .thenComparing(Object::toString))
+                .toList();
+        return disambiguate(sorted, io.github.zhancm.repoonboard.core.model.Module::id,
+                module -> module.evidence().getFirst().location(),
+                (module, id) -> new io.github.zhancm.repoonboard.core.model.Module(
+                        id, module.pomFileId(), module.baseDirectory(), module.groupId(),
+                        module.artifactId(), module.version(), module.packaging(), module.sourceRoots(),
+                        module.frameworks(), module.evidence()), diagnostics, "MODULE");
+    }
+
+    private static List<Component> stabilizeComponents(
+            List<Component> values, List<Diagnostic> diagnostics) {
+        List<Component> sorted = values.stream().sorted(Comparator.comparing(Component::id)
+                .thenComparing(component -> component.kind().name())
+                .thenComparing(component -> component.location().sourceFileId())
+                .thenComparing(Object::toString)).toList();
+        return disambiguate(sorted, Component::id, Component::location,
+                (component, id) -> new Component(id, component.moduleId(), component.qualifiedName(),
+                        component.name(), component.kind(), component.framework(), component.location(),
+                        component.evidence()), diagnostics, "COMPONENT");
+    }
+
+    private static List<Endpoint> stabilizeEndpoints(
+            List<Endpoint> values, List<Diagnostic> diagnostics) {
+        List<Endpoint> sorted = values.stream().sorted(Comparator.comparing(Endpoint::id)
+                .thenComparing(endpoint -> endpoint.location().sourceFileId())
+                .thenComparingInt(endpoint -> endpoint.location().startLine().orElse(0))
+                .thenComparing(Object::toString)).toList();
+        return disambiguate(sorted, Endpoint::id, Endpoint::location,
+                (endpoint, id) -> new Endpoint(id, endpoint.moduleId(), endpoint.componentId(),
+                        endpoint.httpMethod(), endpoint.path(), endpoint.unresolvedPath(),
+                        endpoint.handlerMethod(), endpoint.conditions(), endpoint.framework(),
+                        endpoint.location(), endpoint.evidence()), diagnostics, "ENDPOINT");
+    }
+
+    private static List<Dependency> stabilizeDependencies(
+            List<Dependency> values, List<Diagnostic> diagnostics) {
+        List<Dependency> sorted = values.stream().sorted(Comparator.comparing(Dependency::id)
+                .thenComparing(dependency -> dependency.location().sourceFileId())
+                .thenComparingInt(dependency -> dependency.location().startLine().orElse(0))
+                .thenComparing(Object::toString)).toList();
+        return disambiguate(sorted, Dependency::id, Dependency::location,
+                (dependency, id) -> new Dependency(id, dependency.sourceId(), dependency.targetId(),
+                        dependency.declaredTarget(), dependency.kind(), dependency.status(),
+                        dependency.location(), dependency.evidence()), diagnostics, "DEPENDENCY");
+    }
+
+    private static <T> List<T> disambiguate(
+            List<T> sorted,
+            java.util.function.Function<T, String> id,
+            java.util.function.Function<T, SourceLocation> location,
+            java.util.function.BiFunction<T, String, T> withId,
+            List<Diagnostic> diagnostics,
+            String entityKind) {
+        List<T> result = new ArrayList<>();
+        int cursor = 0;
+        while (cursor < sorted.size()) {
+            int end = cursor + 1;
+            String baseId = id.apply(sorted.get(cursor));
+            while (end < sorted.size() && id.apply(sorted.get(end)).equals(baseId)) {
+                end++;
+            }
+            if (end - cursor > 1) {
+                SourceLocation collisionLocation = location.apply(sorted.get(cursor));
+                diagnostics.add(new Diagnostic(
+                        "REPORT_ID_COLLISION",
+                        io.github.zhancm.repoonboard.core.model.DiagnosticSeverity.WARNING,
+                        "REPORT_ASSEMBLY",
+                        Optional.empty(),
+                        Optional.of(collisionLocation.sourceFileId()),
+                        Optional.of(collisionLocation),
+                        entityKind + " key occurs " + (end - cursor) + " times: " + baseId));
+            }
+            for (int index = cursor; index < end; index++) {
+                String resolvedId = index == cursor ? baseId : baseId + "~" + (index - cursor + 1);
+                result.add(withId.apply(sorted.get(index), resolvedId));
+            }
+            cursor = end;
+        }
+        return List.copyOf(result);
     }
 }

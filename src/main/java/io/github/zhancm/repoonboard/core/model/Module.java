@@ -24,8 +24,10 @@ public record Module(
         artifactId = ModelValues.requireOptionalText(artifactId, "artifactId");
         version = ModelValues.requireOptionalText(version, "version");
         packaging = ModelValues.requireOptionalText(packaging, "packaging");
-        sourceRoots = List.copyOf(Objects.requireNonNull(sourceRoots, "sourceRoots"));
-        frameworks = List.copyOf(Objects.requireNonNull(frameworks, "frameworks"));
-        evidence = List.copyOf(Objects.requireNonNull(evidence, "evidence"));
+        sourceRoots = Objects.requireNonNull(sourceRoots, "sourceRoots").stream()
+                .distinct().sorted().toList();
+        frameworks = Objects.requireNonNull(frameworks, "frameworks").stream()
+                .distinct().sorted().toList();
+        evidence = ModelValues.stableEvidence(evidence);
     }
 }

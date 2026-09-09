@@ -11,9 +11,13 @@ public record EndpointConditions(
         List<String> produces,
         boolean unresolved) {
     public EndpointConditions {
-        params = List.copyOf(Objects.requireNonNull(params, "params"));
-        headers = List.copyOf(Objects.requireNonNull(headers, "headers"));
-        consumes = List.copyOf(Objects.requireNonNull(consumes, "consumes"));
-        produces = List.copyOf(Objects.requireNonNull(produces, "produces"));
+        params = stable(params, "params");
+        headers = stable(headers, "headers");
+        consumes = stable(consumes, "consumes");
+        produces = stable(produces, "produces");
+    }
+
+    private static List<String> stable(List<String> values, String name) {
+        return Objects.requireNonNull(values, name).stream().sorted().toList();
     }
 }
