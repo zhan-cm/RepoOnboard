@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **Report Assembly & Serialization — next**
+> **M7 Local Web UI — next**
 
-M0 至 M5 已完成。Spring MVC 类级/方法级 mapping 已组合为保留方法、路径、条件和两级 Evidence 的 Endpoint facts；注入候选已整理为带状态和合并 Evidence 的有向组件依赖，只有唯一确认的项目内组件目标形成确定边，循环会被保留。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0601 Project Model Assembly。
+M0 至 M6 已完成。统一 `AnalysisReport`、稳定身份、派生 Summary 和版本化 JSON 已形成展示边界。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0701 Local UI Bootstrap & Minimal App Shell。
 
 ---
 
@@ -154,11 +154,11 @@ M0 至 M5 已完成。Spring MVC 类级/方法级 mapping 已组合为保留方�
 
 当前正式接受的具体技术栈决策：
 
-> **ADR-0001 至 ADR-0016 已于 2026-09-08 接受。**
+> **ADR-0001 至 ADR-0017 已接受。**
 
 这些决策来自 T-0001 技术方案、T-0002 架构评审及随后明确的继续执行确认。具体约束、验证门槛和重新评估条件见 Decision Index 与正式 ADR。
 
-Release and Distribution 仍为 DEFERRED；精确依赖补丁版本、图阈值等可逆实现细节由对应任务在 ADR 约束内确定。
+V0.1 的 JAR 与启动脚本发布方式已由 ADR-0016 确定；Desktop 容器、原生安装器与自带运行时由 ADR-0017 延后到 V0.2 候选。精确依赖补丁版本、图阈值等可逆实现细节由对应任务在 ADR 约束内确定。
 
 ---
 
@@ -495,6 +495,7 @@ ADR：
 | ADR-0014 | Use Layered Fixture and Real-repository Testing | ACCEPTED | 2026-09-08 |
 | ADR-0015 | Preserve Partial Results and Structured Diagnostics | ACCEPTED | 2026-09-08 |
 | ADR-0016 | Package V0.1 as a JAR with Launcher Scripts | ACCEPTED | 2026-09-08 |
+| ADR-0017 | Develop V0.1 Web-first and Defer Desktop Packaging to V0.2 | ACCEPTED | 2026-09-09 |
 
 ---
 
@@ -2054,6 +2055,36 @@ M10 在 Windows、macOS、Linux 做离线分析和启动冒烟测试。若 Java 
 
 ---
 
+## ADR-0017 — Develop V0.1 Web-first and Defer Desktop Packaging to V0.2
+
+### Status
+
+```text
+ACCEPTED
+```
+
+### Date
+
+```text
+2026-09-09
+```
+
+### Context and Decision
+
+RepoOnboard V0.1 先完成本地 Web 产品并以 ADR-0016 规定的可执行 JAR 和启动脚本发布。Vue 主要页面保持宿主无关：不直接访问本地文件系统，不依赖浏览器地址栏完成主要流程。宿主特定能力在首个真实调用方出现时，通过最小可替换适配边界接入，不提前建立未使用的 Desktop API。
+
+Desktop Application、原生安装器和自带 Java Runtime 不是 V0.1 发布门槛，延后到 V0.2 候选阶段。在 V0.1 通过真实仓库和 onboarding 价值验证后，再以技术试验评估 Tauri 及其他容器，不在本 ADR 中预先锁定桌面技术。
+
+### Alternatives and Rationale
+
+在 V0.1 中直接引入 Tauri 可以提供原生窗口和文件选择，但会同时引入 Rust/WebView 工具链、Java sidecar 生命周期、运行时打包、安装器和签名等未经用户价值验证的工作。先发布本地 Web 产品可更早检验 Overview、Architecture、API Map 和 Start Here 是否真正有用。
+
+### Consequences and Validation
+
+M7 不引入 Tauri、Electron、native installer 或桌面专用依赖。T-0701 只允许建立最小 App Shell，T-0702 再正式落地视觉系统和产品 Shell。M9 先验证产品价值，M10 仍为 V0.1 Release Preparation。Desktop 技术试验不得反向要求重写已完成的主要页面。
+
+---
+
 # 22. Current Summary
 
 当前阶段：
@@ -2072,7 +2103,7 @@ Technical Stack
 ✓ Accepted for V0.1
 
 Architecture Decisions
-✓ ADR-0001 through ADR-0016 accepted
+✓ ADR-0001 through ADR-0017 accepted
 
 Implementation
 ✓ M1 Project Foundation complete
@@ -2080,13 +2111,14 @@ Implementation
 ✓ M3 Java Source Analysis complete
 ✓ M4 Spring Boot Analysis complete
 ✓ M5 API & Dependency Analysis complete
-○ M6 Report Assembly & Serialization next
+✓ M6 Report Assembly & Serialization complete
+○ M7 Local Web UI next
 ```
 
 下一步：
 
-> 完成 T-0601 — Project Model Assembly。
+> 完成 T-0701 — Local UI Bootstrap & Minimal App Shell。
 
-M0 至 M5 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0 至 M6 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````

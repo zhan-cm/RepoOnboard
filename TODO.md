@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0701 — Local UI Bootstrap。**
+> **T-0701 — Local UI Bootstrap & Minimal App Shell。**
 
-M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
+M0 至 M6 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -246,7 +246,7 @@ V0.1 Release
 | M4 Spring Boot Analysis | M3 complete | Spring component, configuration, entry-point and injection facts | Supported annotations and injection patterns pass fixtures; T-0404 Mapper remains optional |
 | M5 API & Dependency Analysis | M4 required tasks complete | HTTP endpoint facts and confirmed typed component edges with evidence | Mapping/ambiguity fixtures pass; uncertain relationships remain unresolved |
 | M6 Report Assembly & Serialization | M5 complete | Stable AnalysisReport, identifiers, summary and versioned JSON | Deterministic snapshot and compatibility tests pass |
-| M7 Local Web UI | M6 complete | Local read-only UI for Overview, Modules, Architecture and APIs | Browser flow, evidence display, loopback server and local security checks pass |
+| M7 Local Web UI | M6 complete | Host-independent local read-only UI with a unified product shell for Overview, Modules, Architecture and APIs | Browser flow, visual system, evidence display, loopback server and local security checks pass |
 | M8 Start Here | M7 complete | Explainable reading guide and UI | Stable heuristic fixtures and explanation checks pass |
 | M9 Regression & Real Repository Validation | M8 complete | Audited fixture suite plus small/medium/large repository findings | Regression suite passes; real-repository accuracy, limits and onboarding results recorded |
 | M10 Release Preparation | M9 complete | Installable V0.1 release candidate, documentation and demo | Cross-platform smoke checks, license, cleanup and release checklist pass |
@@ -1650,20 +1650,22 @@ Status:
 
 Boundary:
 
-> 只读取 M6 AnalysisReport，在 loopback 本地服务中展示四个核心信息视图；不重新分析仓库或提供任意文件服务。
+> 只读取 M6 AnalysisReport，在 loopback 本地服务中展示核心信息视图；前端不重新分析仓库、不直接访问本地文件系统，服务不提供任意文件读取。页面保持宿主无关，但不为 V0.2 提前引入 Desktop runtime 或无调用方的抽象。
 
 Exit Criteria:
 
 ```text
+[ ] 最小 App Shell 与统一视觉系统已建立
 [ ] Overview、Module、Architecture、API 和 Evidence 浏览流程可用
 [ ] Architecture 默认使用筛选/邻域并有列表回退
 [ ] 服务绑定 loopback，路径/内容注入/关闭流程测试通过
 [ ] 前端资源随离线 JAR 构建产物提供，无运行时 CDN
+[ ] 所有用户可见事实来自 AnalysisReport 或明确派生值，缺失数据不伪造
 ```
 
 ---
 
-## T-0701 — Local UI Bootstrap
+## T-0701 — Local UI Bootstrap & Minimal App Shell
 
 Status:
 
@@ -1679,6 +1681,32 @@ repoonboard .
 
 之后打开本地页面的完整路径。
 
+Scope:
+
+```text
+CLI analysis
+    ↓
+AnalysisReport
+    ↓
+loopback read-only service
+    ↓
+Vue application bootstrap
+    ↓
+minimal App Shell
+```
+
+最小 App Shell 只包含：
+
+```text
+Application frame
+Navigation placeholders
+Repository context
+Content outlet
+Basic loading / error fallback
+```
+
+不在此任务中完成正式 Design System、Overview 内容或 Desktop host integration。
+
 Acceptance Criteria:
 
 ```text
@@ -1687,11 +1715,14 @@ Acceptance Criteria:
 [ ] 默认不需要账号或外部服务器
 [ ] JDK HttpServer 仅绑定 127.0.0.1 并使用只读固定路由
 [ ] --no-open、端口占用、浏览器打开失败和 Ctrl+C 关闭行为明确
+[ ] 最小 App Shell 可显示仓库上下文与报告加载/错误状态
+[ ] production frontend build 可由 Java 应用加载
+[ ] UI 不直接访问文件系统，不存在 Tauri、Electron 或其他 Desktop-specific dependency
 ```
 
 ---
 
-## T-0702 — Overview Page
+## T-0702 — Visual System & Product Shell
 
 Status:
 
@@ -1699,27 +1730,78 @@ Status:
 [ ]
 ```
 
-展示：
+正式建立后续所有页面共用的视觉系统和产品 Shell。
+
+Scope:
 
 ```text
-Project
-Language
-Framework
-Java Version
-Spring Boot Version
-Modules
-Components
-Endpoints
-Entry Point
+Design tokens
+Typography
+Color
+Spacing
+Border and radius
+Sidebar and page layout
+Context header
+Inspector foundation
+Loading / empty / error patterns
+Keyboard focus and basic accessibility
+Desktop-ready viewport behavior
 ```
+
+不在此任务中实现 Overview 或其他业务页面。
+
+Acceptance Criteria:
+
+```text
+[ ] Design tokens 集中定义，页面不自建竞争的视觉体系
+[ ] Sidebar、Context Header、Page Layout 和 Inspector 基础结构可复用
+[ ] loading、empty、error 使用统一组件和文案层级
+[ ] 键盘焦点、对比度和常用尺寸通过自动化/人工验收
+[ ] 在普通浏览器和桌面应用尺寸的 viewport 下布局稳定
+[ ] 不引入 Desktop runtime 或与 Vue/Vite/Cytoscape.js ADR 冲突的技术栈
+```
+
+---
+
+## T-0703 — Repository Overview
+
+Status:
+
+```text
+[ ]
+```
+
+展示当前 AnalysisReport 可支持的真实结果：
+
+```text
+Repository identity
+Build system
+Detected languages and frameworks
+Module and source-root summary
+Component statistics
+Endpoint and dependency statistics
+Application entry points
+Analysis status and warnings
+```
+
+版本、运行时或其他字段只有在公共报告提供明确事实与 Evidence 时才展示；前端不从名称、路径或文案自行猜测。
 
 目标：
 
 > 用户 30 秒内知道项目基本情况。
 
+Acceptance Criteria:
+
+```text
+[ ] 页面使用 T-0702 的视觉系统
+[ ] 所有字段可映射到 AnalysisReport 或可重现的派生规则
+[ ] SUCCESS、PARTIAL 和 FAILED 状态与覆盖限制清晰展示
+[ ] 空值显示为明确未知/不可用，不生成伪造值
+```
+
 ---
 
-## T-0703 — Module View
+## T-0704 — Module Explorer
 
 Status:
 
@@ -1733,11 +1815,16 @@ Status:
 Module Hierarchy
 Module Components
 Module Statistics
+Module Metadata
+Source Roots
+Inter-module Dependencies
 ```
+
+如果公共报告尚不包含显式父子身份或内部模块依赖，应先在本任务内以可测试的模型变更补齐，不得由 UI 根据路径或坐标猜测。
 
 ---
 
-## T-0704 — Architecture View
+## T-0705 — Architecture Workspace
 
 Status:
 
@@ -1761,6 +1848,8 @@ Component
 
 > 可读性优先于节点数量。
 
+支持基础 zoom、pan、fit view、node/edge selection、Inspector 和 Source Evidence。复杂探索与筛选留给 T-0706。
+
 Acceptance Criteria:
 
 ```text
@@ -1771,7 +1860,7 @@ Acceptance Criteria:
 
 ---
 
-## T-0705 — Architecture Filtering
+## T-0706 — Architecture Exploration & Filtering
 
 Status:
 
@@ -1784,6 +1873,10 @@ Status:
 ```text
 By Module
 By Component Type
+By Relationship Type
+Search Node
+Selected-node Neighborhood
+Reset / Focus / Fit Selection
 ```
 
 防止大项目直接生成“毛线球”。
@@ -1798,7 +1891,7 @@ Acceptance Criteria:
 
 ---
 
-## T-0706 — API Map
+## T-0707 — API Map
 
 Status:
 
@@ -1828,7 +1921,7 @@ Acceptance Criteria:
 
 ---
 
-## T-0707 — Source Navigation Information
+## T-0708 — Source Navigation
 
 Status:
 
@@ -1845,7 +1938,7 @@ Module
 Related Components
 ```
 
-V0.1 不要求直接集成 IDE。
+V0.1 不要求直接集成 IDE。支持安全复制 path 和 symbol；如首次出现宿主操作需求，只为实际调用方建立最小 `SourceNavigationHost` 边界。
 
 Acceptance Criteria:
 
@@ -1853,11 +1946,12 @@ Acceptance Criteria:
 [ ] 位置使用扫描根相对路径和 1-based 行列
 [ ] 未知位置不显示伪造的 0 行
 [ ] Source/Diagnostic 内容以文本方式安全渲染
+[ ] Copy Path / Copy Symbol 在可用时工作，不可用时有明确回退
 ```
 
 ---
 
-## T-0708 — Local Web Boundary and Packaged UI Validation
+## T-0709 — Local Web Boundary and Packaged UI Validation
 
 Status:
 
@@ -1877,6 +1971,8 @@ Acceptance Criteria:
 [ ] 恶意项目名、路径和诊断文本不会执行为页面内容
 [ ] 生产前端资源从 JAR 离线加载并与 schemaVersion 匹配
 [ ] 服务关闭后端口和资源释放
+[ ] UI 不依赖浏览器地址栏，不直接访问 filesystem，不包含 Desktop-specific dependency
+[ ] 在桌面应用尺寸的 viewport 下主要布局可用
 ```
 
 ---
@@ -2591,6 +2687,12 @@ Cloud Service
 Team Workspace
 
 User Accounts
+
+Desktop Application
+
+Native Installer
+
+Bundled Java Runtime
 ```
 
 这些功能只有在：
@@ -2611,7 +2713,10 @@ V0.1 核心价值被验证
 
 ```text
 V0.2
-Improve Java / Spring analysis
+Desktop Application technical spike and Windows-first packaging
+
+V0.2+
+Improve Java / Spring analysis based on V0.1 validation
 
 V0.3
 Gradle support
@@ -2863,7 +2968,7 @@ Remaining Issues:
 
 ```text
 T-0701
-Local UI Bootstrap
+Local UI Bootstrap & Minimal App Shell
 ```
 
 本阶段：
@@ -2913,6 +3018,6 @@ Release
 
 Next:
 
-> **T-0701 — Local UI Bootstrap.**
+> **T-0701 — Local UI Bootstrap & Minimal App Shell.**
 
 ````

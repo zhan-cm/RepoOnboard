@@ -640,6 +640,15 @@ RepoOnboard 为什么得出这个结论。
 
 分析结果通过本地 Web UI 展示。
 
+V0.1 采用 **Web-first, Desktop-ready** 的实现边界：
+
+- 主要产品页面作为与宿主无关的 Web 前端实现，具体技术栈由 `DECISIONS.md` 约束。
+- 前端页面不直接访问本地文件系统，不依赖浏览器地址栏完成主要工作流。
+- 需要宿主能力时，在首个真实调用方出现时建立最小、可替换的前端适配边界，不提前建立未使用的 Desktop API。
+- Repository Analysis 和受控文件访问仍属于 Java Application / Core 的责任。
+
+V0.1 的产品交付仍是本地 Web UI、可执行 JAR 和启动脚本。Desktop Application、原生安装器与自带 Java Runtime 属于 V0.2 候选范围，应在 V0.1 产品价值经真实仓库和首次发布验证后再通过技术试验决定桌面容器。
+
 V0.1 至少包含：
 
 ### Overview
@@ -1004,6 +1013,9 @@ V0.1 明确不做：
 - SaaS
 - VS Code Extension
 - JetBrains Plugin
+- Desktop Application
+- Native Installer
+- Bundled Java Runtime
 
 除非 PROJECT.md 被明确修改，否则 Work / Codex 不应擅自将这些功能加入 V0.1。
 
@@ -1115,6 +1127,10 @@ Model Clearly
 Present Clearly
 ↓
 Validate on Real Repositories
+↓
+Release Web-first V0.1
+↓
+Evaluate Desktop Application
 ↓
 Increase Analysis Depth
 ↓
@@ -1243,29 +1259,9 @@ PROJECT.md 不记录具体短期实现任务。
 
 RepoOnboard 当前处于：
 
-Technical Architecture Design
+> **M7 — Local Web UI**
 
-目前不应立即开始完整产品实现。
-
-下一阶段首先确定：
-
-- Java Version
-- Build Tool Strategy
-- CLI Architecture
-- Maven Parsing Strategy
-- Java AST Strategy
-- Symbol Resolution Strategy
-- Generic Project Model
-- Dependency Graph Model
-- Spring Boot Analyzer Boundary
-- Serialization Format
-- Local Web UI Architecture
-- Graph Visualization Strategy
-- Testing Strategy
-- Fixture Strategy
-- V0.1 Milestones
-
-技术方案经过确认以后，再进入正式编码阶段。
+M0 至 M6 已完成，当前下一任务是 **T-0701 — Local UI Bootstrap & Minimal App Shell**。该任务只建立 CLI 分析、loopback 本地服务、报告读取、浏览器打开与最小 App Shell 的闭环；完整视觉系统属于 T-0702。
 
 ## 35. Project Direction Summary
 

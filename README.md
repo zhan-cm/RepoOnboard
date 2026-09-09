@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Report Assembly & Serialization Next**
+> **Status: Early Development / Local Web UI Next**
 >
-> Maven analysis, Java source facts, Spring components, configurations, Boot application entry points, HTTP endpoints, and component dependencies are available. Stable report assembly and JSON serialization are next; the first usable release is not available yet.
+> Maven, Java, Spring, API, and component-dependency analysis are available. Stable `AnalysisReport` assembly, identifiers, derived summaries, and versioned JSON serialization are complete. The next milestone is the local Web UI; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -153,7 +153,7 @@ M2  Maven Analysis                         ✓
 M3  Java Source Analysis                   ✓
 M4  Spring Boot Analysis                  ✓
 M5  API & Dependency Analysis             ✓
-M6  Report Assembly & Serialization
+M6  Report Assembly & Serialization          ✓
 M7  Local Web UI
 M8  Start Here
 M9  Regression & Real Repository Validation
@@ -161,6 +161,8 @@ M10 Release Preparation
 ```
 
 Detailed tasks and acceptance criteria are maintained in [TODO.md](./TODO.md).
+
+V0.1 remains Web-first: it will ship as an executable JAR with Windows and POSIX launcher scripts. The Vue UI is kept host-independent so it can be reused later, but a native desktop shell, installer, and bundled Java runtime are deferred to a V0.2 technical spike rather than blocking the first release.
 
 ## Development Build
 
@@ -182,7 +184,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable reports, JSON output, and the Web UI are still under development.
+The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.1` JSON serialization are implemented; connecting that report pipeline to the CLI and local Web UI is next.
 
 ## Documentation
 
