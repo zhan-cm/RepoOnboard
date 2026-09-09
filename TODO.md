@@ -1340,8 +1340,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 将类级与方法级 mapping facts 做笛卡尔路径组合，并按 Spring method 条件求交集，生成带 Controller、handler、条件、方法位置及两级 Evidence 的 endpoint facts；无 method 限制显式表示为 `ANY`，未知路径与 method 分别保留未解析状态。
+
+Validation: Java 21 `test` 共 103 项通过；固定 API fixture 与新增 endpoint 测试覆盖多级多路径、GET/POST/ANY、路径规范化、未知路径、条件合并以及同路径不同条件 handler。
 
 正确组合：
 
@@ -1364,14 +1370,14 @@ Method Mapping
 Acceptance Criteria:
 
 ```text
-[ ] HTTP method 正确
-[ ] Path 正确
-[ ] Controller 正确
-[ ] Handler method 正确
-[ ] Source Location 正确
-[ ] 无 method 限制的 RequestMapping 表示为 ANY
-[ ] 无法解析的表达式表示为 unresolvedPath
-[ ] params / headers / consumes / produces 可区分同路径 handler
+[x] HTTP method 正确
+[x] Path 正确
+[x] Controller 正确
+[x] Handler method 正确
+[x] Source Location 正确
+[x] 无 method 限制的 RequestMapping 表示为 ANY
+[x] 无法解析的表达式表示为 unresolvedPath
+[x] params / headers / consumes / produces 可区分同路径 handler
 ```
 
 ---

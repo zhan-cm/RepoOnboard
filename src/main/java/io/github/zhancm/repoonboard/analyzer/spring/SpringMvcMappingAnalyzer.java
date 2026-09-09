@@ -157,6 +157,7 @@ public final class SpringMvcMappingAnalyzer {
                 pathValues.values(),
                 pathValues.unresolved(),
                 conditions,
+                declarationLocation,
                 annotation.location(),
                 List.of(new Evidence(
                         level == SpringMappingLevel.TYPE
