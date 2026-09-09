@@ -11,6 +11,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.AnnotationDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -172,6 +173,7 @@ public final class JavaSourceParser {
                 .orElseGet(() -> packageName.isEmpty() ? simpleName : packageName + "." + simpleName);
 
         List<JavaFieldFact> fields = new ArrayList<>();
+        List<JavaConstructorFact> constructors = new ArrayList<>();
         List<JavaMethodFact> methods = new ArrayList<>();
         for (BodyDeclaration<?> member : declaration.getMembers()) {
             if (member instanceof FieldDeclaration field) {
@@ -179,8 +181,24 @@ public final class JavaSourceParser {
                 field.getVariables().forEach(variable -> fields.add(new JavaFieldFact(
                         variable.getNameAsString(),
                         variable.getType().toString(),
+                        field.getModifiers().stream()
+                                .map(modifier -> modifier.getKeyword().asString())
+                                .toList(),
                         annotations,
-                        location(sourceFile, variable, qualifiedName + "#" + variable.getNameAsString()))));
+                        location(sourceFile, field, qualifiedName + "#" + variable.getNameAsString()))));
+            } else if (member instanceof ConstructorDeclaration constructor) {
+                List<JavaParameterFact> parameters = constructor.getParameters().stream()
+                        .map(parameter -> new JavaParameterFact(
+                                parameter.getNameAsString(),
+                                parameter.getType().toString(),
+                                location(sourceFile, parameter,
+                                        qualifiedName + "#<init>:" + parameter.getNameAsString())))
+                        .toList();
+                constructors.add(new JavaConstructorFact(
+                        constructor.getNameAsString(),
+                        parameters,
+                        annotations(sourceFile, constructor),
+                        location(sourceFile, constructor, qualifiedName + "#<init>")));
             } else if (member instanceof MethodDeclaration method) {
                 List<JavaParameterFact> parameters = method.getParameters().stream()
                         .map(parameter -> new JavaParameterFact(
@@ -197,6 +215,8 @@ public final class JavaSourceParser {
             }
         }
         fields.sort(Comparator.comparingInt(field -> field.location().startLine().orElse(Integer.MAX_VALUE)));
+        constructors.sort(Comparator.comparingInt(
+                constructor -> constructor.location().startLine().orElse(Integer.MAX_VALUE)));
         methods.sort(Comparator.comparingInt(method -> method.location().startLine().orElse(Integer.MAX_VALUE)));
         types.add(new JavaTypeFact(
                 simpleName,
@@ -205,6 +225,7 @@ public final class JavaSourceParser {
                 kind(declaration),
                 annotations(sourceFile, declaration),
                 fields,
+                constructors,
                 methods,
                 location(sourceFile, declaration, qualifiedName)));
 

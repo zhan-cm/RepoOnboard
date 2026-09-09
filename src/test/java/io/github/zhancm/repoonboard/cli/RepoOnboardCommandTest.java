@@ -37,7 +37,18 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Spring components: 0"));
         assertTrue(result.out().contains("Spring configurations: 0"));
         assertTrue(result.out().contains("Spring application entry points: 0"));
+        assertTrue(result.out().contains("Spring injection candidates: 0"));
         assertTrue(result.err().isEmpty());
+    }
+
+    @Test
+    void reportsConfirmedAndAmbiguousInjectionCandidates() {
+        CliResult result = execute(FixturePaths.project("spring-injection-project").toString());
+
+        assertEquals(3, result.exitCode());
+        assertTrue(result.out().contains("Spring injection candidates: 5 (confirmed: 3, ambiguous: 2)"));
+        assertTrue(result.err().contains("SPRING_CONSTRUCTOR_INJECTION_AMBIGUOUS"));
+        assertTrue(result.err().contains("SPRING_METHOD_INJECTION_UNSUPPORTED"));
     }
 
     @Test

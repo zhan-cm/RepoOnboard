@@ -8,12 +8,14 @@ import java.util.Objects;
 public record JavaFieldFact(
         String name,
         String type,
+        List<String> modifiers,
         List<JavaAnnotationFact> annotations,
         SourceLocation location) {
 
     public JavaFieldFact {
         name = requireText(name, "name");
         type = requireText(type, "type");
+        modifiers = List.copyOf(Objects.requireNonNull(modifiers, "modifiers"));
         annotations = List.copyOf(Objects.requireNonNull(annotations, "annotations"));
         location = Objects.requireNonNull(location, "location");
     }
