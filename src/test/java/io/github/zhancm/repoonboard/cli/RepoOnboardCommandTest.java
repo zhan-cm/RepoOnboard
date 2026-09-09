@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import io.github.zhancm.repoonboard.testing.FixturePaths;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
@@ -33,7 +34,21 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Java declarations:"));
         assertTrue(result.out().contains("Java declaration index:"));
         assertTrue(result.out().contains("Java type references:"));
+        assertTrue(result.out().contains("Spring components: 0"));
         assertTrue(result.err().isEmpty());
+    }
+
+    @Test
+    void reportsSpringComponentKindsFromFixture() {
+        CliResult result = execute(FixturePaths.project("spring-analysis-project").toString());
+
+        assertEquals(0, result.exitCode());
+        assertTrue(result.out().contains("Spring components: 6"));
+        assertTrue(result.out().contains("CONTROLLER: 1"));
+        assertTrue(result.out().contains("REST_CONTROLLER: 1"));
+        assertTrue(result.out().contains("SERVICE: 1"));
+        assertTrue(result.out().contains("REPOSITORY: 1"));
+        assertTrue(result.out().contains("COMPONENT: 2"));
     }
 
     @Test

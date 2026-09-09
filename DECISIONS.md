@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **Spring Boot Analysis — ready to start**
+> **Spring Boot Analysis — in progress**
 
-M0 至 M3 已完成。JavaParser 3.28.2 已转换为项目自有源码 facts；模块感知声明索引保留同名/重复候选和源码证据，类型引用只在明确 Maven 可见范围内解析。当前下一任务是 T-0401 Spring Component Detection。
+M0 至 M3 已完成，M4 已开始。标准 Spring stereotype 已通过确认的全限定名/import 映射为带名称与源码证据的组件 facts，歧义不会被猜测。当前下一任务是 T-0402 Configuration and Application Entry Point Detection。
 
 ---
 
@@ -2078,12 +2078,12 @@ Implementation
 ✓ M1 Project Foundation complete
 ✓ M2 Maven Project Analysis complete
 ✓ M3 Java Source Analysis complete
-○ M4 Spring Boot Analysis not started
+◐ M4 Spring Boot Analysis in progress
 ```
 
 下一步：
 
-> 完成 T-0401 — Spring Component Detection。
+> 完成 T-0402 — Configuration and Application Entry Point Detection。
 
 M0、M1、M2、M3 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 

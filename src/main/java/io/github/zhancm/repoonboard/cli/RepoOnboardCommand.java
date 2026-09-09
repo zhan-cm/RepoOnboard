@@ -14,6 +14,8 @@ import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
 import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentKind;
 import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -94,6 +96,7 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             var declarationIndex = JavaDeclarationIndex.build(javaParse);
             var javaFacts = new JavaTypeReferenceResolver().resolve(
                     javaParse, analysis, declarationIndex);
+            var springComponents = new SpringComponentAnalyzer().analyze(javaFacts);
             commandSpec.commandLine().getOut()
                     .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
             for (var sourceRoot : sourceRoots.sourceRoots()) {
@@ -122,8 +125,19 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     "Java type references: %d (project-local resolved: %d)%n",
                     referenceCount,
                     resolvedReferenceCount);
+            commandSpec.commandLine().getOut()
+                    .printf("Spring components: %d%n", springComponents.components().size());
+            for (SpringComponentKind kind : SpringComponentKind.values()) {
+                long count = springComponents.components().stream()
+                        .filter(component -> component.kind() == kind)
+                        .count();
+                if (count > 0) {
+                    commandSpec.commandLine().getOut().printf("  %s: %d%n", kind, count);
+                }
+            }
             AnalysisStatus status = combine(
-                    analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status());
+                    analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status(),
+                    springComponents.status());
             commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
             for (var diagnostic : analysis.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
@@ -137,7 +151,11 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
-            for (var diagnostic : javaParse.diagnostics()) {
+            for (var diagnostic : javaFacts.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            for (var diagnostic : springComponents.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
