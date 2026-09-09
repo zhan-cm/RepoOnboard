@@ -17,6 +17,7 @@ public record SpringMappingFact(
         List<String> paths,
         boolean unresolvedPath,
         SpringMappingConditions conditions,
+        SourceLocation declarationLocation,
         SourceLocation location,
         List<Evidence> evidence) {
 
@@ -35,6 +36,7 @@ public record SpringMappingFact(
             throw new IllegalArgumentException("Resolved mapping requires at least one path");
         }
         conditions = Objects.requireNonNull(conditions, "conditions");
+        declarationLocation = Objects.requireNonNull(declarationLocation, "declarationLocation");
         location = Objects.requireNonNull(location, "location");
         evidence = List.copyOf(Objects.requireNonNull(evidence, "evidence"));
         if (evidence.isEmpty()) {

@@ -33,7 +33,7 @@ class SpringMvcMappingAnalyzerTest {
         SpringMappingAnalysis analysis = new SpringMvcMappingAnalyzer().analyze(javaFacts, components);
 
         assertEquals(AnalysisStatus.PARTIAL, analysis.status());
-        assertEquals(5, analysis.mappings().size());
+        assertEquals(8, analysis.mappings().size());
         SpringMappingFact typeMapping = analysis.mappings().stream()
                 .filter(mapping -> mapping.level() == SpringMappingLevel.TYPE)
                 .findFirst()
@@ -54,6 +54,8 @@ class SpringMvcMappingAnalyzerTest {
         assertEquals(List.of(SpringHttpMethod.GET, SpringHttpMethod.POST), search.httpMethods());
         assertEquals(List.of("application/json"), search.conditions().consumes());
         assertFalse(search.unresolvedMethod());
+
+        assertEquals(List.of(SpringHttpMethod.ANY), mapping(analysis, "anyMethod").httpMethods());
 
         assertTrue(mapping(analysis, "unresolvedPath").unresolvedPath());
         assertTrue(mapping(analysis, "unresolvedCondition").conditions().unresolved());

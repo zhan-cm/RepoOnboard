@@ -20,6 +20,7 @@ import io.github.zhancm.repoonboard.analyzer.spring.SpringConfigurationAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionStatus;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringMvcMappingAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointAnalyzer;
 import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -106,6 +107,7 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     javaFacts, springComponents, springConfiguration);
             var springMappings = new SpringMvcMappingAnalyzer().analyze(
                     javaFacts, springComponents);
+            var springEndpoints = new SpringEndpointAnalyzer().analyze(springMappings);
             commandSpec.commandLine().getOut()
                     .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
             for (var sourceRoot : sourceRoots.sourceRoots()) {
@@ -159,10 +161,17 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     springInjection.candidates().size(), confirmedInjections, ambiguousInjections);
             commandSpec.commandLine().getOut().printf(
                     "Spring MVC mapping declarations: %d%n", springMappings.mappings().size());
+            long unresolvedEndpoints = springEndpoints.endpoints().stream()
+                    .filter(endpoint -> endpoint.unresolvedPath()
+                            || endpoint.httpMethod() == io.github.zhancm.repoonboard.analyzer.spring.SpringHttpMethod.UNRESOLVED)
+                    .count();
+            commandSpec.commandLine().getOut().printf(
+                    "Spring HTTP endpoints: %d (unresolved: %d)%n",
+                    springEndpoints.endpoints().size(), unresolvedEndpoints);
             AnalysisStatus status = combine(
                     analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status(),
                     springComponents.status(), springConfiguration.status(), springInjection.status(),
-                    springMappings.status());
+                    springMappings.status(), springEndpoints.status());
             commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
             for (var diagnostic : analysis.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
@@ -193,6 +202,10 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
             for (var diagnostic : springMappings.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            for (var diagnostic : springEndpoints.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }

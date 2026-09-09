@@ -22,6 +22,18 @@ public class UserController {
         return "";
     }
 
+    @RequestMapping("/any")
+    public void anyMethod() {
+    }
+
+    @GetMapping(path = "/filtered", params = "state=active")
+    public void filteredActive() {
+    }
+
+    @GetMapping(path = "/filtered", params = "state=inactive")
+    public void filteredInactive() {
+    }
+
     @DeleteMapping(PATH_PREFIX)
     public void unresolvedPath() {
     }

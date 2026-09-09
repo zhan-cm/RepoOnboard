@@ -39,6 +39,7 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Spring application entry points: 0"));
         assertTrue(result.out().contains("Spring injection candidates: 0"));
         assertTrue(result.out().contains("Spring MVC mapping declarations: 0"));
+        assertTrue(result.out().contains("Spring HTTP endpoints: 0 (unresolved: 0)"));
         assertTrue(result.err().isEmpty());
     }
 
@@ -47,7 +48,8 @@ class RepoOnboardCommandTest {
         CliResult result = execute(FixturePaths.project("spring-api-project").toString());
 
         assertEquals(3, result.exitCode());
-        assertTrue(result.out().contains("Spring MVC mapping declarations: 5"));
+        assertTrue(result.out().contains("Spring MVC mapping declarations: 8"));
+        assertTrue(result.out().contains("Spring HTTP endpoints: 17 (unresolved: 1)"));
         assertTrue(result.err().contains("SPRING_MVC_PATH_UNRESOLVED"));
         assertTrue(result.err().contains("SPRING_MVC_CONDITION_UNRESOLVED"));
     }
