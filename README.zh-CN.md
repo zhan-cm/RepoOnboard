@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / Java 源码分析阶段**
 >
-> Maven 分析、Spring Boot 构建识别和 Java 源码根发现已经可用。下一步是 Java 文件发现，首个可用版本尚未发布。
+> Maven 分析、Spring Boot 构建识别和带模块归属的 Java 源文件发现已经可用。下一步是基础 Java AST 解析，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -74,7 +74,7 @@ cd unfamiliar-project
 repoonboard .
 ```
 
-当前阶段，该命令会检测根目录的 `pom.xml`，显示解析后的坐标，并输出模块层级、源码目录和依赖。每条依赖保留 groupId、artifactId、version、scope、原始/解析值与字段来源位置。支持可用 parent 或导入 BOM 提供的版本和 scope；缺失版本保留未知状态并产生诊断。仅包含声明、继承及激活 profile 的依赖，不下载构件或计算传递依赖图。未使用的 dependencyManagement 条目不会列为项目依赖。
+当前阶段，该命令会检测根目录的 `pom.xml`，显示解析后的坐标，并输出模块层级、源码目录、发现的 Java 源码根/文件和依赖。每条依赖保留 groupId、artifactId、version、scope、原始/解析值与字段来源位置。支持可用 parent 或导入 BOM 提供的版本和 scope；缺失版本保留未知状态并产生诊断。仅包含声明、继承及激活 profile 的依赖，不下载构件或计算传递依赖图。未使用的 dependencyManagement 条目不会列为项目依赖。
 
 模块聚合与 parent 继承分别记录，支持嵌套模块与激活 profile 中的模块。模块路径与 `build.sourceDirectory` 必须解析在扫描根内；源码目录可尚未存在。模块缺失、损坏、越界、重复或循环时生成诊断，并继续处理其他模块。默认 Java 源码目录为各模块下的 `src/main/java`；自定义目录保留声明值和解析值，供后续源码分析使用。
 
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供早期 Maven 仓库分析流程。Java 源码、Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
+当前 CLI 已提供早期 Maven 仓库分析和 Java 源文件发现流程。Java AST、Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
 
 ## 项目文档
 

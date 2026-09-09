@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Java Source Analysis — ready to start**
 
-M0 至 M2 已完成，M3 已开始。Java 主源码根发现已实现，保留模块归属、扫描根相对路径和构建声明证据，并排除构建与生成输出。当前下一任务是 T-0302 Java File Discovery。
+M0 至 M2 已完成，M3 已开始。Java 主源码根与源码文件发现已实现，保留模块归属、扫描根相对路径和构建声明证据，并排除构建与生成输出；归属歧义不会被静默猜测。当前下一任务是 T-0303 Basic AST Parsing。
 
 ---
 
@@ -2082,7 +2082,7 @@ Implementation
 
 下一步：
 
-> 完成 T-0302 — Java File Discovery。
+> 完成 T-0303 — Basic AST Parsing。
 
 M0、M1、M2 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 

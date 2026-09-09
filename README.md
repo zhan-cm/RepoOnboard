@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Java Source Analysis**
 >
-> Maven analysis, Spring Boot build detection, and Java source-root discovery are available. Java file discovery is next; the first usable release is not available yet.
+> Maven analysis, Spring Boot build detection, and module-owned Java source-file discovery are available. Basic Java AST parsing is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -74,7 +74,7 @@ cd unfamiliar-project
 repoonboard .
 ```
 
-At the current stage, this command detects a root `pom.xml`, displays its resolved coordinates, and prints the module hierarchy, source directories, and dependencies. Each dependency retains groupId, artifactId, version, scope, raw/resolved values, and field source locations. Versions and scopes supplied by available parents or imported BOMs are supported; missing versions remain unknown with diagnostics. Only declared/inherited dependencies and active profiles are included, without downloading artifacts or computing a transitive graph. Unused dependencyManagement entries are not listed as dependencies.
+At the current stage, this command detects a root `pom.xml`, displays its resolved coordinates, and prints the module hierarchy, source directories, discovered Java source roots/files, and dependencies. Each dependency retains groupId, artifactId, version, scope, raw/resolved values, and field source locations. Versions and scopes supplied by available parents or imported BOMs are supported; missing versions remain unknown with diagnostics. Only declared/inherited dependencies and active profiles are included, without downloading artifacts or computing a transitive graph. Unused dependencyManagement entries are not listed as dependencies.
 
 Module aggregation and parent inheritance are recorded separately. Nested and active-profile modules are supported. Module paths and `build.sourceDirectory` resolve inside the scan root; source directories need not exist yet. Missing, malformed, escaping, duplicate, or cyclic modules produce diagnostics while other modules continue. The default Java source directory is `src/main/java` relative to each module; declared and resolved custom values remain available for source analysis.
 
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides an early Maven repository analysis workflow. Java source, Spring component, API, dependency-graph, and Web UI analysis are still under development.
+The current CLI provides an early Maven repository analysis and Java source-file discovery workflow. Java AST, Spring component, API, dependency-graph, and Web UI analysis are still under development.
 
 ## Documentation
 

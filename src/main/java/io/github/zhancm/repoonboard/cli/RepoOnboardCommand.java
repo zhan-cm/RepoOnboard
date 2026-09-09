@@ -1,5 +1,7 @@
 package io.github.zhancm.repoonboard.cli;
 
+import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetection;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenMetadataValue;
@@ -7,6 +9,7 @@ import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectMetadata;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
+import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
 import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -81,12 +84,31 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                 commandSpec.commandLine().getOut().println("Maven modules:");
                 printModule(root, 0);
             });
-            commandSpec.commandLine().getOut().printf("Analysis status: %s%n", analysis.status());
+            var sourceRoots = new JavaSourceRootDiscoverer().discover(resolvedTarget, analysis);
+            var javaFiles = new JavaFileDiscoverer().discover(resolvedTarget, sourceRoots);
+            commandSpec.commandLine().getOut()
+                    .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
+            for (var sourceRoot : sourceRoots.sourceRoots()) {
+                commandSpec.commandLine().getOut().printf("  %s (%s)%n",
+                        sourceRoot.relativePath(), sourceRoot.modulePomFileId());
+            }
+            commandSpec.commandLine().getOut().printf("Java source files: %d%n", javaFiles.files().size());
+            AnalysisStatus status = combine(
+                    analysis.status(), sourceRoots.status(), javaFiles.status());
+            commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
             for (var diagnostic : analysis.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
-            return switch (analysis.status()) {
+            for (var diagnostic : sourceRoots.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            for (var diagnostic : javaFiles.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            return switch (status) {
                 case SUCCESS -> CommandLine.ExitCode.OK;
                 case PARTIAL -> 3;
                 case FAILED -> CommandLine.ExitCode.SOFTWARE;
@@ -134,5 +156,18 @@ public final class RepoOnboardCommand implements Callable<Integer> {
     private static String display(MavenMetadataValue value) {
         return value.resolvedValue().orElseGet(
                 () -> value.rawValue().map(raw -> raw + " (unresolved)").orElse("<unknown>"));
+    }
+
+    private static AnalysisStatus combine(AnalysisStatus... statuses) {
+        AnalysisStatus result = AnalysisStatus.SUCCESS;
+        for (AnalysisStatus status : statuses) {
+            if (status == AnalysisStatus.FAILED) {
+                return AnalysisStatus.FAILED;
+            }
+            if (status == AnalysisStatus.PARTIAL) {
+                result = AnalysisStatus.PARTIAL;
+            }
+        }
+        return result;
     }
 }
