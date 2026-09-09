@@ -32,6 +32,7 @@ Before starting any task, read the following files in this order:
 1. `PROJECT.md`
 2. `DECISIONS.md`
 3. `TODO.md`
+4. `STATE.md`
 
 Read `README.md` when the task affects:
 
@@ -116,6 +117,19 @@ T-0201
 ```
 
 work only on that task unless explicitly instructed otherwise.
+
+---
+
+### STATE.md
+
+Describes the repository's current consolidated state, including:
+
+* completed capabilities
+* current architecture
+* known limitations
+* current and next tasks
+
+Maintain it as a current snapshot, not an append-only development log. If `STATE.md` conflicts with verified current code, use the code evidence and correct `STATE.md` as part of the assigned task.
 
 ---
 
@@ -1215,21 +1229,19 @@ TODO updated when appropriate
 
 ## 43. Current Project Stage
 
-At the time this file is introduced, RepoOnboard is in:
+RepoOnboard is currently in:
 
-> Technical Architecture Design
+> M7 — Local Web UI
 
-If `TODO.md` still shows:
+The current next task is:
 
 ```text
-T-0001 — Complete Technical Architecture Proposal
+T-0701 — Local UI Bootstrap & Minimal App Shell
 ```
 
-as the current task:
+T-0701 establishes only the CLI-to-loopback-UI runtime closure and a minimal App Shell. The formal visual system belongs to T-0702. Desktop packaging is deferred beyond V0.1; do not introduce Tauri, Electron, a native installer, or a bundled runtime during M7.
 
-> Do not begin full product implementation.
-
-Follow the current TODO state rather than assuming the repository is ready for coding.
+Always follow the current `TODO.md` and `STATE.md` if this snapshot becomes stale.
 
 ---
 
@@ -1241,14 +1253,15 @@ For every new task:
 1. Read PROJECT.md
 2. Read DECISIONS.md
 3. Read TODO.md
-4. Read relevant existing code
-5. Identify assigned task
-6. Check task acceptance criteria
-7. Implement only necessary changes
-8. Run relevant tests
-9. Verify acceptance criteria
-10. Update TODO.md if appropriate
-11. Return concise completion report
+4. Read AGENTS.md and STATE.md
+5. Read relevant existing code
+6. Identify assigned task
+7. Check task acceptance criteria
+8. Implement only necessary changes
+9. Run relevant tests
+10. Verify acceptance criteria
+11. Update TODO.md and STATE.md if appropriate
+12. Return concise completion report
 ```
 
 ---
