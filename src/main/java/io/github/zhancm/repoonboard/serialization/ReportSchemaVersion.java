@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 /** Major/minor version of the public analysis report JSON schema. */
 public record ReportSchemaVersion(int major, int minor) {
-    public static final ReportSchemaVersion CURRENT = new ReportSchemaVersion(1, 0);
+    public static final ReportSchemaVersion CURRENT = new ReportSchemaVersion(1, 1);
 
     private static final Pattern FORMAT = Pattern.compile("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)");
 

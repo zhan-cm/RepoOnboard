@@ -2,6 +2,7 @@ package io.github.zhancm.repoonboard.serialization;
 
 import io.github.zhancm.repoonboard.core.model.AnalysisReport;
 import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
+import io.github.zhancm.repoonboard.core.model.AnalysisSummary;
 import io.github.zhancm.repoonboard.core.model.BuildSystem;
 import io.github.zhancm.repoonboard.core.model.Component;
 import io.github.zhancm.repoonboard.core.model.ComponentKind;
@@ -29,6 +30,7 @@ import java.util.OptionalInt;
 public record ReportJsonDocument(
         String schemaVersion,
         ProjectDto project,
+        SummaryDto summary,
         List<ModuleDto> modules,
         List<SourceFileDto> sourceFiles,
         List<ComponentDto> components,
@@ -44,6 +46,7 @@ public record ReportJsonDocument(
         return new ReportJsonDocument(
                 ReportSchemaVersion.CURRENT.toString(),
                 ProjectDto.fromModel(report.project()),
+                SummaryDto.fromModel(report.summary()),
                 report.modules().stream().map(ModuleDto::fromModel).toList(),
                 report.sourceFiles().stream().map(SourceFileDto::fromModel).toList(),
                 report.components().stream().map(ComponentDto::fromModel).toList(),
@@ -56,7 +59,13 @@ public record ReportJsonDocument(
 
     /** Reconstructs the validated analyzer-neutral model. */
     public AnalysisReport toModel() {
-        return new AnalysisReport(
+        ReportSchemaVersion version = ReportSchemaVersion.parse(schemaVersion);
+        if (!version.isCompatibleWith(ReportSchemaVersion.CURRENT)) {
+            throw new UnsupportedReportSchemaVersionException(
+                    version,
+                    ReportSchemaVersion.CURRENT);
+        }
+        AnalysisReport report = new AnalysisReport(
                 Objects.requireNonNull(project, "project").toModel(),
                 requiredList(modules, "modules").stream().map(ModuleDto::toModel).toList(),
                 requiredList(sourceFiles, "sourceFiles").stream()
@@ -71,6 +80,14 @@ public record ReportJsonDocument(
                 enumValue(AnalysisStatus.class, status, "status"),
                 requiredList(diagnostics, "diagnostics").stream()
                         .map(DiagnosticDto::toModel).toList());
+        if (version.minor() >= 1) {
+            AnalysisSummary suppliedSummary = Objects.requireNonNull(summary, "summary").toModel();
+            if (!suppliedSummary.equals(report.summary())) {
+                throw new IllegalArgumentException(
+                        "summary must match counts derived from report entities");
+            }
+        }
+        return report;
     }
 
     public record ProjectDto(
@@ -93,6 +110,61 @@ public record ReportJsonDocument(
                     enumValue(BuildSystem.class, buildSystem, "project.buildSystem"),
                     requiredList(evidence, "project.evidence").stream()
                             .map(EvidenceDto::toModel).toList());
+        }
+    }
+
+    public record SummaryDto(
+            int moduleCount,
+            int sourceFileCount,
+            int componentCount,
+            int controllerCount,
+            int serviceCount,
+            int repositoryCount,
+            int configurationCount,
+            int endpointCount,
+            int entryPointCount,
+            int dependencyCount,
+            String analysisStatus,
+            boolean coverageLimited,
+            List<String> coverageLimitationCodes) {
+        static SummaryDto fromModel(AnalysisSummary summary) {
+            return new SummaryDto(
+                    summary.moduleCount(),
+                    summary.sourceFileCount(),
+                    summary.componentCount(),
+                    summary.controllerCount(),
+                    summary.serviceCount(),
+                    summary.repositoryCount(),
+                    summary.configurationCount(),
+                    summary.endpointCount(),
+                    summary.entryPointCount(),
+                    summary.dependencyCount(),
+                    summary.analysisStatus().name(),
+                    summary.coverageLimited(),
+                    summary.coverageLimitationCodes());
+        }
+
+        AnalysisSummary toModel() {
+            AnalysisSummary result = new AnalysisSummary(
+                    moduleCount,
+                    sourceFileCount,
+                    componentCount,
+                    controllerCount,
+                    serviceCount,
+                    repositoryCount,
+                    configurationCount,
+                    endpointCount,
+                    entryPointCount,
+                    dependencyCount,
+                    enumValue(AnalysisStatus.class, analysisStatus, "summary.analysisStatus"),
+                    requiredList(
+                            coverageLimitationCodes,
+                            "summary.coverageLimitationCodes"));
+            if (coverageLimited != result.coverageLimited()) {
+                throw new IllegalArgumentException(
+                        "summary.coverageLimited must match analysisStatus and limitations");
+            }
+            return result;
         }
     }
 
