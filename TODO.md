@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0702 — Visual System & Product Shell。**
+> **T-0703 — Repository Overview。**
 
-M0 至 M6 及 T-0701 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701、T-0702 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1655,7 +1655,7 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] 最小 App Shell 与统一视觉系统已建立
+[x] 最小 App Shell 与统一视觉系统已建立
 [ ] Overview、Module、Architecture、API 和 Evidence 浏览流程可用
 [ ] Architecture 默认使用筛选/邻域并有列表回退
 [ ] 服务绑定 loopback，路径/内容注入/关闭流程测试通过
@@ -1733,8 +1733,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-10
+
+Deliverable: 将 T-0701 的单文件最小样式升级为集中 design tokens、全局基础样式和响应式 Shell 布局；新增可复用 `AppShell`、`SidebarNav`、`ContextHeader`、`PageLayout`、`InspectorPanel` 与 `StatePanel`，统一 loading、empty、error、ready 状态和语义层级。产品 Shell 在宽屏使用 Sidebar / Workspace / Inspector 三栏，在紧凑桌面尺寸将 Inspector 移至内容下方，在窄屏切换为横向可滚动导航；保留 skip link、可见键盘焦点和 reduced-motion 支持，不包含 Overview 业务内容。
+
+Validation: Vitest 4 + happy-dom 的 3 个测试文件共 19 项通过，覆盖报告 loading/ready/error、可复用 Shell/slot 契约、导航禁用与键盘焦点、live-region 语义、集中 tokens、WCAG 4.5:1 文本色彩组合和响应式断点。Chrome 实际渲染检查覆盖 1440×900、1024×768 和 500×844 CSS viewport；Java 21 / Maven 3.9.16 `clean verify` 同时运行 19 项前端测试和 136 项 Java 测试并成功打包前端资源。
 
 正式建立后续所有页面共用的视觉系统和产品 Shell。
 
@@ -1759,12 +1765,12 @@ Desktop-ready viewport behavior
 Acceptance Criteria:
 
 ```text
-[ ] Design tokens 集中定义，页面不自建竞争的视觉体系
-[ ] Sidebar、Context Header、Page Layout 和 Inspector 基础结构可复用
-[ ] loading、empty、error 使用统一组件和文案层级
-[ ] 键盘焦点、对比度和常用尺寸通过自动化/人工验收
-[ ] 在普通浏览器和桌面应用尺寸的 viewport 下布局稳定
-[ ] 不引入 Desktop runtime 或与 Vue/Vite/Cytoscape.js ADR 冲突的技术栈
+[x] Design tokens 集中定义，页面不自建竞争的视觉体系
+[x] Sidebar、Context Header、Page Layout 和 Inspector 基础结构可复用
+[x] loading、empty、error 使用统一组件和文案层级
+[x] 键盘焦点、对比度和常用尺寸通过自动化/人工验收
+[x] 在普通浏览器和桌面应用尺寸的 viewport 下布局稳定
+[x] 不引入 Desktop runtime 或与 Vue/Vite/Cytoscape.js ADR 冲突的技术栈
 ```
 
 ---
@@ -2973,18 +2979,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0702
-Visual System & Product Shell
+T-0703
+Repository Overview
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701、T-0702 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0702
+T-0703
 ```
 
 ---
@@ -3013,7 +3019,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 complete)
+M7 Local Web UI — in progress (T-0701 and T-0702 complete)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3024,6 +3030,6 @@ Release
 
 Next:
 
-> **T-0702 — Visual System & Product Shell.**
+> **T-0703 — Repository Overview.**
 
 ````

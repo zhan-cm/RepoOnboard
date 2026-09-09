@@ -1261,7 +1261,7 @@ RepoOnboard 当前处于：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 **T-0701 — Local UI Bootstrap & Minimal App Shell** 已完成。CLI 现已把统一报告交给仅绑定 loopback 的本地服务，并可启动宿主无关的 Vue 最小外壳。当前下一任务是 **T-0702 — Visual System & Product Shell**；该任务只正式落地共用视觉系统和产品 Shell，不提前实现 Overview 或其他业务页面。
+M0 至 M6 及 **T-0701、T-0702** 已完成。CLI 已把统一报告交给仅绑定 loopback 的本地服务；Vue 前端已有集中视觉系统、响应式产品 Shell、Inspector 基础和统一状态模式。当前下一任务是 **T-0703 — Repository Overview**，只使用现有 `AnalysisReport` 呈现项目概览，不提前实现 Module Explorer 或后续页面。
 
 ## 35. Project Direction Summary
 
