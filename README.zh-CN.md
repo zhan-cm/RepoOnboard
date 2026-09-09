@@ -6,9 +6,9 @@
 
 RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手工具**，帮助开发者在修改陌生项目之前，先建立清晰、可靠的整体认知。
 
-> **状态：早期开发 / 即将进入本地 Web UI**
+> **状态：早期开发 / 本地 Web UI 开发中**
 >
-> Maven、Java、Spring、API 和组件依赖分析已经可用。稳定 `AnalysisReport` 组装、身份、派生摘要和版本化 JSON 序列化已完成。下一里程碑是本地 Web UI，首个可用版本尚未发布。
+> Maven、Java、Spring、API、组件依赖和稳定报告分析已经可用。CLI 现在会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 最小 App Shell。正式视觉系统和产品页面仍在开发中，首个版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -67,14 +67,20 @@ Spring Boot 分析
 
 ## 预期使用体验
 
-未来的命令行使用方式将保持简单：
+当前命令行使用方式为：
 
 ```bash
 cd unfamiliar-project
 repoonboard .
 ```
 
-当前阶段，该命令会检测根目录的 `pom.xml`，显示解析后的坐标，并输出模块层级、源码目录、发现的 Java 源码根/文件和依赖。每条依赖保留 groupId、artifactId、version、scope、原始/解析值与字段来源位置。支持可用 parent 或导入 BOM 提供的版本和 scope；缺失版本保留未知状态并产生诊断。仅包含声明、继承及激活 profile 的依赖，不下载构件或计算传递依赖图。未使用的 dependencyManagement 条目不会列为项目依赖。
+分析完成后，RepoOnboard 会在系统分配的 `127.0.0.1` 端口启动只读本地 UI，并打开默认浏览器。使用 `--no-open` 可改为手动打开；在按 Ctrl+C 停止进程前，终端输出的地址会保持可用。
+
+```bash
+repoonboard . --no-open
+```
+
+该命令会检测根目录的 `pom.xml`，显示解析后的坐标，并在启动 UI 前输出模块层级、源码目录、发现的 Java 源码根/文件和依赖。每条依赖保留 groupId、artifactId、version、scope、原始/解析值与字段来源位置。支持可用 parent 或导入 BOM 提供的版本和 scope；缺失版本保留未知状态并产生诊断。仅包含声明、继承及激活 profile 的依赖，不下载构件或计算传递依赖图。未使用的 dependencyManagement 条目不会列为项目依赖。
 
 模块聚合与 parent 继承分别记录，支持嵌套模块与激活 profile 中的模块。模块路径与 `build.sourceDirectory` 必须解析在扫描根内；源码目录可尚未存在。模块缺失、损坏、越界、重复或循环时生成诊断，并继续处理其他模块。默认 Java 源码目录为各模块下的 `src/main/java`；自定义目录保留声明值和解析值，供后续源码分析使用。
 
@@ -154,7 +160,7 @@ M3  Java 源码分析                    ✓
 M4  Spring Boot 分析                 ✓
 M5  API 与依赖分析                  ✓
 M6  报告组装与序列化             ✓
-M7  本地 Web UI
+M7  本地 Web UI                         ◐
 M8  Start Here
 M9  回归测试与真实仓库验证
 M10 发布准备
@@ -166,7 +172,7 @@ V0.1 继续采用 Web-first 交付：发布包为可执行 JAR 及 Windows/POSIX
 
 ## 开发构建
 
-RepoOnboard 当前要求 JDK 21 或更高版本。无需单独安装 Maven，也不依赖 IDE：仓库中的 Maven Wrapper 会下载固定版本的 Maven，并校验发行包完整性。
+RepoOnboard 开发构建当前要求 JDK 21 或更高版本，以及 Node.js `^20.19.0` 或 `>=22.12.0`。无需单独安装 Maven，也不依赖 IDE：仓库中的 Maven Wrapper 会下载并校验固定版本的 Maven、安装锁定的前端依赖，并构建随包发布的 UI。最终用户使用发布产物时不需要 Node.js。
 
 Windows：
 
@@ -184,7 +190,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装与 schema `1.1` JSON 序列化已实现；下一步是把完整报告流程接入 CLI 和本地 Web UI。
+当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.1` JSON 序列化现已接入 loopback 服务与随包发布的最小 App Shell。共用视觉系统以及 Overview、Module、Architecture、API 和源码导航等正式视图仍属于后续 M7 任务。
 
 ## 项目文档
 

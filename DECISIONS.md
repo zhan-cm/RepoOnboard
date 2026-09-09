@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **M7 Local Web UI — next**
+> **M7 Local Web UI — in progress**
 
-M0 至 M6 已完成。统一 `AnalysisReport`、稳定身份、派生 Summary 和版本化 JSON 已形成展示边界。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0701 Local UI Bootstrap & Minimal App Shell。
+M0 至 M6 及 T-0701 已完成。CLI 已将统一 `AnalysisReport` 接入仅绑定 loopback 的本地只读服务和 Vue 最小 App Shell。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0702 Visual System & Product Shell。
 
 ---
 
@@ -2112,13 +2112,13 @@ Implementation
 ✓ M4 Spring Boot Analysis complete
 ✓ M5 API & Dependency Analysis complete
 ✓ M6 Report Assembly & Serialization complete
-○ M7 Local Web UI next
+◐ M7 Local Web UI in progress (T-0701 complete)
 ```
 
 下一步：
 
-> 完成 T-0701 — Local UI Bootstrap & Minimal App Shell。
+> 完成 T-0702 — Visual System & Product Shell。
 
-M0 至 M6 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0 至 M6 及 T-0701 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````

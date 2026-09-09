@@ -8,6 +8,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import io.github.zhancm.repoonboard.core.model.AnalysisReport;
 import io.github.zhancm.repoonboard.testing.FixturePaths;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -152,7 +155,49 @@ class RepoOnboardCommandTest {
         assertEquals(CommandLine.ExitCode.OK, result.exitCode());
         assertTrue(result.out().contains("Usage: repoonboard"));
         assertTrue(result.out().contains("PATH"));
+        assertTrue(result.out().contains("--no-open"));
         assertTrue(result.err().isEmpty());
+    }
+
+    @Test
+    void assemblesThePublicReportAndStartsTheUi() {
+        AtomicReference<AnalysisReport> launchedReport = new AtomicReference<>();
+        AtomicBoolean launchedWithoutBrowser = new AtomicBoolean();
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+
+        int exitCode = RepoOnboardCommand.execute(
+                new String[] {
+                    FixturePaths.project("spring-analysis-project").toString(), "--no-open"
+                },
+                new PrintWriter(out, true),
+                new PrintWriter(err, true),
+                (report, noOpen, standardOut, standardErr) -> {
+                    launchedReport.set(report);
+                    launchedWithoutBrowser.set(noOpen);
+                });
+
+        assertEquals(CommandLine.ExitCode.OK, exitCode);
+        assertEquals("spring-analysis-project", launchedReport.get().project().name());
+        assertTrue(launchedReport.get().summary().componentCount() > 0);
+        assertTrue(launchedWithoutBrowser.get());
+    }
+
+    @Test
+    void reportsUiStartupFailure() {
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+
+        int exitCode = RepoOnboardCommand.execute(
+                new String[] {FixturePaths.project("minimal-maven-project").toString()},
+                new PrintWriter(out, true),
+                new PrintWriter(err, true),
+                (report, noOpen, standardOut, standardErr) -> {
+                    throw new IOException("port unavailable");
+                });
+
+        assertEquals(CommandLine.ExitCode.SOFTWARE, exitCode);
+        assertTrue(err.toString().contains("local UI could not be started: port unavailable"));
     }
 
     @Test

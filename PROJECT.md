@@ -1261,7 +1261,7 @@ RepoOnboard 当前处于：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 已完成，当前下一任务是 **T-0701 — Local UI Bootstrap & Minimal App Shell**。该任务只建立 CLI 分析、loopback 本地服务、报告读取、浏览器打开与最小 App Shell 的闭环；完整视觉系统属于 T-0702。
+M0 至 M6 及 **T-0701 — Local UI Bootstrap & Minimal App Shell** 已完成。CLI 现已把统一报告交给仅绑定 loopback 的本地服务，并可启动宿主无关的 Vue 最小外壳。当前下一任务是 **T-0702 — Visual System & Product Shell**；该任务只正式落地共用视觉系统和产品 Shell，不提前实现 Overview 或其他业务页面。
 
 ## 35. Project Direction Summary
 

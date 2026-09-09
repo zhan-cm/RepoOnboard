@@ -100,7 +100,7 @@ Architecture Constraints ✓
 Technical Decisions      ✓
 Project Scaffold         ✓
 Core Analysis            ✓
-Web UI                   ○
+Web UI                   ◐
 Real-world Validation    ○
 Public Release           ○
 ```
@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0701 — Local UI Bootstrap & Minimal App Shell。**
+> **T-0702 — Visual System & Product Shell。**
 
-M0 至 M6 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1645,7 +1645,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -1670,8 +1670,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: CLI 将 Maven、Java、Spring、Endpoint 和组件依赖分析结果组装为统一 `AnalysisReport`，由仅绑定 `127.0.0.1` 且使用系统分配端口的 JDK `HttpServer` 提供固定静态资源和 `/api/report`。新增 Vue 3 + Vite 生产构建和最小 App Shell，只展示仓库上下文、导航占位、报告加载/错误与连接就绪状态。CLI 支持 `--no-open`，浏览器打开失败时保留服务并输出手动地址，Ctrl+C 关闭时释放端口与线程。
+
+Validation: Node 24 下 Vite production build 通过；Java 21 / Maven 3.9.16 `clean verify` 共运行 136 个测试并通过，JAR 含完整 HTML、CSS 和 JavaScript 生产资源。新增 9 个测试覆盖 CLI 报告交接、`--no-open`、UI 启动失败、浏览器失败回退、loopback 绑定、固定只读路由、报告 JSON 往返、端口占用与关闭释放。真实 CLI 会话在 `127.0.0.1` 的系统分配端口成功返回 HTML 与 schema `1.1` 报告，Ctrl+C 后端口已释放。
 
 完成：
 
@@ -1710,14 +1716,14 @@ Basic loading / error fallback
 Acceptance Criteria:
 
 ```text
-[ ] CLI 可启动 UI
-[ ] UI 可以读取当前分析结果
-[ ] 默认不需要账号或外部服务器
-[ ] JDK HttpServer 仅绑定 127.0.0.1 并使用只读固定路由
-[ ] --no-open、端口占用、浏览器打开失败和 Ctrl+C 关闭行为明确
-[ ] 最小 App Shell 可显示仓库上下文与报告加载/错误状态
-[ ] production frontend build 可由 Java 应用加载
-[ ] UI 不直接访问文件系统，不存在 Tauri、Electron 或其他 Desktop-specific dependency
+[x] CLI 可启动 UI
+[x] UI 可以读取当前分析结果
+[x] 默认不需要账号或外部服务器
+[x] JDK HttpServer 仅绑定 127.0.0.1 并使用只读固定路由
+[x] --no-open、端口占用、浏览器打开失败和 Ctrl+C 关闭行为明确
+[x] 最小 App Shell 可显示仓库上下文与报告加载/错误状态
+[x] production frontend build 可由 Java 应用加载
+[x] UI 不直接访问文件系统，不存在 Tauri、Electron 或其他 Desktop-specific dependency
 ```
 
 ---
@@ -2967,18 +2973,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0701
-Local UI Bootstrap & Minimal App Shell
+T-0702
+Visual System & Product Shell
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
+M0 至 M6 及 T-0701 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0701
+T-0702
 ```
 
 ---
@@ -3007,7 +3013,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — not started
+M7 Local Web UI — in progress (T-0701 complete)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3018,6 +3024,6 @@ Release
 
 Next:
 
-> **T-0701 — Local UI Bootstrap & Minimal App Shell.**
+> **T-0702 — Visual System & Product Shell.**
 
 ````
