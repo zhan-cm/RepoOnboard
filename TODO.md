@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0403 — Dependency Injection Detection。**
+> **T-0501 — Spring MVC Controller Mapping。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1110,8 +1110,12 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
+
+Completed: 2026-09-09
+
+Validation: Java 21 `clean verify` 通过；共 100 项测试，覆盖标准/项目内组合 Spring 注解、配置与应用入口、构造器/字段注入，以及歧义与不支持模式的可解释诊断。
 
 Boundary:
 
@@ -1120,10 +1124,10 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] 标准 Spring 组件、配置和应用入口 fixture 通过
-[ ] 单构造器、@Autowired 构造器和字段注入候选可识别
-[ ] 多构造器、多实现和未知组合注解产生明确限制/歧义
-[ ] T-0401 至 T-0403 完成；T-0404 可延后
+[x] 标准 Spring 组件、配置和应用入口 fixture 通过
+[x] 单构造器、@Autowired 构造器和字段注入候选可识别
+[x] 多构造器、多实现和未知组合注解产生明确限制/歧义
+[x] T-0401 至 T-0403 完成；T-0404 可延后
 ```
 
 ---
@@ -1251,6 +1255,10 @@ OPTIONAL FOR EARLY V0.1
 Dependency Exception:
 
 > 本任务不阻塞 M4 完成或 M5 开始。若延后，必须在 Known Issues / Deferred Work 中记录覆盖限制。
+
+Deferred: 2026-09-09
+
+Reason: 当前 M4 所需的组件、配置、入口与注入 facts 已满足出口；MyBatis-Plus `BaseMapper<T>` 的可靠识别还需要结构化的继承/实现类型 facts。该可选任务保留到相关 Java facts 可复用时处理，避免为非阻塞能力提前扩大 M3 模型。
 
 支持：
 
@@ -2624,7 +2632,19 @@ DECISIONS.md
 当前：
 
 ```text
-None — implementation has not started.
+ISSUE-0404
+
+Status:
+OPEN / DEFERRED
+
+Description:
+MyBatis 与 MyBatis-Plus Mapper 专用分类尚未实现。
+
+Impact:
+Mapper 接口目前只作为普通 Java 声明出现，不会生成 Mapper 组件 fact；不影响标准 Spring 组件、配置、应用入口、注入候选或 M5 的核心分析。
+
+Related Task:
+T-0404
 ```
 
 以后格式：
@@ -2796,18 +2816,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0403
-Dependency Injection Detection
+T-0501
+Spring MVC Controller Mapping
 ```
 
 本阶段：
 
-> **M4 — Spring Boot Analysis**
+> **M5 — API & Dependency Analysis**
 
-M0 至 M3 与 T-0401、T-0402 已完成。接下来按默认依赖顺序执行：
+M0 至 M4 已完成；可选 T-0404 已按非阻塞规则延后。接下来按默认依赖顺序执行：
 
 ```text
-T-0403
+T-0501
 ```
 
 ---
@@ -2833,7 +2853,8 @@ Implementation
 M1 Project Foundation — complete
 M2 Maven Project Analysis — complete
 M3 Java Source Analysis — complete
-M4 Spring Boot Analysis — in progress
+M4 Spring Boot Analysis — complete
+M5 API & Dependency Analysis — next
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2844,6 +2865,6 @@ Release
 
 Next:
 
-> **T-0403 — Dependency Injection Detection.**
+> **T-0501 — Spring MVC Controller Mapping.**
 
 ````
