@@ -5,14 +5,14 @@
 RepoOnboard 当前处于 **M6 — Report Assembly & Serialization（报告组装与序列化）**。
 
 - M0 至 M5 已完成。
-- T-0601 与 T-0602 已完成。
-- 当前下一任务是 **T-0603 — Serialization**。
-- M6 状态为 `IN PROGRESS`；尚未实现 JSON 序列化与 Overview summary。
+- T-0601、T-0602 与 T-0603 已完成。
+- 当前下一任务是 **T-0604 — Analysis Summary**。
+- M6 状态为 `IN PROGRESS`；版本化 JSON 已完成，尚未实现 Overview summary。
 
 当前验证状态：
 
-- Java 21 离线完整 `clean verify` 通过，共 113 个测试，JAR 构建成功。
-- T-0602 fixture 验证了输入顺序无关的报告结果、重复键诊断以及重命名/签名变化后的身份变化。
+- Java 21 离线完整 `clean verify` 通过，共 122 个测试，JAR 构建成功。
+- T-0603 验证了稳定 JSON 快照、完整模型和 SourceLocation 往返、UTF-8 文件、schema 主/次版本规则、未知主版本失败、输入路径再校验和安全字段边界。
 
 ## 2. 已完成任务
 
@@ -67,6 +67,7 @@ RepoOnboard 当前处于 **M6 — Report Assembly & Serialization（报告组装
 
 - **T-0601 — Project Model Assembly**：新增 analyzer-neutral 的公共模型：`Project`、`Module`、`SourceFile`、`Component`、`Endpoint`、`EntryPoint`、`Dependency`、`AnalysisReport` 及相关枚举/条件对象；新增 `ProjectAnalysisInput` 与 `ProjectModelAssembler`，可将 M2 至 M5 的 Maven、Java、Spring、Endpoint、Dependency facts、evidence 和 diagnostics 组装为统一报告，并保留整体分析状态。Core 模型不依赖 Maven、JavaParser 或 Spring 类型。
 - **T-0602 — Stable Identifiers**：新增 `StableIdentifiers`，用扫描根相对模块路径、组件限定名和 Endpoint/Dependency 结构签名生成稳定身份；公共模型的集合和 evidence 使用确定排序。报告装配时重复语义键不会被覆盖，而是保留全部实体、为后续项分配稳定后缀并生成 `REPORT_ID_COLLISION` 诊断。组件重命名、Endpoint handler/HTTP 签名及 dependency target 变化会产生新 ID。
+- **T-0603 — Serialization**：使用 Jackson 3.1.4 和显式 `ReportJsonDocument` DTO 实现 `AnalysisReport` 的可读 UTF-8 JSON 序列化、反序列化及文件读写。当前 schema 为 `1.0`；同一主版本内允许加法式次版本兼容，未知主版本通过专用异常明确失败。输出固定使用 LF，保留 SourceLocation，并且不包含源码正文、扫描根绝对路径或多态类型元数据。
 
 ## 3. 当前实现能力
 
@@ -81,7 +82,8 @@ RepoOnboard 当前处于 **M6 — Report Assembly & Serialization（报告组装
 - 将上述分析 facts 映射为统一公共 `AnalysisReport`；报告使用扫描根相对路径，不包含源码正文。
 - 为 Project、Module、SourceFile、Component、EntryPoint、Endpoint 和 Dependency 生成稳定结构身份；报告顶层实体、诊断、mapping conditions 和 evidence 均规范化为确定顺序。
 - 重复实体键会产生结构化诊断且所有声明继续保留，不依赖对象地址或分析器遍历顺序。
-- CLI 目前仍直接打印分析摘要和诊断；统一 `AnalysisReport` 尚未接入 JSON 输出，也没有 Web UI。
+- 通过 `AnalysisReportJson` 将统一报告转换为稳定、可调试、前端友好的 schema `1.0` JSON，也可按 UTF-8 写入和读取文件；读取时重新执行 Core Model 校验。
+- CLI 目前仍直接打印分析摘要和诊断；尚未把统一 `AnalysisReport` 和 JSON codec 接入 CLI 输出，也没有 Web UI。
 
 ## 4. 当前架构与核心模块
 
@@ -107,7 +109,7 @@ io.github.zhancm.repoonboard
 - **`analyzer.spring`**：`SpringComponentAnalyzer`、`SpringConfigurationAnalyzer`、`SpringInjectionAnalyzer`、`SpringMvcMappingAnalyzer`、`SpringEndpointAnalyzer`、`SpringComponentDependencyAnalyzer` 负责框架层 facts；`SpringComposedAnnotationResolver` 负责项目内组合注解。
 - **`core.model`**：保存跨分析器公共契约，包括位置、证据、诊断、状态、统一项目实体与 `StableIdentifiers`。`AnalysisReport` 和相关值对象负责确定性集合顺序。此包禁止依赖 Maven、JavaParser、Spring、CLI 或 Web 实现类型。
 - **`analysis`**：`ProjectAnalysisInput` 汇集各分析器输出，`ProjectModelAssembler` 将其转换成公共 `AnalysisReport`，处理实体键冲突和稳定后缀。当前该装配器是 API 边界，尚未接入 CLI 的最终输出流程。
-- **`serialization`**：目前仅有包边界说明；T-0603 才会实现版本化 JSON。
+- **`serialization`**：`AnalysisReportJson` 提供字符串及 UTF-8 文件 codec；`ReportJsonDocument` 是与 Core Model 双向映射的显式 DTO；`ReportSchemaVersion` 定义 `major.minor` 兼容规则；`ReportSerializationException` 与 `UnsupportedReportSchemaVersionException` 提供清晰失败语义。Jackson 未启用默认多态类型处理。
 - **`web`**：目前仅有包边界说明；M7 才会实现 loopback 本地只读服务和前端。
 - **测试资源**：包含 minimal Maven、multi-module、Java syntax、Spring analysis、Spring API、Spring injection、Spring dependency 等最小确定性 fixtures。
 
@@ -121,7 +123,7 @@ io.github.zhancm.repoonboard
 - **ADR-0007**：公共模型保持最小且框架中立，实体保留 `SourceLocation`、`Evidence`、`Diagnostic`；默认不包含源码正文或用户绝对路径。
 - **ADR-0008**：Maven、Java、Spring、Core、Presentation 保持显式边界，但 V0.1 仍为一个本地进程，不引入插件运行时或微服务。
 - **ADR-0009**：依赖采用有类型、有方向、带解析状态和证据的边；Maven 依赖与组件依赖分图；循环合法，未解析目标保留但不冒充确认边。
-- **ADR-0010**：报告使用 UTF-8、带 `schemaVersion` 的 JSON；Java 端采用 Jackson 3 和显式 DTO，禁止任意多态反序列化，集合稳定排序。该决策尚待 T-0603 落地。
+- **ADR-0010**：报告使用 UTF-8、带 `schemaVersion` 的 JSON；Java 端采用 Jackson 3 和显式 DTO，禁止任意多态反序列化，集合稳定排序。当前 schema `1.0` 对同主版本的加法式字段变化保持兼容，未知主版本明确失败。
 - **ADR-0011 / 0012**：未来本地 UI 使用 JDK `HttpServer` 绑定 loopback；前端使用 Vue、Vite、Cytoscape.js，资源随离线产物提供，不依赖运行时 CDN。
 - **ADR-0013**：Start Here 使用可解释、确定性的启发式，不使用不透明 AI 排名。
 - **ADR-0014**：测试采用 unit → fixture → integration → real repository 的分层策略；分析器能力实现时即增加最小 fixture，M9 再做综合回归和真实仓库验证。
@@ -139,6 +141,7 @@ io.github.zhancm.repoonboard
 - API 分析从 mapping 声明拆分为“声明提取”和“Endpoint 组合”，从而保留类级/方法级证据以及无法解析的路径/条件。
 - 组件依赖从注入候选升级为确认边与不确定事实分离，并加入重复 evidence 合并和稳定邻接查询。
 - T-0601 新增统一公共模型和装配边界，后续 JSON、UI、Start Here 将消费 `AnalysisReport`，而不直接依赖 analyzer-specific 类型。
+- T-0603 将序列化从 Core Model 中隔离到显式 DTO 边界，避免 Jackson 注解或解析器对象进入核心契约；同时固定跨平台 JSON 换行、版本门禁和 UTF-8 文件行为。
 
 ## 7. 已知限制 / 技术债
 
@@ -148,10 +151,10 @@ io.github.zhancm.repoonboard
 - **Java 解析保守**：不是完整编译器或全功能符号求解器；只确认项目内可证明引用，外部类型、复杂泛型或歧义保持未知。
 - **Spring 静态分析有限**：只覆盖当前列明的 stereotype、配置、入口、注入和 MVC 模式；动态注册、运行时代理、反射或复杂条件配置不做推断。
 - **依赖图有限**：目前是 Maven 声明关系和组件注入关系，不是方法级调用图、运行时调用图或传递依赖图。
-- **报告尚未序列化**：统一模型已经具备稳定 ID、确定排序和冲突诊断，但 T-0603 尚未提供 `schemaVersion` JSON，T-0604 尚无 Overview summary。
+- **报告接入尚未完成**：版本化 JSON codec 已存在，但 CLI 尚未输出统一报告；T-0604 尚无 Overview summary。
 - **展示尚未实现**：没有本地 HTTP 服务、前端页面、图谱交互、源码跳转或 Start Here。
 - **发布尚未就绪**：当前是 `0.1.0-SNAPSHOT`，没有安装体验、发布许可清理、演示资源或 V0.1 release。
-- **文档小幅不一致**：README 仍描述“报告组装下一步”，而实际公共模型和稳定身份已完成；由于本任务未改变用户可用 CLI 行为，README 留待序列化/公开行为落地时同步。
+- **文档小幅不一致**：README 仍描述“报告组装下一步”，而实际公共模型、稳定身份和 JSON codec 已完成；由于 CLI 用户行为尚未改变，README 留待公开输出流程落地时同步。
 
 ## 8. 未完成任务
 
@@ -161,7 +164,6 @@ io.github.zhancm.repoonboard
 
 ### M6 — Report Assembly & Serialization
 
-- **T-0603 — Serialization**：Jackson 3 显式 DTO、UTF-8 JSON、`schemaVersion` 主/次版本兼容、未知主版本失败、安全字段边界和稳定快照。
 - **T-0604 — Analysis Summary**：按稳定身份去重的模块、Controller、Service、Repository、Endpoint、Dependency 等 Overview 统计，并标明 PARTIAL 覆盖限制。
 
 ### M7 — Local Web UI
@@ -184,10 +186,10 @@ io.github.zhancm.repoonboard
 
 下一项应继续开发：
 
-> **T-0603 — Serialization**
+> **T-0604 — Analysis Summary**
 
-下一次只实现版本化 JSON 边界：按照 ADR-0010 使用 Jackson 3 和显式 DTO，定义 `schemaVersion` 主/次版本兼容及未知主版本失败行为，保留 SourceLocation，并验证 JSON 不含源码正文、用户绝对路径或任意多态配置。不要提前实现 T-0604 summary 或 M7 Web UI。
+下一次只实现 Overview summary：按稳定实体身份统计 Module、Controller、Service、Repository、Endpoint、Dependency 等数量，保证 Summary 与底层实体一致，并在 `PARTIAL` 分析时明确统计覆盖限制。不要提前实现 M7 Web UI。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具。V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → 当前代码顺序阅读，并遵守 `AGENTS.md`。M0–M5 已完成：受限离线 Maven 模型/模块/依赖/Boot 信号，模块感知的 JavaParser facts、声明索引与项目内类型解析，Spring 组件/配置/入口/注入/组合注解，MVC Endpoint，以及带证据和歧义状态的组件依赖。M6 的 T-0601、T-0602 已完成：`core.model` 中已有 analyzer-neutral 的 Project、Module、SourceFile、Component、Endpoint、EntryPoint、Dependency、AnalysisReport 和 `StableIdentifiers`；`analysis.ProjectModelAssembler` 可把 M2–M5 输出装配成统一报告，并保证实体/诊断/evidence 的确定排序。ID 基于结构语义而非遍历顺序；重复键保留全部实体、使用稳定后缀并产生 `REPORT_ID_COLLISION`。Java 21 离线 `clean verify` 共 113 项测试通过。CLI 尚未输出统一报告。当前下一任务是 T-0603：按 ADR-0010 用 Jackson 3 显式 DTO 实现 UTF-8 `schemaVersion` JSON、兼容/未知主版本行为和安全字段边界；不要提前实现 T-0604 或 Web UI。每个 T 独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具。V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → 当前代码顺序阅读，并遵守 `AGENTS.md`。M0–M5 已完成：受限离线 Maven 模型/模块/依赖/Boot 信号，模块感知的 JavaParser facts、声明索引与项目内类型解析，Spring 组件/配置/入口/注入/组合注解，MVC Endpoint，以及带证据和歧义状态的组件依赖。M6 的 T-0601 至 T-0603 已完成：`core.model` 中已有 analyzer-neutral 的统一报告与 `StableIdentifiers`；`ProjectModelAssembler` 可装配 M2–M5 facts，并保证实体、诊断和 evidence 的确定排序，重复键保留并产生 `REPORT_ID_COLLISION`。`serialization.AnalysisReportJson` 使用 Jackson 3.1.4 和显式 DTO 提供固定 LF 的 UTF-8 schema `1.0` JSON、完整模型往返、同主版本加法式兼容及未知主版本专用错误；默认无源码正文、用户绝对路径和多态类型元数据。Java 21 离线 `clean verify` 共 122 项测试通过，JAR 构建成功。CLI 尚未输出统一报告。当前下一任务是 T-0604：实现按稳定实体身份去重且能标明 PARTIAL 覆盖限制的 Overview summary；不要提前实现 M7 Web UI。每个 T 独立测试、更新 TODO/STATE、提交并推送 GitHub。

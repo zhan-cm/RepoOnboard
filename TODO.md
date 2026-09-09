@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0603 — Serialization。**
+> **T-0604 — Analysis Summary。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1484,8 +1484,8 @@ Exit Criteria:
 ```text
 [x] AnalysisReport 完整承载支持的 facts、evidence、diagnostics 和 coverage status
 [x] IDs、集合顺序和语义快照在相同输入下稳定
-[ ] schemaVersion 兼容与未知主版本行为有测试
-[ ] JSON 不包含源码正文、默认绝对路径或未允许的配置属性
+[x] schemaVersion 兼容与未知主版本行为有测试
+[x] JSON 不包含源码正文、默认绝对路径或未允许的配置属性
 ```
 
 ---
@@ -1575,20 +1575,26 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 基于 Jackson 3.1.4 的显式 `ReportJsonDocument` DTO 与 `AnalysisReportJson` UTF-8 codec；输出固定 LF 的可读 JSON，支持文件读写、Core Model 往返、`major.minor` schemaVersion 校验以及未知主版本专用错误。
+
+Validation: Java 21 离线 `clean verify` 共运行 122 个测试并通过，其中 9 个覆盖稳定快照、完整实体与 SourceLocation 往返、UTF-8、同主版本新增字段兼容、未知主版本失败、尾随 JSON、相对路径再校验，以及源码正文、用户绝对路径和任意多态元数据边界。
 
 将统一 Project Model 导出为选定格式。
 
 Acceptance Criteria:
 
 ```text
-[ ] Human-readable
-[ ] Debuggable
-[ ] Frontend friendly
-[ ] Source locations retained
-[ ] schemaVersion 存在且未知主版本明确失败
-[ ] 默认无源码正文、用户绝对路径或任意多态反序列化
+[x] Human-readable
+[x] Debuggable
+[x] Frontend friendly
+[x] Source locations retained
+[x] schemaVersion 存在且未知主版本明确失败
+[x] 默认无源码正文、用户绝对路径或任意多态反序列化
 ```
 
 ---
@@ -2850,8 +2856,8 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0603
-Serialization
+T-0604
+Analysis Summary
 ```
 
 本阶段：
@@ -2861,7 +2867,7 @@ Serialization
 M0 至 M5 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
 
 ```text
-T-0603
+T-0604
 ```
 
 ---
@@ -2900,6 +2906,6 @@ Release
 
 Next:
 
-> **T-0603 — Serialization.**
+> **T-0604 — Analysis Summary.**
 
 ````

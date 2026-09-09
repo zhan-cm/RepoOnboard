@@ -1,7 +1,8 @@
 /**
- * Versioned serialization of the public RepoOnboard analysis report.
+ * Versioned UTF-8 JSON serialization of the public RepoOnboard analysis report.
  *
- * <p>Only public model values cross this boundary; parser-specific objects do
- * not become part of the report format.</p>
+ * <p>Only explicit transport DTOs and public model values cross this boundary;
+ * parser-specific objects, source bodies, absolute scan roots, and polymorphic
+ * type metadata do not become part of the report format.</p>
  */
 package io.github.zhancm.repoonboard.serialization;
