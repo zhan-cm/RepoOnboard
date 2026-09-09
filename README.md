@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Local Web UI Next**
+> **Status: Early Development / Local Web UI In Progress**
 >
-> Maven, Java, Spring, API, and component-dependency analysis are available. Stable `AnalysisReport` assembly, identifiers, derived summaries, and versioned JSON serialization are complete. The next milestone is the local Web UI; the first usable release is not available yet.
+> Maven, Java, Spring, API, component-dependency, and stable report analysis are available. The CLI now serves each report to a packaged Vue minimal App Shell over a loopback-only local endpoint. The formal visual system and product views are still under development; the first release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -67,14 +67,20 @@ Local Interactive Codebase Map
 
 ## Intended Experience
 
-The future command-line experience is designed to be simple:
+The current command-line experience is:
 
 ```bash
 cd unfamiliar-project
 repoonboard .
 ```
 
-At the current stage, this command detects a root `pom.xml`, displays its resolved coordinates, and prints the module hierarchy, source directories, discovered Java source roots/files, and dependencies. Each dependency retains groupId, artifactId, version, scope, raw/resolved values, and field source locations. Versions and scopes supplied by available parents or imported BOMs are supported; missing versions remain unknown with diagnostics. Only declared/inherited dependencies and active profiles are included, without downloading artifacts or computing a transitive graph. Unused dependencyManagement entries are not listed as dependencies.
+After analysis, RepoOnboard starts a read-only local UI on a system-assigned `127.0.0.1` port and opens the default browser. Use `--no-open` to keep browser opening manual; the printed URL remains available until the process is stopped with Ctrl+C.
+
+```bash
+repoonboard . --no-open
+```
+
+The command detects a root `pom.xml`, displays its resolved coordinates, and prints the module hierarchy, source directories, discovered Java source roots/files, and dependencies before starting the UI. Each dependency retains groupId, artifactId, version, scope, raw/resolved values, and field source locations. Versions and scopes supplied by available parents or imported BOMs are supported; missing versions remain unknown with diagnostics. Only declared/inherited dependencies and active profiles are included, without downloading artifacts or computing a transitive graph. Unused dependencyManagement entries are not listed as dependencies.
 
 Module aggregation and parent inheritance are recorded separately. Nested and active-profile modules are supported. Module paths and `build.sourceDirectory` resolve inside the scan root; source directories need not exist yet. Missing, malformed, escaping, duplicate, or cyclic modules produce diagnostics while other modules continue. The default Java source directory is `src/main/java` relative to each module; declared and resolved custom values remain available for source analysis.
 
@@ -154,7 +160,7 @@ M3  Java Source Analysis                   ✓
 M4  Spring Boot Analysis                  ✓
 M5  API & Dependency Analysis             ✓
 M6  Report Assembly & Serialization          ✓
-M7  Local Web UI
+M7  Local Web UI                           ◐
 M8  Start Here
 M9  Regression & Real Repository Validation
 M10 Release Preparation
@@ -166,7 +172,7 @@ V0.1 remains Web-first: it will ship as an executable JAR with Windows and POSIX
 
 ## Development Build
 
-RepoOnboard currently requires JDK 21 or newer. A separate Maven installation or IDE is not required: the checked-in Maven Wrapper downloads the pinned Maven distribution and verifies its checksum.
+RepoOnboard development currently requires JDK 21 or newer and Node.js `^20.19.0` or `>=22.12.0`. A separate Maven installation or IDE is not required: the checked-in Maven Wrapper downloads the pinned Maven distribution, verifies its checksum, installs the locked frontend dependencies, and builds the packaged UI. End users of a release artifact will not need Node.js.
 
 Windows:
 
@@ -184,7 +190,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.1` JSON serialization are implemented; connecting that report pipeline to the CLI and local Web UI is next.
+The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.1` JSON serialization now feed the loopback service and packaged minimal App Shell. The shared visual system and the substantive Overview, Module, Architecture, API, and source-navigation views remain future M7 tasks.
 
 ## Documentation
 

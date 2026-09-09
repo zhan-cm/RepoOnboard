@@ -1,5 +1,7 @@
 package io.github.zhancm.repoonboard.cli;
 
+import io.github.zhancm.repoonboard.analysis.ProjectAnalysisInput;
+import io.github.zhancm.repoonboard.analysis.ProjectModelAssembler;
 import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.java.JavaDeclarationIndex;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
@@ -23,6 +25,9 @@ import io.github.zhancm.repoonboard.analyzer.spring.SpringMvcMappingAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringDependencyStatus;
+import io.github.zhancm.repoonboard.web.LocalUiApplication;
+import io.github.zhancm.repoonboard.web.LocalUiLauncher;
+import java.io.IOException;
 import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -42,6 +47,8 @@ import picocli.CommandLine.Model.CommandSpec;
         version = "RepoOnboard 0.1.0-SNAPSHOT")
 public final class RepoOnboardCommand implements Callable<Integer> {
 
+    private final LocalUiLauncher uiLauncher;
+
     @Parameters(index = "0", paramLabel = "PATH", description = "Repository directory to inspect.")
     private Path target;
 
@@ -51,19 +58,39 @@ public final class RepoOnboardCommand implements Callable<Integer> {
     @Option(names = "--local-repository", description = "Local POM cache (default: ~/.m2/repository).")
     private Path localRepository;
 
+    @Option(names = "--no-open", description = "Start the local UI without opening a browser.")
+    private boolean noOpen;
+
     @Spec
     private CommandSpec commandSpec;
+
+    public RepoOnboardCommand() {
+        this(new LocalUiApplication());
+    }
+
+    RepoOnboardCommand(LocalUiLauncher uiLauncher) {
+        this.uiLauncher = java.util.Objects.requireNonNull(uiLauncher, "uiLauncher");
+    }
 
     public static void main(String[] args) {
         int exitCode = execute(
                 args,
                 new PrintWriter(System.out, true),
-                new PrintWriter(System.err, true));
+                new PrintWriter(System.err, true),
+                new LocalUiApplication());
         System.exit(exitCode);
     }
 
     static int execute(String[] args, PrintWriter out, PrintWriter err) {
-        CommandLine commandLine = new CommandLine(new RepoOnboardCommand());
+        return execute(args, out, err, (report, noOpen, standardOut, standardErr) -> { });
+    }
+
+    static int execute(
+            String[] args,
+            PrintWriter out,
+            PrintWriter err,
+            LocalUiLauncher uiLauncher) {
+        CommandLine commandLine = new CommandLine(new RepoOnboardCommand(uiLauncher));
         commandLine.setOut(out);
         commandLine.setErr(err);
         return commandLine.execute(args);
@@ -224,6 +251,34 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             for (var diagnostic : springDependencies.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            if (analysis.root().isPresent()) {
+                var report = new ProjectModelAssembler().assemble(new ProjectAnalysisInput(
+                        analysis,
+                        javaFacts,
+                        springComponents,
+                        springConfiguration,
+                        springEndpoints,
+                        springDependencies));
+                try {
+                    uiLauncher.launch(
+                            report,
+                            noOpen,
+                            commandSpec.commandLine().getOut(),
+                            commandSpec.commandLine().getErr());
+                } catch (IOException exception) {
+                    commandSpec.commandLine().getErr().printf(
+                            "Error: local UI could not be started: %s%n", exception.getMessage());
+                    return CommandLine.ExitCode.SOFTWARE;
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    commandSpec.commandLine().getErr().println(
+                            "Error: local UI was interrupted before shutdown completed.");
+                    return CommandLine.ExitCode.SOFTWARE;
+                }
+            } else {
+                commandSpec.commandLine().getErr().println(
+                        "Local UI not started because no analysis report could be assembled.");
             }
             return switch (status) {
                 case SUCCESS -> CommandLine.ExitCode.OK;

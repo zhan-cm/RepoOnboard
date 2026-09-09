@@ -5,6 +5,9 @@ target/
 # IDE compiler output
 out/
 
+# Frontend dependencies
+frontend/node_modules/
+
 # RepoOnboard local analysis output
 .repoonboard/
 

@@ -1236,10 +1236,10 @@ RepoOnboard is currently in:
 The current next task is:
 
 ```text
-T-0701 — Local UI Bootstrap & Minimal App Shell
+T-0702 — Visual System & Product Shell
 ```
 
-T-0701 establishes only the CLI-to-loopback-UI runtime closure and a minimal App Shell. The formal visual system belongs to T-0702. Desktop packaging is deferred beyond V0.1; do not introduce Tauri, Electron, a native installer, or a bundled runtime during M7.
+T-0701 has established the CLI-to-loopback-UI runtime closure and a minimal App Shell. T-0702 must only formalize the shared visual system and product Shell; Overview and other business pages remain later tasks. Desktop packaging is deferred beyond V0.1; do not introduce Tauri, Electron, a native installer, or a bundled runtime during M7.
 
 Always follow the current `TODO.md` and `STATE.md` if this snapshot becomes stale.
 
