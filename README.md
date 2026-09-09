@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Maven Analysis**
+> **Status: Early Development / Java Source Analysis**
 >
-> Maven detection, coordinate/property extraction, restricted offline parent/BOM resolution, multi-module analysis, and dependency extraction are available. Spring Boot build detection is next; the first usable release is not available yet.
+> Maven analysis and Spring Boot build detection are available. Java source analysis is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -115,6 +115,8 @@ src/main/java/.../UserController.java:73
 
 ## Planned Interface
 
+Spring Boot build detection uses a module's declared `org.springframework.boot:spring-boot-starter-parent`, imported `spring-boot-dependencies` BOM, or resolved/inherited Boot core and starter dependencies. Each signal retains source and version locations. Detection remains separate from version resolution; conflicting known versions yield an unknown version and a diagnostic. A build signal does not establish an application entry point. Indirect parent/BOM chains without a recognized dependency are not yet classified.
+
 ### Overview
 
 Summarizes the technology stack, modules, components, endpoints, and application entry points.
@@ -147,7 +149,7 @@ RepoOnboard V0.1 does not depend on an LLM. Future AI features, if introduced, s
 ```text
 M0  Technical Architecture                 ✓
 M1  Project Foundation                     ✓
-M2  Maven Analysis                         In Progress
+M2  Maven Analysis                         ✓
 M3  Java Source Analysis
 M4  Spring Boot Analysis
 M5  API & Dependency Analysis
@@ -180,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The build currently validates the project foundation. It does not yet provide a usable repository analysis workflow.
+The current CLI provides an early Maven repository analysis workflow. Java source, Spring component, API, dependency-graph, and Web UI analysis are still under development.
 
 ## Documentation
 
@@ -195,7 +197,7 @@ RepoOnboard is intended for developers joining existing projects, open-source co
 
 ## Contributing
 
-RepoOnboard is still in its project foundation stage. Contribution guidelines will be added when the implementation is ready for external contributions. Until then, changes should remain consistent with the project scope and accepted decisions.
+RepoOnboard is still in early development. Contribution guidelines will be added when the implementation is ready for external participation. Until then, changes should remain consistent with the project scope and accepted decisions.
 
 ## License
 

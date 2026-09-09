@@ -91,9 +91,15 @@ public final class MavenModuleAnalyzer {
         Parent parent = usable.getParent();
         Optional<String> parentCoordinates = parent == null ? Optional.empty()
                 : Optional.of(parent.getGroupId() + ":" + parent.getArtifactId() + ":" + parent.getVersion());
+        var dependencies = new MavenDependencyExtractor().extract(built, source, repository, diagnostics);
+        var springBoot = new SpringBootBuildDetector().detect(built, source, dependencies);
+        if (springBoot.detected() && springBoot.version().isEmpty()) {
+            diagnostics.add(diagnostic("SPRING_BOOT_VERSION_UNRESOLVED", source.sourceFileId(),
+                    DiagnosticSeverity.WARNING, "Spring Boot build evidence exists, but its version is unknown or conflicting."));
+        }
         return new MavenModule(source.sourceFileId(), relative(scanRoot, source.realFile().getParent()),
                 parentCoordinates, built.metadata(), sourceDirectory,
-                new MavenDependencyExtractor().extract(built, source, repository, diagnostics), children);
+                dependencies, springBoot, children);
     }
 
     private MavenMetadataValue sourceDirectory(Path scanRoot, RestrictedPomSource source,
