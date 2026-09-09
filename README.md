@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Java Source Analysis**
 >
-> Maven analysis and Spring Boot build detection are available. Java source analysis is next; the first usable release is not available yet.
+> Maven analysis, Spring Boot build detection, and Java source-root discovery are available. Java file discovery is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 

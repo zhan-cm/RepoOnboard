@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / Java 源码分析阶段**
 >
-> Maven 分析与 Spring Boot 构建识别已经可用。下一步是 Java 源码分析，首个可用版本尚未发布。
+> Maven 分析、Spring Boot 构建识别和 Java 源码根发现已经可用。下一步是 Java 文件发现，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 

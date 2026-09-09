@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Java Source Analysis — ready to start**
 
-M0 至 M2 已完成。Maven 检测、受限离线模型、属性、模块层级、依赖提取和 Spring Boot 构建识别均已实现。当前下一任务是 T-0301 Source Root Discovery。
+M0 至 M2 已完成，M3 已开始。Java 主源码根发现已实现，保留模块归属、扫描根相对路径和构建声明证据，并排除构建与生成输出。当前下一任务是 T-0302 Java File Discovery。
 
 ---
 
@@ -2077,11 +2077,12 @@ Architecture Decisions
 Implementation
 ✓ M1 Project Foundation complete
 ✓ M2 Maven Project Analysis complete
+◐ M3 Java Source Analysis in progress
 ```
 
 下一步：
 
-> 完成 T-0301 — Source Root Discovery。
+> 完成 T-0302 — Java File Discovery。
 
 M0、M1、M2 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
