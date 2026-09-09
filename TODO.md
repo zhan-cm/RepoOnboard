@@ -1305,8 +1305,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 从已确认的 Controller/RestController 中提取标准 Spring MVC 类级与方法级 mapping facts，保留路径数组、HTTP method、params/headers/consumes/produces 条件、源码位置和 Evidence；同名伪注解及歧义 import 不会被猜测。
+
+Validation: Java 21 `test` 共 102 项通过；固定 API fixture 与 2 项相关测试覆盖六类标准 mapping、类/方法层级、多路径、多 method、条件、同名伪注解及无法读取的表达式。
 
 识别：
 
@@ -1322,9 +1328,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] 只识别可确认的 Spring MVC 标准注解
-[ ] class-level 和 method-level 声明均保留 Source Evidence
-[ ] path 数组、HTTP method 和 mapping conditions 不被丢失
+[x] 只识别可确认的 Spring MVC 标准注解
+[x] class-level 和 method-level 声明均保留 Source Evidence
+[x] path 数组、HTTP method 和 mapping conditions 不被丢失
 ```
 
 ---

@@ -19,6 +19,7 @@ import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentKind;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringConfigurationAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionStatus;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringMvcMappingAnalyzer;
 import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -103,6 +104,8 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             var springConfiguration = new SpringConfigurationAnalyzer().analyze(javaFacts);
             var springInjection = new SpringInjectionAnalyzer().analyze(
                     javaFacts, springComponents, springConfiguration);
+            var springMappings = new SpringMvcMappingAnalyzer().analyze(
+                    javaFacts, springComponents);
             commandSpec.commandLine().getOut()
                     .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
             for (var sourceRoot : sourceRoots.sourceRoots()) {
@@ -154,9 +157,12 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             commandSpec.commandLine().getOut().printf(
                     "Spring injection candidates: %d (confirmed: %d, ambiguous: %d)%n",
                     springInjection.candidates().size(), confirmedInjections, ambiguousInjections);
+            commandSpec.commandLine().getOut().printf(
+                    "Spring MVC mapping declarations: %d%n", springMappings.mappings().size());
             AnalysisStatus status = combine(
                     analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status(),
-                    springComponents.status(), springConfiguration.status(), springInjection.status());
+                    springComponents.status(), springConfiguration.status(), springInjection.status(),
+                    springMappings.status());
             commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
             for (var diagnostic : analysis.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
@@ -183,6 +189,10 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
             for (var diagnostic : springInjection.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            for (var diagnostic : springMappings.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
