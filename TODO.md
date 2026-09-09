@@ -84,7 +84,7 @@ Implementation
 
 Current Phase:
 
-> **Phase 6 — Report Assembly & Serialization**
+> **Phase 7 — Local Web UI**
 
 Current Product Version:
 
@@ -99,7 +99,7 @@ Product Definition       ✓
 Architecture Constraints ✓
 Technical Decisions      ✓
 Project Scaffold         ✓
-Core Analysis            ◐
+Core Analysis            ✓
 Web UI                   ○
 Real-world Validation    ○
 Public Release           ○
@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0604 — Analysis Summary。**
+> **T-0701 — Local UI Bootstrap。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1472,7 +1472,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 Boundary:
@@ -1604,8 +1604,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: `AnalysisSummary` 作为 `AnalysisReport` 的确定性派生 Overview，按稳定实体 ID 去重统计 Module、SourceFile、Component、Controller、Service、Repository、Configuration、Endpoint、EntryPoint 和 Dependency；PARTIAL/FAILED 通过 `analysisStatus`、`coverageLimited` 与去重排序的诊断代码标明覆盖限制。JSON schema 以加法式次版本升级到 `1.1`，包含 Summary 并校验其与底层实体一致，仍可读取不含 Summary 的 `1.0` 报告。
+
+Validation: Java 21 离线 `clean verify` 共运行 127 个测试并通过。新增 5 个测试覆盖稳定身份去重、Controller 类型合并、PARTIAL 覆盖限制、空报告、非法计数、Summary JSON 快照/往返、一致性拒绝及 `1.0` 向后兼容；JAR 构建成功。
 
 生成：
 
@@ -1623,9 +1629,9 @@ Dependency count
 Acceptance Criteria:
 
 ```text
-[ ] 统计按稳定实体身份去重
-[ ] PARTIAL 分析标出统计覆盖限制
-[ ] Summary 与底层实体数量一致
+[x] 统计按稳定实体身份去重
+[x] PARTIAL 分析标出统计覆盖限制
+[x] Summary 与底层实体数量一致
 ```
 
 ---
@@ -2856,18 +2862,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0604
-Analysis Summary
+T-0701
+Local UI Bootstrap
 ```
 
 本阶段：
 
-> **M6 — Report Assembly & Serialization**
+> **M7 — Local Web UI**
 
-M0 至 M5 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
+M0 至 M6 已完成；可选 T-0404 继续按非阻塞规则延后。接下来按默认依赖顺序执行：
 
 ```text
-T-0604
+T-0701
 ```
 
 ---
@@ -2895,7 +2901,8 @@ M2 Maven Project Analysis — complete
 M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
-M6 Report Assembly & Serialization — in progress
+M6 Report Assembly & Serialization — complete
+M7 Local Web UI — not started
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2906,6 +2913,6 @@ Release
 
 Next:
 
-> **T-0604 — Analysis Summary.**
+> **T-0701 — Local UI Bootstrap.**
 
 ````

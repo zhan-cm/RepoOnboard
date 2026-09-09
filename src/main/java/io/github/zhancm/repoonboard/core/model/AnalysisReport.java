@@ -34,6 +34,11 @@ public record AnalysisReport(
                 .toList();
     }
 
+    /** Returns overview counts derived from the current stable entity identities. */
+    public AnalysisSummary summary() {
+        return AnalysisSummary.from(this);
+    }
+
     private static <T> List<T> stable(
             List<T> values,
             java.util.function.Function<T, String> id,

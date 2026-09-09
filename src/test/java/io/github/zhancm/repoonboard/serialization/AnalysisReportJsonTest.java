@@ -37,25 +37,31 @@ class AnalysisReportJsonTest {
 
     @Test
     void serializesAStableHumanReadableSnapshot() {
-        AnalysisReport minimal = new AnalysisReport(
-                new Project("project:demo", "demo", BuildSystem.MAVEN, List.of()),
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of(),
-                AnalysisStatus.SUCCESS,
-                List.of());
+        AnalysisReport minimal = minimalReport();
 
         String expected = """
                 {
-                  "schemaVersion" : "1.0",
+                  "schemaVersion" : "1.1",
                   "project" : {
                     "id" : "project:demo",
                     "name" : "demo",
                     "buildSystem" : "MAVEN",
                     "evidence" : [ ]
+                  },
+                  "summary" : {
+                    "moduleCount" : 0,
+                    "sourceFileCount" : 0,
+                    "componentCount" : 0,
+                    "controllerCount" : 0,
+                    "serviceCount" : 0,
+                    "repositoryCount" : 0,
+                    "configurationCount" : 0,
+                    "endpointCount" : 0,
+                    "entryPointCount" : 0,
+                    "dependencyCount" : 0,
+                    "analysisStatus" : "SUCCESS",
+                    "coverageLimited" : false,
+                    "coverageLimitationCodes" : [ ]
                   },
                   "modules" : [ ],
                   "sourceFiles" : [ ],
@@ -82,6 +88,9 @@ class AnalysisReportJsonTest {
         assertTrue(json.contains("\"sourceFileId\" : \"src/main/java/example/UserController.java\""));
         assertTrue(json.contains("\"startLine\" : 12"));
         assertTrue(json.contains("\"symbol\" : \"example.UserController.find\""));
+        assertTrue(json.contains("\"controllerCount\" : 1"));
+        assertTrue(json.contains("\"coverageLimited\" : true"));
+        assertTrue(json.contains("\"coverageLimitationCodes\" : [ \"JAVA_PARTIAL\" ]"));
     }
 
     @Test
@@ -99,7 +108,7 @@ class AnalysisReportJsonTest {
     void acceptsAdditiveMinorVersionsAndIgnoresUnknownFieldsWithoutTypeActivation() {
         AnalysisReport report = completeReport();
         String json = codec.serialize(report)
-                .replace("\"schemaVersion\" : \"1.0\"", "\"schemaVersion\" : \"1.9\"")
+                .replace("\"schemaVersion\" : \"1.1\"", "\"schemaVersion\" : \"1.9\"")
                 .replaceFirst("\\{", "{\n  \"@class\" : \"java.lang.Runtime\",\n"
                         + "  \"futureConfiguration\" : { \"secret\" : \"not-loaded\" },");
 
@@ -109,7 +118,7 @@ class AnalysisReportJsonTest {
     @Test
     void rejectsUnknownMajorVersionBeforeBindingTheReport() {
         String json = codec.serialize(completeReport())
-                .replace("\"schemaVersion\" : \"1.0\"", "\"schemaVersion\" : \"2.0\"");
+                .replace("\"schemaVersion\" : \"1.1\"", "\"schemaVersion\" : \"2.0\"");
 
         UnsupportedReportSchemaVersionException exception = assertThrows(
                 UnsupportedReportSchemaVersionException.class,
@@ -132,8 +141,8 @@ class AnalysisReportJsonTest {
                 ReportSerializationException.class,
                 () -> codec.deserialize(codec.serialize(completeReport()) + " {}"));
         String duplicateVersion = codec.serialize(completeReport()).replace(
-                "\"schemaVersion\" : \"1.0\"",
-                "\"schemaVersion\" : \"2.0\",\n  \"schemaVersion\" : \"1.0\"");
+                "\"schemaVersion\" : \"1.1\"",
+                "\"schemaVersion\" : \"2.0\",\n  \"schemaVersion\" : \"1.1\"");
         assertThrows(
                 ReportSerializationException.class,
                 () -> codec.deserialize(duplicateVersion));
@@ -161,13 +170,60 @@ class AnalysisReportJsonTest {
     }
 
     @Test
+    void readsLegacyVersionOneWithoutTheAdditiveSummaryField() {
+        String legacySummaryBlock = """
+                  "summary" : {
+                    "moduleCount" : 0,
+                    "sourceFileCount" : 0,
+                    "componentCount" : 0,
+                    "controllerCount" : 0,
+                    "serviceCount" : 0,
+                    "repositoryCount" : 0,
+                    "configurationCount" : 0,
+                    "endpointCount" : 0,
+                    "entryPointCount" : 0,
+                    "dependencyCount" : 0,
+                    "analysisStatus" : "SUCCESS",
+                    "coverageLimited" : false,
+                    "coverageLimitationCodes" : [ ]
+                  },
+                """;
+        String json = codec.serialize(minimalReport())
+                .replace("\"schemaVersion\" : \"1.1\"", "\"schemaVersion\" : \"1.0\"")
+                .replace(legacySummaryBlock, "");
+
+        assertEquals(minimalReport(), codec.deserialize(json));
+    }
+
+    @Test
+    void rejectsASummaryThatDoesNotMatchItsEntities() {
+        String json = codec.serialize(completeReport())
+                .replace("\"moduleCount\" : 1", "\"moduleCount\" : 99");
+
+        assertThrows(ReportSerializationException.class, () -> codec.deserialize(json));
+    }
+
+    @Test
     void schemaVersionUsesStrictMajorMinorSyntax() {
-        assertEquals("1.0", ReportSchemaVersion.CURRENT.toString());
+        assertEquals("1.1", ReportSchemaVersion.CURRENT.toString());
         assertEquals(new ReportSchemaVersion(12, 34), ReportSchemaVersion.parse("12.34"));
         assertTrue(new ReportSchemaVersion(1, 99).isCompatibleWith(ReportSchemaVersion.CURRENT));
         assertFalse(new ReportSchemaVersion(2, 0).isCompatibleWith(ReportSchemaVersion.CURRENT));
         assertThrows(IllegalArgumentException.class, () -> ReportSchemaVersion.parse("01.0"));
         assertThrows(IllegalArgumentException.class, () -> ReportSchemaVersion.parse("1"));
+    }
+
+    private static AnalysisReport minimalReport() {
+        return new AnalysisReport(
+                new Project("project:demo", "demo", BuildSystem.MAVEN, List.of()),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                AnalysisStatus.SUCCESS,
+                List.of());
     }
 
     private static AnalysisReport completeReport() {
