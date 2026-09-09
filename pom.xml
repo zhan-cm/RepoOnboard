@@ -12,6 +12,7 @@
     <description>Local-first codebase comprehension and developer onboarding.</description>
 
     <properties>
+        <jackson.version>3.1.4</jackson.version>
         <javaparser.version>3.28.2</javaparser.version>
         <junit.version>6.1.3</junit.version>
         <maven.compiler.release>21</maven.compiler.release>
@@ -23,6 +24,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
