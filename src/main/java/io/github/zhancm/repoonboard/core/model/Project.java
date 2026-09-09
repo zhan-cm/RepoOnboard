@@ -9,6 +9,6 @@ public record Project(String id, String name, BuildSystem buildSystem, List<Evid
         id = ModelValues.requireText(id, "id");
         name = ModelValues.requireText(name, "name");
         buildSystem = Objects.requireNonNull(buildSystem, "buildSystem");
-        evidence = List.copyOf(Objects.requireNonNull(evidence, "evidence"));
+        evidence = ModelValues.stableEvidence(evidence);
     }
 }
