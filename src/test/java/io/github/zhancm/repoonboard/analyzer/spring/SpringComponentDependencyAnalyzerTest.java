@@ -12,8 +12,14 @@ import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceResolver;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
 import io.github.zhancm.repoonboard.testing.FixturePaths;
+import io.github.zhancm.repoonboard.core.model.Evidence;
+import io.github.zhancm.repoonboard.core.model.SourceLocation;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -32,12 +38,13 @@ class SpringComponentDependencyAnalyzerTest {
         SpringComponentDependencyAnalysis analysis = new SpringComponentDependencyAnalyzer().analyze(
                 pipeline.components(), pipeline.injections());
 
-        assertEquals(4, analysis.dependencies().size());
-        assertTrue(analysis.dependencies().stream()
-                .allMatch(dependency -> dependency.status() == SpringDependencyStatus.CONFIRMED));
-        assertTrue(analysis.dependencies().stream()
+        List<SpringComponentDependencyFact> confirmed = analysis.dependencies().stream()
+                .filter(dependency -> dependency.status() == SpringDependencyStatus.CONFIRMED)
+                .toList();
+        assertEquals(5, confirmed.size());
+        assertTrue(confirmed.stream()
                 .allMatch(dependency -> dependency.kind() == SpringDependencyKind.COMPONENT_INJECTION));
-        Set<String> edges = analysis.dependencies().stream()
+        Set<String> edges = confirmed.stream()
                 .map(dependency -> simple(dependency.sourceQualifiedName()) + "->"
                         + simple(dependency.targetQualifiedName().orElseThrow()))
                 .collect(Collectors.toSet());
@@ -45,12 +52,13 @@ class SpringComponentDependencyAnalyzerTest {
                 "OrderController->OrderService",
                 "OrderService->InventoryService",
                 "OrderService->OrderRepository",
-                "InventoryService->AuditComponent"), edges);
-        assertTrue(analysis.dependencies().stream().allMatch(dependency ->
+                "InventoryService->AuditComponent",
+                "AuditComponent->OrderService"), edges);
+        assertTrue(confirmed.stream().allMatch(dependency ->
                 !dependency.evidence().isEmpty()
                         && Set.of("CONSTRUCTOR_INJECTION", "FIELD_INJECTION")
                                 .contains(dependency.evidence().getFirst().type())));
-        assertTrue(analysis.dependencies().stream().allMatch(dependency ->
+        assertTrue(confirmed.stream().allMatch(dependency ->
                 dependency.targetModulePomFileId().orElseThrow().equals("pom.xml")));
     }
 
@@ -65,8 +73,113 @@ class SpringComponentDependencyAnalyzerTest {
         assertTrue(analysis.dependencies().stream().noneMatch(dependency ->
                 dependency.targetQualifiedName().filter(name ->
                         name.endsWith("FastPort") || name.endsWith("SafePort")).isPresent()));
+        SpringComponentDependencyFact unresolvedInterface = analysis.dependencies().stream()
+                .filter(dependency -> dependency.sourceQualifiedName().endsWith("CheckoutService"))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(SpringDependencyStatus.UNRESOLVED_TARGET, unresolvedInterface.status());
+        assertEquals("fixture.inject.Port",
+                unresolvedInterface.resolvedTypeQualifiedName().orElseThrow());
         assertTrue(analysis.diagnostics().stream().anyMatch(diagnostic ->
-                diagnostic.code().equals("SPRING_COMPONENT_DEPENDENCY_UNCONFIRMED")));
+                diagnostic.code().equals("SPRING_DEPENDENCY_TARGET_UNRESOLVED")));
+    }
+
+    @Test
+    void consolidatesEvidenceRetainsUnresolvedTargetsAndSupportsCycles() {
+        Path fixture = FixturePaths.project("spring-dependency-project");
+        Pipeline pipeline = analyze(fixture, temporaryDirectory.resolve("consolidation-cache"));
+
+        SpringComponentDependencyAnalysis analysis = new SpringComponentDependencyAnalyzer().analyze(
+                pipeline.components(), pipeline.injections());
+
+        SpringComponentDependencyFact duplicate = analysis.dependencies().stream()
+                .filter(dependency -> dependency.sourceQualifiedName().endsWith("OrderController"))
+                .filter(dependency -> dependency.targetQualifiedName().filter(
+                        name -> name.endsWith("OrderService")).isPresent())
+                .findFirst()
+                .orElseThrow();
+        assertEquals(2, duplicate.evidence().size());
+        assertEquals(Set.of("CONSTRUCTOR_INJECTION", "FIELD_INJECTION"),
+                duplicate.evidence().stream().map(evidence -> evidence.type())
+                        .collect(Collectors.toSet()));
+
+        SpringComponentDependencyFact unresolved = analysis.dependencies().stream()
+                .filter(dependency -> dependency.sourceQualifiedName().endsWith("MissingClient"))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(SpringDependencyStatus.UNRESOLVED_TARGET, unresolved.status());
+        assertEquals("ExternalGateway", unresolved.declaredTargetType());
+        assertTrue(unresolved.targetQualifiedName().isEmpty());
+        assertTrue(analysis.diagnostics().stream().anyMatch(diagnostic ->
+                diagnostic.code().equals("SPRING_DEPENDENCY_TARGET_UNRESOLVED")));
+
+        Map<SpringComponentRef, List<SpringComponentRef>> adjacency = analysis.confirmedAdjacency();
+        SpringComponentRef orderService = adjacency.keySet().stream()
+                .filter(component -> component.qualifiedName().endsWith("OrderService"))
+                .findFirst()
+                .orElseThrow();
+        Set<SpringComponentRef> visited = reachable(adjacency, orderService);
+        assertTrue(visited.stream().anyMatch(component ->
+                component.qualifiedName().endsWith("InventoryService")));
+        assertTrue(visited.stream().anyMatch(component ->
+                component.qualifiedName().endsWith("AuditComponent")));
+        assertTrue(visited.stream().anyMatch(component ->
+                component.qualifiedName().endsWith("OrderRepository")));
+        assertEquals(4, visited.size());
+    }
+
+    @Test
+    void retainsDuplicateQualifiedComponentTargetsAsAmbiguous() {
+        SourceLocation ownerLocation = SourceLocation.file("owner/Owner.java");
+        SourceLocation targetOneLocation = SourceLocation.file("one/Target.java");
+        SourceLocation targetTwoLocation = SourceLocation.file("two/Target.java");
+        Evidence ownerEvidence = new Evidence(
+                "SPRING_COMPONENT_ANNOTATION", ownerLocation, List.of(), "test.owner");
+        SpringComponentFact owner = new SpringComponentFact(
+                "owner/pom.xml", "demo.Owner", Optional.of("owner"),
+                SpringComponentKind.SERVICE, ownerLocation, List.of(ownerEvidence));
+        SpringComponentFact targetOne = new SpringComponentFact(
+                "one/pom.xml", "demo.Target", Optional.of("target"),
+                SpringComponentKind.SERVICE, targetOneLocation,
+                List.of(new Evidence("SPRING_COMPONENT_ANNOTATION", targetOneLocation,
+                        List.of(), "test.target.one")));
+        SpringComponentFact targetTwo = new SpringComponentFact(
+                "two/pom.xml", "demo.Target", Optional.of("target"),
+                SpringComponentKind.SERVICE, targetTwoLocation,
+                List.of(new Evidence("SPRING_COMPONENT_ANNOTATION", targetTwoLocation,
+                        List.of(), "test.target.two")));
+        SpringInjectionCandidate injection = new SpringInjectionCandidate(
+                "owner/pom.xml", "demo.Owner", SpringInjectionKind.CONSTRUCTOR,
+                "target", "Target", SpringInjectionStatus.CONFIRMED,
+                Optional.of("demo.Target"), ownerLocation,
+                List.of(new Evidence("CONSTRUCTOR_INJECTION", ownerLocation,
+                        List.of(), "test.injection")));
+
+        SpringComponentDependencyAnalysis analysis = new SpringComponentDependencyAnalyzer().analyze(
+                new SpringComponentAnalysis(List.of(owner, targetOne, targetTwo), List.of()),
+                new SpringInjectionAnalysis(List.of(injection), List.of()));
+
+        assertEquals(1, analysis.dependencies().size());
+        assertEquals(SpringDependencyStatus.AMBIGUOUS_TARGET,
+                analysis.dependencies().getFirst().status());
+        assertTrue(analysis.dependencies().getFirst().targetQualifiedName().isEmpty());
+        assertTrue(analysis.diagnostics().stream().anyMatch(diagnostic ->
+                diagnostic.code().equals("SPRING_DEPENDENCY_TARGET_AMBIGUOUS")));
+    }
+
+    private static Set<SpringComponentRef> reachable(
+            Map<SpringComponentRef, List<SpringComponentRef>> adjacency,
+            SpringComponentRef start) {
+        Set<SpringComponentRef> visited = new HashSet<>();
+        ArrayDeque<SpringComponentRef> pending = new ArrayDeque<>();
+        pending.add(start);
+        while (!pending.isEmpty()) {
+            SpringComponentRef current = pending.removeFirst();
+            if (visited.add(current)) {
+                pending.addAll(adjacency.getOrDefault(current, List.of()));
+            }
+        }
+        return visited;
     }
 
     private static String simple(String qualifiedName) {

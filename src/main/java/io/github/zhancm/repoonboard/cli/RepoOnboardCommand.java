@@ -176,8 +176,10 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     .filter(dependency -> dependency.status() == SpringDependencyStatus.CONFIRMED)
                     .count();
             commandSpec.commandLine().getOut().printf(
-                    "Spring component dependencies: %d (confirmed: %d)%n",
-                    springDependencies.dependencies().size(), confirmedDependencies);
+                    "Spring component dependencies: %d (confirmed: %d, unresolved: %d)%n",
+                    springDependencies.dependencies().size(),
+                    confirmedDependencies,
+                    springDependencies.dependencies().size() - confirmedDependencies);
             AnalysisStatus status = combine(
                     analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status(),
                     springComponents.status(), springConfiguration.status(), springInjection.status(),

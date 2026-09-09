@@ -4,5 +4,6 @@ package io.github.zhancm.repoonboard.analyzer.spring;
 public enum SpringDependencyStatus {
     CONFIRMED,
     AMBIGUOUS_INJECTION,
+    AMBIGUOUS_TARGET,
     UNRESOLVED_TARGET
 }

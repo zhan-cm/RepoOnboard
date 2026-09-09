@@ -3,7 +3,7 @@ package fixture.dependency;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuditComponent {
-    public AuditComponent(OrderService orderService) {
+public class MissingClient {
+    public MissingClient(ExternalGateway externalGateway) {
     }
 }

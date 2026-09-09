@@ -12,6 +12,7 @@ public record SpringComponentDependencyFact(
         String sourceQualifiedName,
         Optional<String> targetModulePomFileId,
         Optional<String> targetQualifiedName,
+        Optional<String> resolvedTypeQualifiedName,
         String declaredTargetType,
         SpringDependencyKind kind,
         SpringDependencyStatus status,
@@ -24,8 +25,11 @@ public record SpringComponentDependencyFact(
         targetModulePomFileId = Objects.requireNonNull(
                 targetModulePomFileId, "targetModulePomFileId");
         targetQualifiedName = Objects.requireNonNull(targetQualifiedName, "targetQualifiedName");
+        resolvedTypeQualifiedName = Objects.requireNonNull(
+                resolvedTypeQualifiedName, "resolvedTypeQualifiedName");
         targetModulePomFileId.ifPresent(value -> requireText(value, "targetModulePomFileId"));
         targetQualifiedName.ifPresent(value -> requireText(value, "targetQualifiedName"));
+        resolvedTypeQualifiedName.ifPresent(value -> requireText(value, "resolvedTypeQualifiedName"));
         declaredTargetType = requireText(declaredTargetType, "declaredTargetType");
         kind = Objects.requireNonNull(kind, "kind");
         status = Objects.requireNonNull(status, "status");
@@ -37,6 +41,10 @@ public record SpringComponentDependencyFact(
         if (status == SpringDependencyStatus.CONFIRMED
                 && (targetModulePomFileId.isEmpty() || targetQualifiedName.isEmpty())) {
             throw new IllegalArgumentException("Confirmed dependency requires a target component");
+        }
+        if (status == SpringDependencyStatus.CONFIRMED
+                && !resolvedTypeQualifiedName.equals(targetQualifiedName)) {
+            throw new IllegalArgumentException("Confirmed dependency target must match resolved type");
         }
         if (targetModulePomFileId.isPresent() != targetQualifiedName.isPresent()) {
             throw new IllegalArgumentException("Target module and qualified name must be present together");

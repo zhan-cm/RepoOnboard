@@ -6,9 +6,9 @@
 
 RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手工具**，帮助开发者在修改陌生项目之前，先建立清晰、可靠的整体认知。
 
-> **状态：早期开发 / 即将进入 API 与依赖分析**
+> **状态：早期开发 / 即将进入报告组装与序列化**
 >
-> Maven 分析、Java 源码 facts、Spring 组件、配置类、Boot 应用入口和依赖注入候选已经可用。下一步是 HTTP API 与已确认依赖边分析，首个可用版本尚未发布。
+> Maven 分析、Java 源码 facts、Spring 组件、配置类、Boot 应用入口、HTTP Endpoint 和组件依赖已经可用。下一步是稳定报告组装与 JSON 序列化，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -152,7 +152,7 @@ M1  工程基础                         ✓
 M2  Maven 分析                       ✓
 M3  Java 源码分析                    ✓
 M4  Spring Boot 分析                 ✓
-M5  API 与依赖分析
+M5  API 与依赖分析                  ✓
 M6  报告组装与序列化
 M7  本地 Web UI
 M8  Start Here
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口和注入候选 facts。可确认的项目内组合注解会被继续解析；冲突和不支持的注入模式会保留为明确诊断，不会猜测结果。MyBatis/MyBatis-Plus Mapper 专用分类已延后，因此 Mapper 接口目前只显示为普通 Java 声明。API、依赖图和 Web UI 仍在开发中。
+当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告、JSON 输出和 Web UI 仍在开发中。
 
 ## 项目文档
 
