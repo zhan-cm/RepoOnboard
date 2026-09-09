@@ -27,9 +27,11 @@ public final class SpringConfigurationAnalyzer {
         List<SpringConfigurationFact> configurations = new ArrayList<>();
         List<SpringEntryPointFact> entryPoints = new ArrayList<>();
         List<Diagnostic> diagnostics = new ArrayList<>();
+        SpringComposedAnnotationResolver composedResolver =
+                new SpringComposedAnnotationResolver(javaAnalysis);
         for (JavaCompilationUnitFact unit : javaAnalysis.compilationUnits()) {
             for (JavaTypeFact type : unit.types()) {
-                analyzeType(unit, type, configurations, entryPoints, diagnostics);
+                analyzeType(unit, type, composedResolver, configurations, entryPoints, diagnostics);
             }
         }
         configurations.sort(Comparator.comparing(SpringConfigurationFact::modulePomFileId)
@@ -42,6 +44,7 @@ public final class SpringConfigurationAnalyzer {
     private static void analyzeType(
             JavaCompilationUnitFact unit,
             JavaTypeFact type,
+            SpringComposedAnnotationResolver composedResolver,
             List<SpringConfigurationFact> configurations,
             List<SpringEntryPointFact> entryPoints,
             List<Diagnostic> diagnostics) {
@@ -49,6 +52,7 @@ public final class SpringConfigurationAnalyzer {
             return;
         }
         List<ResolvedAnnotation> matches = new ArrayList<>();
+        boolean ambiguousComposition = false;
         for (JavaAnnotationFact annotation : type.annotations()) {
             SpringAnnotationResolution resolution = SpringAnnotationMatcher.resolve(
                     annotation, unit, KNOWN_ANNOTATIONS);
@@ -56,8 +60,24 @@ public final class SpringConfigurationAnalyzer {
                 diagnostics.add(diagnostic(unit, type, annotation));
             } else if (resolution.status() == SpringAnnotationResolution.Status.CONFIRMED) {
                 matches.add(new ResolvedAnnotation(
-                        annotation, resolution.qualifiedName().orElseThrow()));
+                        annotation, resolution.qualifiedName().orElseThrow(), Optional.empty()));
+            } else {
+                SpringComposedAnnotationResolver.Resolution composed = composedResolver.resolve(
+                        unit, annotation, KNOWN_ANNOTATIONS);
+                if (composed.ambiguous()) {
+                    ambiguousComposition = true;
+                    diagnostics.add(composedDiagnostic(unit, type, annotation));
+                }
+                for (SpringComposedAnnotationResolver.Match composedMatch : composed.matches()) {
+                    matches.add(new ResolvedAnnotation(
+                            annotation,
+                            composedMatch.qualifiedName(),
+                            Optional.of(composedMatch.metaAnnotationLocation())));
+                }
             }
+        }
+        if (ambiguousComposition) {
+            return;
         }
         if (matches.isEmpty()) {
             return;
@@ -100,10 +120,16 @@ public final class SpringConfigurationAnalyzer {
             JavaTypeFact declaration,
             String ruleId) {
         return new Evidence(
-                type,
+                annotation.metaAnnotationLocation().isPresent()
+                        ? "SPRING_COMPOSED_" + type.substring("SPRING_".length())
+                        : type,
                 annotation.annotation().location(),
-                List.of(declaration.location()),
-                ruleId);
+                annotation.metaAnnotationLocation().isPresent()
+                        ? List.of(declaration.location(), annotation.metaAnnotationLocation().orElseThrow())
+                        : List.of(declaration.location()),
+                annotation.metaAnnotationLocation().isPresent()
+                        ? ruleId.replaceFirst("spring\\.", "spring.composed.")
+                        : ruleId);
     }
 
     private static Diagnostic diagnostic(
@@ -118,6 +144,21 @@ public final class SpringConfigurationAnalyzer {
                 "A Spring configuration annotation could not be confirmed because its imports are ambiguous.");
     }
 
-    private record ResolvedAnnotation(JavaAnnotationFact annotation, String qualifiedName) {
+    private static Diagnostic composedDiagnostic(
+            JavaCompilationUnitFact unit, JavaTypeFact type, JavaAnnotationFact annotation) {
+        return new Diagnostic(
+                "SPRING_COMPOSED_CONFIGURATION_AMBIGUOUS",
+                DiagnosticSeverity.WARNING,
+                STAGE,
+                Optional.of(unit.sourceFile().modulePomFileId()),
+                Optional.of(type.location().sourceFileId()),
+                Optional.of(annotation.location()),
+                "A project-local composed configuration annotation is cyclic or cannot be uniquely resolved.");
+    }
+
+    private record ResolvedAnnotation(
+            JavaAnnotationFact annotation,
+            String qualifiedName,
+            Optional<io.github.zhancm.repoonboard.core.model.SourceLocation> metaAnnotationLocation) {
     }
 }
