@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Spring Boot Analysis — in progress**
 
-M0 至 M3 已完成，M4 已开始。标准 Spring stereotype 已通过确认的全限定名/import 映射为带名称与源码证据的组件 facts，歧义不会被猜测。当前下一任务是 T-0402 Configuration and Application Entry Point Detection。
+M0 至 M3 已完成，M4 已开始。标准 Spring stereotype、配置类和 Boot 应用入口已通过确认的全限定名/import 映射为带源码证据的 facts，歧义不会被猜测。当前下一任务是 T-0403 Dependency Injection Detection。
 
 ---
 
@@ -2083,7 +2083,7 @@ Implementation
 
 下一步：
 
-> 完成 T-0402 — Configuration and Application Entry Point Detection。
+> 完成 T-0403 — Dependency Injection Detection。
 
 M0、M1、M2、M3 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 

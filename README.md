@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Spring Boot Analysis**
 >
-> Maven analysis, Java source facts, and confirmed standard Spring component detection are available. Configuration and application entry-point detection are next; the first usable release is not available yet.
+> Maven analysis, Java source facts, standard Spring components, configurations, and Boot application entry points are available. Dependency-injection detection is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven, Java source, and standard Spring component analysis with source evidence. Spring configuration/entry points, injection, APIs, dependency graphs, and the Web UI are still under development.
+The current CLI provides Maven, Java source, standard Spring component, configuration, and application-entry analysis with source evidence. Injection, APIs, dependency graphs, and the Web UI are still under development.
 
 ## Documentation
 
