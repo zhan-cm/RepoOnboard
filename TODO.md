@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0304 — Import and Type Reference Extraction。**
+> **T-0305 — Java Declaration Index。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1042,8 +1042,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 提取 import 与每个类型使用位置，并按全限定名、显式 import、同包、唯一通配 import 的保守优先级解析项目内声明；只允许当前模块及明确 Maven 编译可见模块，外部、不可见和歧义引用保持 unresolved/ambiguous。
+
+Validation: Java 21 `test` 共 88 项通过；3 项新增测试覆盖 import 位置、解析优先级、通配歧义、外部类型、已确认跨模块依赖，以及 runtime/test scope 不可见性。
 
 Goal:
 
@@ -1060,9 +1066,9 @@ Referenced Types
 Acceptance Criteria:
 
 ```text
-[ ] 全限定名、显式 import、同包和唯一通配 import 可解析
-[ ] 无法确认或存在歧义的类型保持 unresolved
-[ ] 跨模块解析只使用确认的 Maven 可见关系
+[x] 全限定名、显式 import、同包和唯一通配 import 可解析
+[x] 无法确认或存在歧义的类型保持 unresolved
+[x] 跨模块解析只使用确认的 Maven 可见关系
 ```
 
 ---
@@ -2766,18 +2772,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0304
-Import and Type Reference Extraction
+T-0305
+Java Declaration Index
 ```
 
 本阶段：
 
 > **M3 — Java Source Analysis**
 
-M0、M1、M2 已完成，T-0301 至 T-0303 已完成。接下来按默认依赖顺序执行：
+M0、M1、M2 已完成，T-0301 至 T-0304 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0304
+T-0305
 ```
 
 ---
@@ -2813,6 +2819,6 @@ Release
 
 Next:
 
-> **T-0304 — Import and Type Reference Extraction.**
+> **T-0305 — Java Declaration Index.**
 
 ````

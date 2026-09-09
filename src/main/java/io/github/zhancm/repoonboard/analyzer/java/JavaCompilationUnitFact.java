@@ -8,7 +8,9 @@ import java.util.Optional;
 public record JavaCompilationUnitFact(
         JavaSourceFile sourceFile,
         Optional<String> packageName,
-        List<JavaTypeFact> types) {
+        List<JavaImportFact> imports,
+        List<JavaTypeFact> types,
+        List<JavaTypeReferenceFact> typeReferences) {
 
     public JavaCompilationUnitFact {
         sourceFile = Objects.requireNonNull(sourceFile, "sourceFile");
@@ -16,6 +18,8 @@ public record JavaCompilationUnitFact(
         if (packageName.isPresent() && packageName.orElseThrow().isBlank()) {
             throw new IllegalArgumentException("packageName must not be blank when present");
         }
+        imports = List.copyOf(Objects.requireNonNull(imports, "imports"));
         types = List.copyOf(Objects.requireNonNull(types, "types"));
+        typeReferences = List.copyOf(Objects.requireNonNull(typeReferences, "typeReferences"));
     }
 }

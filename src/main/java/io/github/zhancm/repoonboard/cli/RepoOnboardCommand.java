@@ -2,6 +2,8 @@ package io.github.zhancm.repoonboard.cli;
 
 import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
+import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceResolver;
+import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceStatus;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetection;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
@@ -88,6 +90,7 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             var sourceRoots = new JavaSourceRootDiscoverer().discover(resolvedTarget, analysis);
             var javaFiles = new JavaFileDiscoverer().discover(resolvedTarget, sourceRoots);
             var javaParse = new JavaSourceParser().parse(resolvedTarget, javaFiles);
+            var javaFacts = new JavaTypeReferenceResolver().resolve(javaParse, analysis);
             commandSpec.commandLine().getOut()
                     .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
             for (var sourceRoot : sourceRoots.sourceRoots()) {
@@ -97,12 +100,23 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             commandSpec.commandLine().getOut().printf("Java source files: %d%n", javaFiles.files().size());
             commandSpec.commandLine().getOut()
                     .printf("Java compilation units: %d%n", javaParse.compilationUnits().size());
-            long declarationCount = javaParse.compilationUnits().stream()
+            long declarationCount = javaFacts.compilationUnits().stream()
                     .mapToLong(unit -> unit.types().size())
                     .sum();
             commandSpec.commandLine().getOut().printf("Java declarations: %d%n", declarationCount);
+            long referenceCount = javaFacts.compilationUnits().stream()
+                    .mapToLong(unit -> unit.typeReferences().size())
+                    .sum();
+            long resolvedReferenceCount = javaFacts.compilationUnits().stream()
+                    .flatMap(unit -> unit.typeReferences().stream())
+                    .filter(reference -> reference.status() == JavaTypeReferenceStatus.RESOLVED)
+                    .count();
+            commandSpec.commandLine().getOut().printf(
+                    "Java type references: %d (project-local resolved: %d)%n",
+                    referenceCount,
+                    resolvedReferenceCount);
             AnalysisStatus status = combine(
-                    analysis.status(), sourceRoots.status(), javaFiles.status(), javaParse.status());
+                    analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status());
             commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
             for (var diagnostic : analysis.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",

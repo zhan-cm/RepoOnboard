@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **Java Source Analysis — ready to start**
 
-M0 至 M2 已完成，M3 已开始。Java 主源码根与源码文件发现已实现；JavaParser 3.28.2 已按 ADR-0005 锁定并转换为项目自有的声明、成员、注解与位置 facts，损坏文件保留部分结果。当前下一任务是 T-0304 Import and Type Reference Extraction。
+M0 至 M2 已完成，M3 已开始。JavaParser 3.28.2 已转换为项目自有源码 facts；import 和类型引用按全限定名、显式 import、同包、唯一通配 import 解析，并受明确 Maven 编译可见关系约束。当前下一任务是 T-0305 Java Declaration Index。
 
 ---
 
@@ -2082,7 +2082,7 @@ Implementation
 
 下一步：
 
-> 完成 T-0304 — Import and Type Reference Extraction。
+> 完成 T-0305 — Java Declaration Index。
 
 M0、M1、M2 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
