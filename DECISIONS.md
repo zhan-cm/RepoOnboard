@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **Spring Boot Analysis — in progress**
+> **API & Dependency Analysis — next**
 
-M0 至 M3 已完成，M4 已开始。标准 Spring stereotype、配置类和 Boot 应用入口已通过确认的全限定名/import 映射为带源码证据的 facts，歧义不会被猜测。当前下一任务是 T-0403 Dependency Injection Detection。
+M0 至 M4 已完成。标准与项目内可确认的组合 Spring stereotype、配置类和 Boot 应用入口均映射为带源码证据的 facts；构造器和字段注入候选会保留确认、歧义与未解析状态，不会把多实现接口猜测为某个实现。可选 T-0404 Mapper Detection 已按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0501 Spring MVC Controller Mapping。
 
 ---
 
@@ -2078,13 +2078,14 @@ Implementation
 ✓ M1 Project Foundation complete
 ✓ M2 Maven Project Analysis complete
 ✓ M3 Java Source Analysis complete
-◐ M4 Spring Boot Analysis in progress
+✓ M4 Spring Boot Analysis complete
+○ M5 API & Dependency Analysis next
 ```
 
 下一步：
 
-> 完成 T-0403 — Dependency Injection Detection。
+> 完成 T-0501 — Spring MVC Controller Mapping。
 
-M0、M1、M2、M3 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0 至 M4 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````

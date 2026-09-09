@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Spring Boot Analysis**
+> **Status: Early Development / API & Dependency Analysis Next**
 >
-> Maven analysis, Java source facts, standard Spring components, configurations, and Boot application entry points are available. Dependency-injection detection is next; the first usable release is not available yet.
+> Maven analysis, Java source facts, Spring components, configurations, Boot application entry points, and dependency-injection candidates are available. HTTP API and confirmed dependency-edge analysis are next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -151,7 +151,7 @@ M0  Technical Architecture                 ✓
 M1  Project Foundation                     ✓
 M2  Maven Analysis                         ✓
 M3  Java Source Analysis                   ✓
-M4  Spring Boot Analysis
+M4  Spring Boot Analysis                  ✓
 M5  API & Dependency Analysis
 M6  Report Assembly & Serialization
 M7  Local Web UI
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven, Java source, standard Spring component, configuration, and application-entry analysis with source evidence. Injection, APIs, dependency graphs, and the Web UI are still under development.
+The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, and injection-candidate facts with source evidence. Confirmable project-local composed annotations are followed; conflicts and unsupported injection patterns remain explicit diagnostics rather than guessed results. MyBatis/MyBatis-Plus mapper classification is deferred, so mapper interfaces currently appear only as ordinary Java declarations. APIs, dependency graphs, and the Web UI are still under development.
 
 ## Documentation
 
