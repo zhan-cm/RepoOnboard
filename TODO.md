@@ -1387,8 +1387,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 将已确认的 Spring 注入候选映射为 `source component → target component` 的有向 `COMPONENT_INJECTION` 边，保留源/目标模块、声明类型、注入位置与 Evidence；只有目标在组件集合中唯一确认时才创建确定边。
+
+Validation: Java 21 `test` 共 106 项通过；固定 dependency fixture 与 3 项相关测试覆盖 Controller→Service、Service→Service、Service→Repository、Component→Component、构造器/字段 Evidence，以及接口多实现不误连边。
 
 建立：
 
@@ -1403,10 +1409,10 @@ Component → Component
 Acceptance Criteria:
 
 ```text
-[ ] Fixture 项目关系正确
-[ ] 每条确定关系包含类型、方向和 Source Evidence
-[ ] 无法确认的关系不应伪造
-[ ] Maven 模块依赖与组件依赖分别表示
+[x] Fixture 项目关系正确
+[x] 每条确定关系包含类型、方向和 Source Evidence
+[x] 无法确认的关系不应伪造
+[x] Maven 模块依赖与组件依赖分别表示
 ```
 
 ---

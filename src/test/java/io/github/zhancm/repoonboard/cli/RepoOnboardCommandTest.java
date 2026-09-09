@@ -40,6 +40,7 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Spring injection candidates: 0"));
         assertTrue(result.out().contains("Spring MVC mapping declarations: 0"));
         assertTrue(result.out().contains("Spring HTTP endpoints: 0 (unresolved: 0)"));
+        assertTrue(result.out().contains("Spring component dependencies: 0 (confirmed: 0)"));
         assertTrue(result.err().isEmpty());
     }
 
@@ -52,6 +53,14 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Spring HTTP endpoints: 17 (unresolved: 1)"));
         assertTrue(result.err().contains("SPRING_MVC_PATH_UNRESOLVED"));
         assertTrue(result.err().contains("SPRING_MVC_CONDITION_UNRESOLVED"));
+    }
+
+    @Test
+    void reportsConfirmedComponentDependencies() {
+        CliResult result = execute(FixturePaths.project("spring-dependency-project").toString());
+
+        assertEquals(0, result.exitCode());
+        assertTrue(result.out().contains("Spring component dependencies: 4 (confirmed: 4)"));
     }
 
     @Test
