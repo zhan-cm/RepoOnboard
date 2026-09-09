@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0401 — Spring Component Detection。**
+> **T-0402 — Configuration and Application Entry Point Detection。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -1110,7 +1110,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -1133,8 +1133,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 将确认的 Spring `@Controller`、`@RestController`、`@Service`、`@Repository`、`@Component` 映射为带模块、组件名称、类型位置和注解 Evidence 的 Spring facts；仅接受全限定名或无歧义 import，显式名称只读取确定字符串字面量。
+
+Validation: Java 21 `test` 共 93 项通过；固定 Spring fixture 与 3 项新增测试覆盖五类组件、默认/显式名称、位置证据、同名伪注解、import 歧义、角色冲突和无法读取的名称表达式。
 
 至少支持：
 
@@ -1149,9 +1155,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] Component Type 分类正确
-[ ] Component Name 正确
-[ ] Source Location 正确
+[x] Component Type 分类正确
+[x] Component Name 正确
+[x] Source Location 正确
 ```
 
 ---
@@ -2778,18 +2784,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0401
-Spring Component Detection
+T-0402
+Configuration and Application Entry Point Detection
 ```
 
 本阶段：
 
 > **M4 — Spring Boot Analysis**
 
-M0 至 M3 已完成。接下来按默认依赖顺序执行：
+M0 至 M3 与 T-0401 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0401
+T-0402
 ```
 
 ---
@@ -2815,7 +2821,7 @@ Implementation
 M1 Project Foundation — complete
 M2 Maven Project Analysis — complete
 M3 Java Source Analysis — complete
-M4 Spring Boot Analysis — not started
+M4 Spring Boot Analysis — in progress
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2826,6 +2832,6 @@ Release
 
 Next:
 
-> **T-0401 — Spring Component Detection.**
+> **T-0402 — Configuration and Application Entry Point Detection.**
 
 ````

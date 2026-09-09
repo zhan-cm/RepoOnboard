@@ -18,6 +18,10 @@ import com.github.javaparser.ast.body.RecordDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.ArrayInitializerExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.NormalAnnotationExpr;
+import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import io.github.zhancm.repoonboard.core.model.Diagnostic;
 import io.github.zhancm.repoonboard.core.model.DiagnosticSeverity;
@@ -230,11 +234,46 @@ public final class JavaSourceParser {
     private static List<JavaAnnotationFact> annotations(
             JavaSourceFile sourceFile, NodeWithAnnotations<?> annotated) {
         return annotated.getAnnotations().stream()
-                .map(annotation -> new JavaAnnotationFact(
-                        annotation.getNameAsString(),
-                        annotation.toString(),
-                        location(sourceFile, annotation, annotation.getNameAsString())))
+                .map(annotation -> annotationFact(sourceFile, annotation))
                 .toList();
+    }
+
+    private static JavaAnnotationFact annotationFact(
+            JavaSourceFile sourceFile, AnnotationExpr annotation) {
+        List<JavaAnnotationAttributeFact> attributes = new ArrayList<>();
+        if (annotation instanceof SingleMemberAnnotationExpr singleMember) {
+            attributes.add(annotationAttribute(sourceFile, "value", singleMember.getMemberValue()));
+        } else if (annotation instanceof NormalAnnotationExpr normal) {
+            normal.getPairs().forEach(pair -> attributes.add(annotationAttribute(
+                    sourceFile, pair.getNameAsString(), pair.getValue())));
+        }
+        return new JavaAnnotationFact(
+                annotation.getNameAsString(),
+                annotation.toString(),
+                attributes,
+                location(sourceFile, annotation, annotation.getNameAsString()));
+    }
+
+    private static JavaAnnotationAttributeFact annotationAttribute(
+            JavaSourceFile sourceFile, String name, Expression expression) {
+        return new JavaAnnotationAttributeFact(
+                name,
+                expression.toString(),
+                stringLiterals(expression),
+                location(sourceFile, expression, name));
+    }
+
+    private static List<String> stringLiterals(Expression expression) {
+        if (expression.isStringLiteralExpr()) {
+            return List.of(expression.asStringLiteralExpr().asString());
+        }
+        if (expression instanceof ArrayInitializerExpr array
+                && array.getValues().stream().allMatch(Expression::isStringLiteralExpr)) {
+            return array.getValues().stream()
+                    .map(value -> value.asStringLiteralExpr().asString())
+                    .toList();
+        }
+        return List.of();
     }
 
     private static SourceLocation location(JavaSourceFile sourceFile, Node node, String symbol) {

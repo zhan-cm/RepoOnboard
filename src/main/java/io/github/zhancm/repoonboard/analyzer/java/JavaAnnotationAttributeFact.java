@@ -4,17 +4,17 @@ import io.github.zhancm.repoonboard.core.model.SourceLocation;
 import java.util.List;
 import java.util.Objects;
 
-/** An annotation name, raw expression, and safely extracted literal attributes. */
-public record JavaAnnotationFact(
+/** One annotation attribute with raw expression and confirmed string literals. */
+public record JavaAnnotationAttributeFact(
         String name,
         String expression,
-        List<JavaAnnotationAttributeFact> attributes,
+        List<String> stringLiterals,
         SourceLocation location) {
 
-    public JavaAnnotationFact {
+    public JavaAnnotationAttributeFact {
         name = requireText(name, "name");
         expression = requireText(expression, "expression");
-        attributes = List.copyOf(Objects.requireNonNull(attributes, "attributes"));
+        stringLiterals = List.copyOf(Objects.requireNonNull(stringLiterals, "stringLiterals"));
         location = Objects.requireNonNull(location, "location");
     }
 
