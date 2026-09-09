@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0303 — Basic AST Parsing。**
+> **T-0304 — Import and Type Reference Extraction。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -928,9 +928,9 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] Java 8 / 11 / 17 / 21 常见语法 fixture 通过
-[ ] 源码位置、嵌套/同名类型和模块归属可追踪
-[ ] 单文件解析失败不终止其他文件并返回 PARTIAL
+[x] Java 8 / 11 / 17 / 21 常见语法 fixture 通过
+[x] 源码位置、嵌套/同名类型和模块归属可追踪
+[x] 单文件解析失败不终止其他文件并返回 PARTIAL
 [ ] 声明索引不因简单名称相同而误解析
 ```
 
@@ -1003,8 +1003,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 使用锁定的 JavaParser 3.28.2 将 Java 8/11/17/21 常见源码语法转换为项目自有的 package、类型、字段、方法、参数和未解释注解 facts；支持嵌套类型与 1-based 来源位置，单文件语法问题不阻断其他文件。
+
+Validation: Java 21 `test` 共 85 项通过；新增 Java 语法 fixture 和 3 项解析测试覆盖跨版本语法、类型/成员/注解、嵌套限定名、来源位置与损坏文件 PARTIAL 恢复。
 
 Goal:
 
@@ -1024,9 +1030,9 @@ Annotation
 Acceptance Criteria:
 
 ```text
-[ ] Fixture Java 项目解析正确
-[ ] Source Location 可追踪
-[ ] 单个文件解析失败不会导致整个项目失败
+[x] Fixture Java 项目解析正确
+[x] Source Location 可追踪
+[x] 单个文件解析失败不会导致整个项目失败
 ```
 
 ---
@@ -2760,18 +2766,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0303
-Basic AST Parsing
+T-0304
+Import and Type Reference Extraction
 ```
 
 本阶段：
 
 > **M3 — Java Source Analysis**
 
-M0、M1、M2 已完成，T-0301 与 T-0302 已完成。接下来按默认依赖顺序执行：
+M0、M1、M2 已完成，T-0301 至 T-0303 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0303
+T-0304
 ```
 
 ---
@@ -2807,6 +2813,6 @@ Release
 
 Next:
 
-> **T-0303 — Basic AST Parsing.**
+> **T-0304 — Import and Type Reference Extraction.**
 
 ````

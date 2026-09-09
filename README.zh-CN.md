@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / Java 源码分析阶段**
 >
-> Maven 分析、Spring Boot 构建识别和带模块归属的 Java 源文件发现已经可用。下一步是基础 Java AST 解析，首个可用版本尚未发布。
+> Maven 分析、Spring Boot 构建识别、带模块归属的 Java 源文件发现和基础 Java AST facts 已经可用。下一步是项目内类型引用解析，首个可用版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供早期 Maven 仓库分析和 Java 源文件发现流程。Java AST、Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
+当前 CLI 已提供早期 Maven 仓库分析和 Java 源码解析流程。类型解析、Spring 组件、API、依赖图和 Web UI 分析仍在开发中。
 
 ## 项目文档
 

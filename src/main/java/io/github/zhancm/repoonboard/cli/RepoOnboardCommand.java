@@ -1,6 +1,7 @@
 package io.github.zhancm.repoonboard.cli;
 
 import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetection;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
@@ -86,6 +87,7 @@ public final class RepoOnboardCommand implements Callable<Integer> {
             });
             var sourceRoots = new JavaSourceRootDiscoverer().discover(resolvedTarget, analysis);
             var javaFiles = new JavaFileDiscoverer().discover(resolvedTarget, sourceRoots);
+            var javaParse = new JavaSourceParser().parse(resolvedTarget, javaFiles);
             commandSpec.commandLine().getOut()
                     .printf("Java source roots: %d%n", sourceRoots.sourceRoots().size());
             for (var sourceRoot : sourceRoots.sourceRoots()) {
@@ -93,8 +95,14 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                         sourceRoot.relativePath(), sourceRoot.modulePomFileId());
             }
             commandSpec.commandLine().getOut().printf("Java source files: %d%n", javaFiles.files().size());
+            commandSpec.commandLine().getOut()
+                    .printf("Java compilation units: %d%n", javaParse.compilationUnits().size());
+            long declarationCount = javaParse.compilationUnits().stream()
+                    .mapToLong(unit -> unit.types().size())
+                    .sum();
+            commandSpec.commandLine().getOut().printf("Java declarations: %d%n", declarationCount);
             AnalysisStatus status = combine(
-                    analysis.status(), sourceRoots.status(), javaFiles.status());
+                    analysis.status(), sourceRoots.status(), javaFiles.status(), javaParse.status());
             commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
             for (var diagnostic : analysis.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
@@ -105,6 +113,10 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
             for (var diagnostic : javaFiles.diagnostics()) {
+                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
+                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
+            }
+            for (var diagnostic : javaParse.diagnostics()) {
                 commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }

@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Java Source Analysis**
 >
-> Maven analysis, Spring Boot build detection, and module-owned Java source-file discovery are available. Basic Java AST parsing is next; the first usable release is not available yet.
+> Maven analysis, Spring Boot build detection, Java source-file discovery, and basic Java AST facts are available. Project-local type-reference resolution is next; the first usable release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -182,7 +182,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides an early Maven repository analysis and Java source-file discovery workflow. Java AST, Spring component, API, dependency-graph, and Web UI analysis are still under development.
+The current CLI provides an early Maven repository analysis and Java source parsing workflow. Type resolution, Spring component, API, dependency-graph, and Web UI analysis are still under development.
 
 ## Documentation
 

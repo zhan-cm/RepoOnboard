@@ -29,6 +29,8 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Metadata status: SUCCESS"));
         assertTrue(result.out().contains("Java source roots: 1"));
         assertTrue(result.out().contains("Java source files:"));
+        assertTrue(result.out().contains("Java compilation units:"));
+        assertTrue(result.out().contains("Java declarations:"));
         assertTrue(result.err().isEmpty());
     }
 
@@ -48,6 +50,8 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Java source roots: 1"));
         assertTrue(result.out().contains("src/main/java (pom.xml)"));
         assertTrue(result.out().contains("Java source files: 1"));
+        assertTrue(result.out().contains("Java compilation units: 1"));
+        assertTrue(result.out().contains("Java declarations: 1"));
     }
 
     @Test
