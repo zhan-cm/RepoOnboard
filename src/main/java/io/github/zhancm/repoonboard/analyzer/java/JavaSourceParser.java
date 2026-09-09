@@ -6,6 +6,7 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.AnnotationDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
@@ -16,6 +17,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.RecordDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import io.github.zhancm.repoonboard.core.model.Diagnostic;
 import io.github.zhancm.repoonboard.core.model.DiagnosticSeverity;
 import io.github.zhancm.repoonboard.core.model.SourceLocation;
@@ -109,13 +112,48 @@ public final class JavaSourceParser {
     private static JavaCompilationUnitFact toFacts(JavaSourceFile sourceFile, CompilationUnit unit) {
         Optional<String> packageName = unit.getPackageDeclaration()
                 .map(declaration -> declaration.getNameAsString());
+        List<JavaImportFact> imports = unit.getImports().stream()
+                .map(declaration -> importFact(sourceFile, declaration))
+                .toList();
         List<JavaTypeFact> types = new ArrayList<>();
         for (TypeDeclaration<?> declaration : unit.getTypes()) {
             collectType(sourceFile, packageName.orElse(""), Optional.empty(), declaration, types);
         }
         types.sort(Comparator.comparing(JavaTypeFact::qualifiedName)
                 .thenComparingInt(type -> type.location().startLine().orElse(Integer.MAX_VALUE)));
-        return new JavaCompilationUnitFact(sourceFile, packageName, types);
+        List<JavaTypeReferenceFact> references = new ArrayList<>();
+        unit.findAll(ClassOrInterfaceType.class).stream()
+                .filter(type -> !isScopeSegment(type))
+                .forEach(type -> references.add(
+                JavaTypeReferenceFact.unresolved(
+                        type.getNameWithScope(),
+                        location(sourceFile, type, type.getNameWithScope()))));
+        unit.findAll(AnnotationExpr.class).forEach(annotation -> references.add(
+                JavaTypeReferenceFact.unresolved(
+                        annotation.getNameAsString(),
+                        location(sourceFile, annotation, annotation.getNameAsString()))));
+        references.sort(Comparator.<JavaTypeReferenceFact>comparingInt(
+                        reference -> reference.location().startLine().orElse(Integer.MAX_VALUE))
+                .thenComparingInt(reference -> reference.location().startColumn().orElse(Integer.MAX_VALUE))
+                .thenComparing(JavaTypeReferenceFact::name));
+        return new JavaCompilationUnitFact(sourceFile, packageName, imports, types, references);
+    }
+
+    private static boolean isScopeSegment(ClassOrInterfaceType type) {
+        return type.getParentNode()
+                .filter(ClassOrInterfaceType.class::isInstance)
+                .map(ClassOrInterfaceType.class::cast)
+                .flatMap(ClassOrInterfaceType::getScope)
+                .filter(scope -> scope == type)
+                .isPresent();
+    }
+
+    private static JavaImportFact importFact(JavaSourceFile sourceFile, ImportDeclaration declaration) {
+        return new JavaImportFact(
+                declaration.getNameAsString(),
+                declaration.isStatic(),
+                declaration.isAsterisk(),
+                location(sourceFile, declaration, declaration.getNameAsString()));
     }
 
     private static void collectType(
