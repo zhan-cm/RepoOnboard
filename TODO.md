@@ -121,7 +121,7 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0301 — Source Root Discovery。**
+> **T-0302 — Java File Discovery。**
 
 M0 技术架构已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0016，并按本文件的里程碑出口逐项推进。
 
@@ -918,7 +918,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -941,8 +941,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-09
+
+Deliverable: 基于 Maven 模块分析结果发现现存 Java 主源码根，保留模块归属、扫描根相对路径和 POM 声明位置；默认与自定义 sourceDirectory 均支持，并排除 target、generated output、`.git` 和 `.repoonboard`。
+
+Validation: Java 21 `test` 共 76 项通过；4 项新增测试覆盖单模块、多模块、自定义目录、缺失目录及构建/生成目录排除。
 
 Goal:
 
@@ -957,9 +963,9 @@ src/main/java
 Acceptance Criteria:
 
 ```text
-[ ] 单模块项目正确
-[ ] 多模块项目正确
-[ ] 不扫描 target / generated output 等无关目录
+[x] 单模块项目正确
+[x] 多模块项目正确
+[x] 不扫描 target / generated output 等无关目录
 ```
 
 ---
@@ -2748,18 +2754,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0301
-Source Root Discovery
+T-0302
+Java File Discovery
 ```
 
 本阶段：
 
 > **M3 — Java Source Analysis**
 
-M0、M1、M2 已完成。接下来按默认依赖顺序执行：
+M0、M1、M2 已完成，T-0301 已完成。接下来按默认依赖顺序执行：
 
 ```text
-T-0301
+T-0302
 ```
 
 ---
@@ -2784,7 +2790,7 @@ Technical Decisions
 Implementation
 M1 Project Foundation — complete
 M2 Maven Project Analysis — complete
-M3 Java Source Analysis — next
+M3 Java Source Analysis — in progress
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -2795,6 +2801,6 @@ Release
 
 Next:
 
-> **T-0301 — Source Root Discovery.**
+> **T-0302 — Java File Discovery.**
 
 ````
