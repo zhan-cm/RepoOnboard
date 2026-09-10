@@ -198,6 +198,7 @@ The current CLI provides Maven and Java source analysis plus Spring component, c
 - [DECISIONS.md](./DECISIONS.md) — accepted architecture and technical decisions
 - [TODO.md](./TODO.md) — development roadmap and current task status
 - [AGENTS.md](./AGENTS.md) — repository instructions for coding agents
+- [Frontend Product Requirements](./docs/product/FRONTEND-PRODUCT-REQUIREMENTS.md) — page structure, interaction, visual direction, responsive behavior, and future desktop experience
 
 ## Target Users
 
