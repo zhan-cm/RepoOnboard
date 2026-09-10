@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0703 — Repository Overview。**
+> **T-0704 — Module Explorer。**
 
-M0 至 M6 及 T-0701、T-0702 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701、T-0702、T-0703 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1780,8 +1780,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-10
+
+Deliverable: 在 T-0702 产品 Shell 中启用 Overview 主视图，直接消费 schema `1.1` `AnalysisReport` 与 Summary；展示仓库身份、构建系统、已报告语言/框架、模块/源码根摘要、组件角色统计、Endpoint/Dependency/EntryPoint 计数、应用入口以及警告/错误摘要。缺失字段统一显示 `Not available` 或明确空状态，SUCCESS、PARTIAL、FAILED 使用不同状态说明；派生展示规则集中在 `reportOverview.js` 并保持可重现，不从名称、路径或文案猜测技术事实。
+
+Validation: Vitest 5 个测试文件共 31 项通过，覆盖 Summary/实体派生、技术枚举显示、SUCCESS/PARTIAL/FAILED、缺失值、空状态、诊断预览和完整 App 组合。Java 21 / Maven 3.9.16 `clean verify` 同时运行 31 项前端测试与 136 项 Java 测试并成功打包；真实 `spring-analysis-project` CLI 报告在 Chrome 1440×900、1024×768 和 500×900 CSS viewport 完成实际渲染检查，服务停止后 loopback 端口释放。
 
 展示当前 AnalysisReport 可支持的真实结果：
 
@@ -1805,10 +1811,10 @@ Analysis status and warnings
 Acceptance Criteria:
 
 ```text
-[ ] 页面使用 T-0702 的视觉系统
-[ ] 所有字段可映射到 AnalysisReport 或可重现的派生规则
-[ ] SUCCESS、PARTIAL 和 FAILED 状态与覆盖限制清晰展示
-[ ] 空值显示为明确未知/不可用，不生成伪造值
+[x] 页面使用 T-0702 的视觉系统
+[x] 所有字段可映射到 AnalysisReport 或可重现的派生规则
+[x] SUCCESS、PARTIAL 和 FAILED 状态与覆盖限制清晰展示
+[x] 空值显示为明确未知/不可用，不生成伪造值
 ```
 
 ---
@@ -2979,18 +2985,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0703
-Repository Overview
+T-0704
+Module Explorer
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701、T-0702 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701、T-0702、T-0703 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0703
+T-0704
 ```
 
 ---
@@ -3019,7 +3025,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 and T-0702 complete)
+M7 Local Web UI — in progress (T-0701 through T-0703 complete)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3030,6 +3036,6 @@ Release
 
 Next:
 
-> **T-0703 — Repository Overview.**
+> **T-0704 — Module Explorer.**
 
 ````

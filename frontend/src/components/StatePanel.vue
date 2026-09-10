@@ -5,7 +5,7 @@ const props = defineProps({
   variant: {
     type: String,
     required: true,
-    validator: (value) => ['loading', 'empty', 'error', 'ready'].includes(value)
+    validator: (value) => ['loading', 'empty', 'warning', 'error', 'ready'].includes(value)
   },
   heading: {
     type: String,
@@ -35,6 +35,7 @@ const live = computed(() => props.variant === 'error' ? 'assertive' : 'polite')
     <div class="state-panel__icon" aria-hidden="true">
       <span v-if="variant === 'loading'" class="spinner"></span>
       <span v-else-if="variant === 'error'">!</span>
+      <span v-else-if="variant === 'warning'">!</span>
       <span v-else-if="variant === 'ready'">✓</span>
       <span v-else>·</span>
     </div>
