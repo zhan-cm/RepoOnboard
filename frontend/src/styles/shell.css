@@ -278,6 +278,11 @@
   background: linear-gradient(145deg, var(--color-danger-soft), var(--color-surface));
 }
 
+.state-panel--warning {
+  border-color: rgb(253 230 138 / 30%);
+  background: linear-gradient(145deg, var(--color-warning-soft), var(--color-surface));
+}
+
 .state-panel--ready {
   border-color: rgb(134 239 172 / 24%);
 }
@@ -309,6 +314,12 @@
   color: var(--color-danger);
   border-color: rgb(253 164 175 / 35%);
   background: var(--color-danger-soft);
+}
+
+.state-panel--warning .state-panel__icon {
+  color: var(--color-warning);
+  border-color: rgb(253 230 138 / 30%);
+  background: var(--color-warning-soft);
 }
 
 .state-panel--ready .state-panel__icon {
@@ -371,6 +382,14 @@
   color: var(--color-text);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
+}
+
+.inline-facts--inspector {
+  display: grid;
+}
+
+.inline-facts--inspector > div {
+  min-width: 0;
 }
 
 .spinner {

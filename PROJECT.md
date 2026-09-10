@@ -1261,7 +1261,7 @@ RepoOnboard 当前处于：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 **T-0701、T-0702** 已完成。CLI 已把统一报告交给仅绑定 loopback 的本地服务；Vue 前端已有集中视觉系统、响应式产品 Shell、Inspector 基础和统一状态模式。当前下一任务是 **T-0703 — Repository Overview**，只使用现有 `AnalysisReport` 呈现项目概览，不提前实现 Module Explorer 或后续页面。
+M0 至 M6 及 **T-0701 至 T-0703** 已完成。CLI 已把统一报告交给仅绑定 loopback 的本地服务；Vue 前端已有集中视觉系统、响应式产品 Shell，以及基于报告事实的 Repository Overview。当前下一任务是 **T-0704 — Module Explorer**，只呈现可确认的模块结构和元数据，不提前实现 Architecture 或后续页面。
 
 ## 35. Project Direction Summary
 

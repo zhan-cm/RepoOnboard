@@ -2,13 +2,13 @@
 import { computed, onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import InspectorPanel from './components/InspectorPanel.vue'
+import OverviewView from './components/OverviewView.vue'
 import PageLayout from './components/PageLayout.vue'
 import SidebarNav from './components/SidebarNav.vue'
 import StatePanel from './components/StatePanel.vue'
 
 const navigation = Object.freeze([
-  { id: 'workspace', label: 'Workspace', glyph: 'W', active: true, disabled: false },
-  { id: 'overview', label: 'Overview', glyph: 'O', active: false, disabled: true },
+  { id: 'overview', label: 'Overview', glyph: 'O', active: true, disabled: false },
   { id: 'modules', label: 'Modules', glyph: 'M', active: false, disabled: true },
   { id: 'architecture', label: 'Architecture', glyph: 'A', active: false, disabled: true },
   { id: 'apis', label: 'APIs', glyph: '↗', active: false, disabled: true },
@@ -18,7 +18,10 @@ const navigation = Object.freeze([
 const report = ref(null)
 const error = ref('')
 
-const repositoryName = computed(() => report.value?.project?.name ?? 'Preparing workspace')
+const repositoryName = computed(() => {
+  if (!report.value) return 'Preparing workspace'
+  return report.value.project?.name ?? 'Repository name unavailable'
+})
 const analysisStatus = computed(() => report.value?.status ?? '')
 const statusTone = computed(() => {
   if (analysisStatus.value === 'SUCCESS') return 'success'
@@ -49,9 +52,9 @@ onMounted(async () => {
     </template>
 
     <PageLayout
-      eyebrow="Local analysis workspace"
+      eyebrow="Repository overview"
       :title="repositoryName"
-      description="A private, read-only view of the report generated on this machine."
+      description="A confirmed snapshot of the repository, its technology footprint, and analysis coverage."
       :status="analysisStatus"
       :status-tone="statusTone"
     >
@@ -73,37 +76,34 @@ onMounted(async () => {
         heading="Loading analysis report"
         message="Connecting to the local RepoOnboard service…"
       />
-      <StatePanel
-        v-else
-        variant="ready"
-        heading="Workspace foundation ready"
-        message="The report is connected. Product views will appear here as the M7 tasks are completed."
-      >
-        <template #details>
-          <dl class="inline-facts">
-            <div>
-              <dt>Analysis status</dt>
-              <dd>{{ report.status }}</dd>
-            </div>
-            <div>
-              <dt>Report schema</dt>
-              <dd>{{ report.schemaVersion }}</dd>
-            </div>
-          </dl>
-        </template>
-      </StatePanel>
+      <OverviewView v-else :report="report" />
     </PageLayout>
 
     <template #inspector>
       <InspectorPanel
-        title="Selection details"
-        description="Evidence and source context will stay close to the selected item."
+        title="About this overview"
+        description="Every visible value comes from the current report or a deterministic count of its entities."
       >
+        <dl v-if="report" class="inline-facts inline-facts--inspector">
+          <div>
+            <dt>Analysis status</dt>
+            <dd>{{ report.status ?? 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Report schema</dt>
+            <dd>{{ report.schemaVersion ?? 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Build system</dt>
+            <dd>{{ report.project?.buildSystem ?? 'Not available' }}</dd>
+          </div>
+        </dl>
         <StatePanel
+          v-else
           variant="empty"
           compact
-          heading="Nothing selected"
-          message="Choose an item in a future project view to inspect its evidence."
+          heading="Overview not ready"
+          message="Report facts will appear after the local analysis response is available."
         />
       </InspectorPanel>
     </template>

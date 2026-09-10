@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / 本地 Web UI 开发中**
 >
-> Maven、Java、Spring、API、组件依赖和稳定报告分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式视觉系统和可复用产品 Shell 已经建立；正式产品页面仍在开发中，首个版本尚未发布。
+> Maven、Java、Spring、API、组件依赖和稳定报告分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式产品 Shell 现在已包含基于报告事实的 Repository Overview；其余产品页面仍在开发中，首个版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -190,7 +190,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.1` JSON 序列化现已接入 loopback 服务与随包发布的响应式产品 Shell。Overview、Module、Architecture、API 和源码导航等正式视图仍属于后续 M7 任务。
+当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.1` JSON 序列化现已接入 loopback 服务、响应式产品 Shell 和 Repository Overview。Module、Architecture、API 和源码导航等视图仍属于后续 M7 任务。
 
 ## 项目文档
 

@@ -83,6 +83,7 @@ describe('product shell components', () => {
   it.each([
     ['loading', 'status', 'polite'],
     ['empty', 'status', 'polite'],
+    ['warning', 'status', 'polite'],
     ['ready', 'status', 'polite'],
     ['error', 'alert', 'assertive']
   ])('gives the %s state an accessible live-region contract', (variant, role, live) => {

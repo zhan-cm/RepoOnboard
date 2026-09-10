@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **M7 Local Web UI — in progress**
 
-M0 至 M6 及 T-0701、T-0702 已完成。CLI 已将统一 `AnalysisReport` 接入仅绑定 loopback 的本地只读服务；Vue 前端已有集中视觉系统、可复用产品 Shell、Inspector 和统一状态组件。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0703 Repository Overview。
+M0 至 M6 及 T-0701 至 T-0703 已完成。CLI 已将统一 `AnalysisReport` 接入仅绑定 loopback 的本地只读服务；Vue 前端已有集中视觉系统、可复用产品 Shell 和基于报告事实的 Repository Overview。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0704 Module Explorer。
 
 ---
 
@@ -2112,13 +2112,13 @@ Implementation
 ✓ M4 Spring Boot Analysis complete
 ✓ M5 API & Dependency Analysis complete
 ✓ M6 Report Assembly & Serialization complete
-◐ M7 Local Web UI in progress (T-0701 and T-0702 complete)
+◐ M7 Local Web UI in progress (T-0701 through T-0703 complete)
 ```
 
 下一步：
 
-> 完成 T-0703 — Repository Overview。
+> 完成 T-0704 — Module Explorer。
 
-M0 至 M6 及 T-0701、T-0702 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0 至 M6 及 T-0701 至 T-0703 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
 
 ````

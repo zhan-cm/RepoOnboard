@@ -1236,10 +1236,10 @@ RepoOnboard is currently in:
 The current next task is:
 
 ```text
-T-0703 — Repository Overview
+T-0704 — Module Explorer
 ```
 
-T-0701 and T-0702 have established the CLI-to-loopback-UI runtime closure, shared visual system, reusable product Shell, Inspector foundation, and unified state patterns. T-0703 must only implement the Repository Overview from existing `AnalysisReport` facts; Module Explorer and later views remain separate tasks. Desktop packaging is deferred beyond V0.1; do not introduce Tauri, Electron, a native installer, or a bundled runtime during M7.
+T-0701 through T-0703 have established the CLI-to-loopback-UI runtime closure, shared visual system, reusable product Shell, and report-backed Repository Overview. T-0704 must only implement the Module Explorer from confirmed report facts; if explicit hierarchy or internal module dependencies are absent, add them through a tested model change instead of UI inference. Architecture and later views remain separate tasks. Desktop packaging is deferred beyond V0.1; do not introduce Tauri, Electron, a native installer, or a bundled runtime during M7.
 
 Always follow the current `TODO.md` and `STATE.md` if this snapshot becomes stale.
 
