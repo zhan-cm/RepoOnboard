@@ -7,7 +7,7 @@
 - 产品：RepoOnboard
 - 文档类型：前端产品需求文档（PRD）
 - 当前产品阶段：M7 — Local Web UI
-- 当前实现：产品 Shell、视觉系统、Repository Overview
+- 当前实现：产品 Shell、视觉系统、Repository Overview、Module Explorer
 - V0.1 交付形态：本地 Web UI + 可执行 JAR + 启动脚本
 - 未来候选形态：复用同一套 Web 前端的桌面应用窗口
 
@@ -185,7 +185,7 @@ Shell 的固定职责：
 | 页面 / 表面 | 主要问题 | V0.1 | 当前状态 |
 | --- | --- | --- | --- |
 | Repository Overview | 这是一个什么项目？分析是否可信？ | 必需 | 已实现基础版本 |
-| Module Explorer | 项目由哪些模块组成？ | 必需 | 计划中，T-0704 |
+| Module Explorer | 项目由哪些模块组成？ | 必需 | 已实现，T-0704 |
 | Architecture Workspace | 主要组件如何组织和依赖？ | 必需 | 计划中，T-0705 / T-0706 |
 | API Map | 项目暴露哪些 HTTP API？ | 必需 | 计划中，T-0707 |
 | Source / Evidence Detail | 这个结论来自哪里？ | 必需 | 计划中，T-0708 |
@@ -732,7 +732,26 @@ RepoOnboard 的主要使用环境是桌面，但必须支持窄窗口、分屏�
 
 - 已有响应式 App Shell、Sidebar、Context Header、Page Layout、Inspector 和统一状态组件。
 - 已有 Repository Overview。
-- Modules、Architecture、API Map、Source Evidence 和 Start Here 仍按 TODO 顺序开发。
+- 已有 Module Explorer，包括显式层级、模块事实、内部模块依赖、搜索/筛选和 Inspector。
+- Architecture、API Map、Source Evidence 和 Start Here 仍按 TODO 顺序开发。
+
+### 13.4 后续页面设计交接流程
+
+从 T-0705 起，新的前端页面在编码前必须先完成用户可审阅的 Stitch 设计交接：
+
+```text
+TODO / AnalysisReport / 当前实现
+        ↓
+Codex Data Contract Audit + Stitch 设计方案
+        ↓
+用户完成 Stitch 高保真设计并导入项目
+        ↓
+Codex Vue Implementation
+        ↓
+Browser Validation
+```
+
+Codex 提供的 Stitch 方案必须列明页面目标、模块结构、可展示字段、状态、交互、响应式行为以及不可推断的数据；不得为迁就原型制造后端事实。用户完成设计前，不提前实现该页面 UI。
 
 ---
 

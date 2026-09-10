@@ -74,6 +74,15 @@ describe('App', () => {
     expect(view.container.textContent).toContain('sample.Application')
     expect(view.container.textContent).toContain('Coverage is limited')
     expect(view.container.querySelector('.nav-item--active').textContent).toContain('Overview')
+
+    const modulesButton = [...view.container.querySelectorAll('.nav-item')]
+      .find((button) => button.textContent.includes('Modules'))
+    expect(modulesButton.disabled).toBe(false)
+    modulesButton.click()
+    await flushUi()
+    expect(view.container.querySelector('.module-explorer')).not.toBeNull()
+    expect(view.container.querySelector('.module-row--active')).not.toBeNull()
+    expect(view.container.textContent).toContain('Internal module relationships are unavailable')
     view.unmount()
   })
 

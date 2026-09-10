@@ -21,7 +21,9 @@ import io.github.zhancm.repoonboard.core.model.EndpointConditions;
 import io.github.zhancm.repoonboard.core.model.EntryPoint;
 import io.github.zhancm.repoonboard.core.model.Evidence;
 import io.github.zhancm.repoonboard.core.model.Framework;
+import io.github.zhancm.repoonboard.core.model.FrameworkVersion;
 import io.github.zhancm.repoonboard.core.model.Language;
+import io.github.zhancm.repoonboard.core.model.LanguageVersion;
 import io.github.zhancm.repoonboard.core.model.Project;
 import io.github.zhancm.repoonboard.core.model.ResolutionStatus;
 import io.github.zhancm.repoonboard.core.model.SourceFile;
@@ -46,10 +48,13 @@ public final class ProjectModelAssembler {
         Map<String, String> moduleIds = mavenModules.stream().collect(java.util.stream.Collectors.toMap(
                 MavenModule::pomFileId, module -> moduleId(module.pomFileId()), (left, right) -> left,
                 LinkedHashMap::new));
+        Map<String, String> aggregationParents = aggregationParents(root);
 
         List<io.github.zhancm.repoonboard.core.model.Module> modules = mavenModules.stream()
-                .map(module -> toModule(module, input, moduleIds.get(module.pomFileId())))
+                .map(module -> toModule(module, input, moduleIds, aggregationParents))
                 .toList();
+        Map<String, List<String>> internalModuleIdsByCoordinate = internalModuleIdsByCoordinate(
+                mavenModules, moduleIds);
         List<SourceFile> sourceFiles = input.java().compilationUnits().stream()
                 .map(unit -> new SourceFile(
                         StableIdentifiers.sourceFile(unit.sourceFile().relativePath()),
@@ -71,7 +76,8 @@ public final class ProjectModelAssembler {
                 .toList();
         List<Dependency> assembledDependencies = new ArrayList<>();
         mavenModules.forEach(
-                module -> assembledDependencies.addAll(toMavenDependencies(module, moduleIds)));
+                module -> assembledDependencies.addAll(toMavenDependencies(
+                        module, moduleIds, internalModuleIdsByCoordinate)));
         input.springDependencies().dependencies().stream()
                 .map(fact -> toComponentDependency(fact, moduleIds))
                 .forEach(assembledDependencies::add);
@@ -111,7 +117,14 @@ public final class ProjectModelAssembler {
     }
 
     private static io.github.zhancm.repoonboard.core.model.Module toModule(
-            MavenModule module, ProjectAnalysisInput input, String id) {
+            MavenModule module,
+            ProjectAnalysisInput input,
+            Map<String, String> moduleIds,
+            Map<String, String> aggregationParents) {
+        String id = requiredModuleId(moduleIds, module.pomFileId());
+        Optional<String> aggregationParentId = Optional.ofNullable(
+                        aggregationParents.get(module.pomFileId()))
+                .map(parentPom -> requiredModuleId(moduleIds, parentPom));
         List<String> sourceRoots = input.java().compilationUnits().stream()
                 .map(unit -> unit.sourceFile())
                 .filter(file -> file.modulePomFileId().equals(module.pomFileId()))
@@ -120,18 +133,63 @@ public final class ProjectModelAssembler {
                 .toList();
         List<Framework> frameworks = module.springBoot().detected()
                 ? List.of(Framework.SPRING_BOOT) : List.of();
+        List<Evidence> moduleEvidence = new ArrayList<>();
+        moduleEvidence.add(evidence(
+                "MAVEN_MODULE", SourceLocation.file(module.pomFileId()), "maven.module"));
+        Optional.ofNullable(aggregationParents.get(module.pomFileId())).ifPresent(parentPom ->
+                moduleEvidence.add(evidence(
+                        "MAVEN_MODULE_AGGREGATION",
+                        SourceLocation.file(parentPom),
+                        "maven.module.aggregation")));
         return new io.github.zhancm.repoonboard.core.model.Module(
                 id,
                 module.pomFileId(),
                 module.baseDirectory(),
+                aggregationParentId,
                 value(module.metadata().groupId()),
                 value(module.metadata().artifactId()),
                 value(module.metadata().version()),
                 value(module.metadata().packaging()),
                 sourceRoots,
                 frameworks,
-                List.of(evidence(
-                        "MAVEN_MODULE", SourceLocation.file(module.pomFileId()), "maven.module")));
+                javaVersion(module),
+                springBootVersion(module),
+                moduleEvidence);
+    }
+
+    private static List<LanguageVersion> javaVersion(MavenModule module) {
+        for (String property : List.of(
+                "maven.compiler.release", "maven.compiler.source", "java.version")) {
+            Optional<MavenMetadataValue> metadata = module.metadata().property(property)
+                    .filter(value -> value.resolvedValue().isPresent());
+            if (metadata.isPresent()) {
+                MavenMetadataValue value = metadata.orElseThrow();
+                Evidence evidence = evidence(
+                        "MAVEN_LANGUAGE_VERSION", value.origin(), "maven.language.version." + property);
+                return List.of(new LanguageVersion(
+                        Language.JAVA, value.resolvedValue().orElseThrow(), List.of(evidence)));
+            }
+        }
+        return List.of();
+    }
+
+    private static List<FrameworkVersion> springBootVersion(MavenModule module) {
+        Optional<String> version = module.springBoot().version();
+        if (version.isEmpty()) {
+            return List.of();
+        }
+        var signal = module.springBoot().evidence().stream()
+                .filter(candidate -> candidate.version().equals(version))
+                .sorted(Comparator.comparing(candidate -> candidate.versionOrigin().sourceFileId()))
+                .findFirst()
+                .orElseThrow();
+        Evidence evidence = new Evidence(
+                "SPRING_BOOT_VERSION",
+                signal.versionOrigin(),
+                List.of(signal.origin()),
+                "maven.framework.spring-boot.version");
+        return List.of(new FrameworkVersion(
+                Framework.SPRING_BOOT, version.orElseThrow(), List.of(evidence)));
     }
 
     private static Component toComponent(SpringComponentFact fact, Map<String, String> moduleIds) {
@@ -197,13 +255,24 @@ public final class ProjectModelAssembler {
     }
 
     private static List<Dependency> toMavenDependencies(
-            MavenModule module, Map<String, String> moduleIds) {
+            MavenModule module,
+            Map<String, String> moduleIds,
+            Map<String, List<String>> internalModuleIdsByCoordinate) {
         List<Dependency> result = new ArrayList<>();
         for (MavenDependency dependency : module.dependencies()) {
             String coordinates = coordinate(dependency);
             SourceLocation location = dependency.artifactId().origin();
             String sourceId = requiredModuleId(moduleIds, module.pomFileId());
-            Optional<String> targetId = Optional.of(StableIdentifiers.externalArtifact(coordinates));
+            List<String> internalTargets = resolvedCoordinate(dependency)
+                    .map(value -> internalModuleIdsByCoordinate.getOrDefault(value, List.of()))
+                    .orElse(List.of());
+            Optional<String> targetId = internalTargets.size() == 1
+                    ? Optional.of(internalTargets.getFirst())
+                    : internalTargets.isEmpty()
+                            ? Optional.of(StableIdentifiers.externalArtifact(coordinates))
+                            : Optional.empty();
+            ResolutionStatus status = internalTargets.size() > 1
+                    ? ResolutionStatus.AMBIGUOUS : ResolutionStatus.CONFIRMED;
             result.add(new Dependency(
                     StableIdentifiers.dependency(
                             DependencyKind.MAVEN_DECLARATION, sourceId, targetId, coordinates),
@@ -211,11 +280,43 @@ public final class ProjectModelAssembler {
                     targetId,
                     coordinates,
                     DependencyKind.MAVEN_DECLARATION,
-                    ResolutionStatus.CONFIRMED,
+                    status,
                     location,
                     List.of(evidence("MAVEN_DEPENDENCY", location, "maven.dependency.declaration"))));
         }
         return result;
+    }
+
+    private static Map<String, List<String>> internalModuleIdsByCoordinate(
+            List<MavenModule> modules, Map<String, String> moduleIds) {
+        Map<String, List<String>> result = new LinkedHashMap<>();
+        for (var module : modules) {
+            var metadata = module.metadata();
+            if (metadata.groupId().resolvedValue().isPresent()
+                    && metadata.artifactId().resolvedValue().isPresent()
+                    && metadata.version().resolvedValue().isPresent()) {
+                String coordinate = String.join(":",
+                        metadata.groupId().resolvedValue().orElseThrow(),
+                        metadata.artifactId().resolvedValue().orElseThrow(),
+                        metadata.version().resolvedValue().orElseThrow());
+                result.computeIfAbsent(coordinate, ignored -> new ArrayList<>())
+                        .add(requiredModuleId(moduleIds, module.pomFileId()));
+            }
+        }
+        result.replaceAll((coordinate, ids) -> ids.stream().sorted().toList());
+        return Map.copyOf(result);
+    }
+
+    private static Optional<String> resolvedCoordinate(MavenDependency dependency) {
+        if (dependency.groupId().resolvedValue().isEmpty()
+                || dependency.artifactId().resolvedValue().isEmpty()
+                || dependency.version().resolvedValue().isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(String.join(":",
+                dependency.groupId().resolvedValue().orElseThrow(),
+                dependency.artifactId().resolvedValue().orElseThrow(),
+                dependency.version().resolvedValue().orElseThrow()));
     }
 
     private static Dependency toComponentDependency(
@@ -267,6 +368,20 @@ public final class ProjectModelAssembler {
         module.children().forEach(child -> collect(child, modules));
     }
 
+    private static Map<String, String> aggregationParents(MavenModule root) {
+        Map<String, String> parents = new LinkedHashMap<>();
+        collectAggregationParents(root, parents);
+        return Map.copyOf(parents);
+    }
+
+    private static void collectAggregationParents(
+            MavenModule parent, Map<String, String> parents) {
+        for (MavenModule child : parent.children()) {
+            parents.put(child.pomFileId(), parent.pomFileId());
+            collectAggregationParents(child, parents);
+        }
+    }
+
     private static String requiredModuleId(Map<String, String> moduleIds, String pomFileId) {
         String id = moduleIds.get(pomFileId);
         if (id == null) {
@@ -308,9 +423,11 @@ public final class ProjectModelAssembler {
         return disambiguate(sorted, io.github.zhancm.repoonboard.core.model.Module::id,
                 module -> module.evidence().getFirst().location(),
                 (module, id) -> new io.github.zhancm.repoonboard.core.model.Module(
-                        id, module.pomFileId(), module.baseDirectory(), module.groupId(),
-                        module.artifactId(), module.version(), module.packaging(), module.sourceRoots(),
-                        module.frameworks(), module.evidence()), diagnostics, "MODULE");
+                        id, module.pomFileId(), module.baseDirectory(),
+                        module.aggregationParentModuleId(), module.groupId(), module.artifactId(),
+                        module.version(), module.packaging(), module.sourceRoots(), module.frameworks(),
+                        module.languageVersions(), module.frameworkVersions(), module.evidence()),
+                diagnostics, "MODULE");
     }
 
     private static List<Component> stabilizeComponents(

@@ -22,7 +22,8 @@ class AnalysisSummaryTest {
     void derivesCountsFromUniqueStableEntityIdentities() {
         Module module = new Module(
                 "module:root", "pom.xml", ".", Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), List.of("src/main/java"), List.of(), List.of());
+                Optional.empty(), Optional.empty(), Optional.empty(), List.of("src/main/java"),
+                List.of(), List.of(), List.of(), List.of());
         SourceFile sourceFile = new SourceFile(
                 "source:app", module.id(), SOURCE.sourceFileId(), Language.JAVA, SOURCE);
         Component restController = component("component:rest", ComponentKind.REST_CONTROLLER);

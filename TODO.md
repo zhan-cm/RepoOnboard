@@ -1824,7 +1824,20 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
+```
+
+Deliverable: 基于本地 Stitch 高保真原型实现浅色 workbench Module Explorer；模块索引支持搜索与筛选，主区展示显式聚合层级、模块统计、Maven 元数据、源码根、Java / Spring Boot 版本、确认的内部模块依赖、组件与入口列表，Inspector 展示次级元数据、模块诊断和来源证据。公共报告 schema 加法式升级到 `1.2`：`Module` 新增显式 `aggregationParentModuleId`、带 Evidence 的通用 language/framework version facts；Maven dependency 仅在完整 GAV 唯一匹配时指向真实 Module ID。旧 `1.0` / `1.1` 报告继续可读，UI 明确区分 0、Unavailable、Unresolved 和未知状态。
+
+Acceptance Criteria:
+
+```text
+[x] Module hierarchy 来自显式聚合父 ID，不从路径或 Maven parent 推断
+[x] Internal module dependency 仅由完整且唯一匹配的 Maven GAV 确认
+[x] Module metadata、统计、源码根、组件和入口直接来自报告或确定性分组
+[x] Java / Spring Boot version 具有公共模型字段和 Source Evidence
+[x] 搜索、筛选、空状态、不可用状态、Inspector 与响应式布局已验证
+[x] 页面不展示 T-0707 routes，也不生成模块级伪状态
 ```
 
 展示：
@@ -2985,18 +2998,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0704
-Module Explorer
+T-0705
+Architecture Workspace
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701、T-0702、T-0703 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701 至 T-0704 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0704
+T-0705
 ```
 
 ---
@@ -3025,7 +3038,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0703 complete)
+M7 Local Web UI — in progress (T-0701 through T-0704 complete)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3036,6 +3049,6 @@ Release
 
 Next:
 
-> **T-0704 — Module Explorer.**
+> **T-0705 — Architecture Workspace.**
 
 ````
