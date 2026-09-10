@@ -83,6 +83,14 @@ describe('App', () => {
     expect(view.container.querySelector('.module-explorer')).not.toBeNull()
     expect(view.container.querySelector('.module-row--active')).not.toBeNull()
     expect(view.container.textContent).toContain('Internal module relationships are unavailable')
+
+    const architectureButton = [...view.container.querySelectorAll('.nav-item')]
+      .find((button) => button.textContent.includes('Architecture'))
+    expect(architectureButton.disabled).toBe(false)
+    architectureButton.click()
+    await flushUi()
+    expect(view.container.querySelector('.architecture-workspace')).not.toBeNull()
+    expect(view.container.textContent).toContain('No framework components were reported')
     view.unmount()
   })
 

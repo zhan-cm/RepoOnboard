@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Architecture Workspace — RepoOnboard</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts: Inter / Geist & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+            },
+            surface: {
+              canvas: '#ffffff',
+              subtle: '#f8fafc',
+              border: '#e2e8f0',
+              muted: '#64748b',
+              dark: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom subtle graph grid pattern */
+    .graph-grid-bg {
+      background-color: #f8fafc;
+      background-image: radial-gradient(#cbd5e1 1.1px, transparent 1.1px);
+      background-size: 20px 20px;
+    }
+    /* Graph selection glow */
+    .node-selected-ring {
+      box-shadow: 0 0 0 2px #0284c7, 0 4px 12px -2px rgba(2, 132, 199, 0.2);
+    }
+    .node-connected-ring {
+      box-shadow: 0 0 0 1.5px #38bdf8, 0 2px 6px -1px rgba(56, 189, 248, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-900 font-sans antialiased h-screen flex flex-col overflow-hidden select-none">
+<!-- Top Global Context Header (100% Continuity with Screen 5) -->
+<header class="h-12 border-b border-slate-200 bg-white px-4 flex items-center justify-between shrink-0 z-30">
+<!-- Left: Logo & Target Repo Breadcrumb -->
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-2">
+<div class="w-5 h-5 bg-sky-500 rounded flex items-center justify-center text-white">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="font-bold text-sm tracking-tight text-slate-900">RepoOnboard</span>
+<span class="text-[11px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200">v0.1.0-local</span>
+</div>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<!-- Scope Context Breadcrumbs -->
+<nav class="flex items-center space-x-1.5 text-xs text-slate-500 font-mono">
+<span class="text-slate-700">spring-petclinic-microservices</span>
+<span>/</span>
+<span class="text-slate-500">Architecture</span>
+<span>/</span>
+<span class="text-sky-600 font-medium">spring-petclinic-api-gateway</span>
+</nav>
+</div>
+<!-- Right: Quick Stats & Controls -->
+<div class="flex items-center space-x-3 text-xs">
+<!-- Reported Summary Capsule -->
+<div class="flex items-center space-x-3 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded text-slate-600 font-mono"><div class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-slate-400 font-medium uppercase text-[10px]">Repo:</span><span>8 Modules</span></div><span class="text-slate-300">·</span><span>42 Components</span><span class="text-slate-300">·</span><span>18 Confirmed Relations</span></div>
+<!-- Search Trigger (Disabled/Visual standard) -->
+<div class="relative flex items-center">
+<div class="flex items-center space-x-1 bg-slate-100 hover:bg-slate-200/70 text-slate-500 px-2 py-1 rounded border border-slate-200 text-xs transition-colors cursor-pointer">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="font-sans">Search entities...</span>
+<kbd class="font-mono text-[10px] bg-white text-slate-500 px-1 py-0.2 rounded border border-slate-200 ml-2">⌘K</kbd>
+</div>
+</div>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<!-- Action buttons -->
+<button class="flex items-center space-x-1 text-slate-600 hover:text-slate-900 px-2 py-1 rounded hover:bg-slate-100 transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Re-analyze</span>
+</button>
+<button class="flex items-center space-x-1 text-slate-600 hover:text-slate-900 px-2 py-1 rounded hover:bg-slate-100 transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Export</span>
+</button>
+<button class="p-1 text-slate-500 hover:text-slate-800 rounded hover:bg-slate-100">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</header>
+<!-- Main 3-Pane Structure: Sidebar (Left), Workbench (Center Canvas), Inspector (Right) -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left Navigation Bar (56px or 200px matching Screen 5) -->
+<aside class="w-52 border-r border-slate-200 bg-slate-50 flex flex-col justify-between shrink-0 select-none">
+<div class="p-3">
+<!-- Target Repository Info Box -->
+<div class="p-2.5 bg-white rounded border border-slate-200 shadow-sm mb-4">
+<div class="flex items-center justify-between text-[11px] text-slate-500 uppercase tracking-wider font-mono">
+<span>Target Repo</span>
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="font-medium text-xs text-sky-700 font-mono truncate mt-1" title="spring-petclinic-microservices">
+            spring-petclinic-microservices
+          </div>
+<div class="text-[11px] text-slate-500 font-mono mt-1 flex items-center space-x-2">
+<span>Java 17</span>
+<span>·</span>
+<span>Boot 3.2</span>
+<span>·</span>
+<span>Maven</span>
+</div>
+</div>
+<!-- Perspectives Navigation -->
+<div class="space-y-1">
+<div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 font-mono">Perspectives</div>
+<a class="flex items-center space-x-2.5 px-2.5 py-1.5 rounded text-xs font-medium text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Overview</span>
+</a>
+<a class="flex items-center space-x-2.5 px-2.5 py-1.5 rounded text-xs font-medium text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Modules</span>
+</a>
+<!-- ACTIVE ITEM: Architecture -->
+<a class="flex items-center space-x-2.5 px-2.5 py-1.5 rounded text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200 shadow-xs" href="#">
+<svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Architecture</span>
+<span class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-600"></span>
+</a>
+<!-- Inactive / Next Milestones -->
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded text-xs font-medium text-slate-400 cursor-not-allowed">
+<div class="flex items-center space-x-2.5">
+<svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>API Map</span>
+</div>
+<span class="text-[9px] font-mono text-slate-400 bg-slate-100 px-1 py-0.5 rounded border border-slate-200">T-0707</span>
+</div>
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded text-xs font-medium text-slate-400 cursor-not-allowed">
+<div class="flex items-center space-x-2.5">
+<svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Start Here</span>
+</div>
+<span class="text-[9px] font-mono text-slate-400 bg-slate-100 px-1 py-0.5 rounded border border-slate-200">M8</span>
+</div>
+</div>
+</div>
+<!-- Bottom Engine Status -->
+<div class="p-3 border-t border-slate-200 text-[11px] font-mono text-slate-500 space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="text-slate-400">AST ENGINE</span>
+<span class="flex items-center text-emerald-600 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>READY
+          </span>
+</div>
+<div class="text-slate-400 text-[10px]">8/8 modules analyzed</div>
+<div class="pt-2 border-t border-slate-200/80 flex items-center justify-between text-slate-500">
+<span>port 8080</span>
+<span>file-backed</span>
+</div>
+<div class="flex items-center justify-between text-slate-400 pt-1 text-[10px]">
+<span class="hover:text-slate-700 cursor-pointer">⚙ Settings</span>
+<span class="hover:text-slate-700 cursor-pointer">📖 Docs</span>
+</div>
+</div>
+</aside>
+<!-- Center Workspace: Architecture Canvas & Minimal Toolbar -->
+<main class="flex-1 flex flex-col overflow-hidden bg-white relative">
+<!-- Top Architecture Header & Minimal Scope Bar (T-0705 Minimal Controls) -->
+<div class="border-b border-slate-200 bg-white px-6 py-3.5 shrink-0 z-20">
+<!-- Row 1: Workspace Eyebrow & Title -->
+<div class="flex items-start justify-between">
+<div>
+<div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">Architecture workspace</div>
+<div class="flex items-center space-x-3 mt-0.5">
+<h1 class="text-lg font-bold text-slate-900 tracking-tight">Component relationships</h1>
+</div>
+<p class="text-xs text-slate-500 mt-1">
+              Confirmed Spring component dependencies from the current analysis report. Directed edges show injection target (<code class="font-mono text-slate-700">source → target</code>).
+            </p>
+</div>
+<!-- Component Kind Legend (A-category data only: No Mapper) -->
+<div class="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 text-[11px] font-mono text-slate-600">
+<span class="text-slate-400 text-[10px] uppercase font-bold mr-1">Legend:</span>
+<div class="flex items-center space-x-1.5">
+<span class="w-2.5 h-2.5 rounded bg-violet-100 border border-violet-300 text-violet-700 flex items-center justify-center text-[9px] font-bold">C</span>
+<span>Controller</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center space-x-1.5">
+<span class="w-2.5 h-2.5 rounded bg-sky-100 border border-sky-300 text-sky-700 flex items-center justify-center text-[9px] font-bold">S</span>
+<span>Service</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center space-x-1.5">
+<span class="w-2.5 h-2.5 rounded bg-emerald-100 border border-emerald-300 text-emerald-700 flex items-center justify-center text-[9px] font-bold">R</span>
+<span>Repository</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center space-x-1.5">
+<span class="w-2.5 h-2.5 rounded bg-amber-100 border border-amber-300 text-amber-700 flex items-center justify-center text-[9px] font-bold">⚙</span>
+<span>Config</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center space-x-1.5">
+<span class="w-2.5 h-2.5 rounded bg-slate-100 border border-slate-300 text-slate-700 flex items-center justify-center text-[9px] font-bold">●</span>
+<span>Component</span>
+</div>
+</div>
+</div>
+<!-- Row 2: Minimal Scope Control Bar (Single Module scope selector, Fit View, Scope summary) -->
+<div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 text-xs">
+<div class="flex items-center space-x-3">
+<!-- Single Module Scope Selector -->
+<div class="flex items-center space-x-2">
+<label class="text-slate-500 font-medium">Module scope:</label>
+<div class="relative">
+<select class="appearance-none bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded px-2.5 py-1 pr-7 text-xs font-mono text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer">
+<option selected="">spring-petclinic-api-gateway (8 components)</option>
+<option>spring-petclinic-customers-service (6 components)</option>
+<option>spring-petclinic-vets-service (5 components)</option>
+<option>spring-petclinic-visits-service (5 components)</option>
+<option>spring-petclinic-admin-server (2 components)</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-slate-500">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Fit View Button -->
+<button class="inline-flex items-center space-x-1 px-2.5 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded text-slate-700 font-medium transition-colors shadow-xs">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Fit view</span>
+</button>
+<!-- Reset Selection (Neutral text) -->
+<button class="text-slate-400 hover:text-slate-600 px-1.5 py-1 transition-colors text-xs">
+              Deselect
+            </button>
+</div>
+<!-- Right: Read-only Graph Budget & Count Notice -->
+<div class="flex items-center space-x-3 text-slate-500 font-mono text-[11px]"><div class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-sky-500"></span><span class="text-slate-400 font-medium uppercase text-[10px]">Module:</span><span class="text-slate-900 font-semibold">8 components</span><span>·</span><span class="text-slate-900 font-semibold">6 confirmed relations</span></div><span class="text-slate-300">|</span><div class="flex items-center space-x-1 text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200"><svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span>Scope bounded to single module</span></div></div>
+</div>
+</div>
+<!-- Canvas Area (Graph Visualization Container) -->
+<div class="flex-1 relative overflow-hidden bg-slate-50/50">
+<!-- SVG Directed Edges Layer (source -> target arrows, confirmed COMPONENT_INJECTION only) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-0"><defs><marker id="arrow-neutral" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="18" refy="5" viewbox="0 0 10 10"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#94a3b8"></path></marker><marker id="arrow-active" markerheight="6.5" markerwidth="6.5" orient="auto-start-reverse" refx="18" refy="5" viewbox="0 0 10 10"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0284c7"></path></marker></defs><!-- Edge 1: BoundaryApiController (x: 40, y: 140) -> CustomersServiceClient (x: 320, y: 140) [ACTIVE INCOMING] --><path d="M 240 185 L 320 185" fill="none" marker-end="url(#arrow-active)" stroke="#0284c7" stroke-width="2"></path><!-- Edge 2: CustomersServiceClient (x: 320, y: 140) -> ReactiveFilterConfig (x: 600, y: 60) [ACTIVE OUTGOING] --><path d="M 530 160 C 560 130, 570 105, 600 100" fill="none" marker-end="url(#arrow-active)" stroke="#0284c7" stroke-width="2"></path><!-- Edge 3: CustomersServiceClient (x: 320, y: 140) -> GatewayRoutingConfig (x: 600, y: 220) [ACTIVE OUTGOING] --><path d="M 530 205 C 560 230, 570 250, 600 255" fill="none" marker-end="url(#arrow-active)" stroke="#0284c7" stroke-width="2"></path><!-- Edge 4: BoundaryApiController -> PaymentClientComponent (x: 320, y: 310) [NEUTRAL] --><path d="M 180 230 C 210 280, 260 330, 320 345" fill="none" marker-end="url(#arrow-neutral)" stroke="#cbd5e1" stroke-width="1.2"></path><!-- Edge 5: SecurityConfiguration (x: 40, y: 310) -> GatewayRoutingConfig (x: 600, y: 220) [NEUTRAL] --><path d="M 240 350 C 400 370, 520 320, 600 280" fill="none" marker-end="url(#arrow-neutral)" stroke="#cbd5e1" stroke-width="1.2"></path><!-- Edge 6: DiscoveryClientConfig (x: 40, y: 450) -> FallbackUriComponent (x: 320, y: 450) [NEUTRAL] --><path d="M 240 485 L 320 485" fill="none" marker-end="url(#arrow-neutral)" stroke="#cbd5e1" stroke-width="1.2"></path></svg>
+<!-- HTML Node Cards (Representing confirmed Component instances) -->
+<!-- NODE 1: BoundaryApiController (Controller - Connected Source) -->
+<!-- NODE 1: BoundaryApiController --><div class="absolute left-[40px] top-[140px] w-[200px] bg-white border border-slate-200 rounded-lg p-3 shadow-xs hover:border-slate-300 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-violet-50 text-violet-700 border border-violet-200">REST_CONTROLLER</span><span class="text-[10px] font-mono text-slate-400">0 in · 2 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="BoundaryApiController">BoundaryApiController</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5" title="org.springframework.samples.petclinic.gateway.boundary.web">o.s.s.p.gateway.boundary.web</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-slate-400">Controller</span></div></div>
+<!-- NODE 2: CustomersServiceClient (PRIMARY SELECTED NODE - Service) -->
+<!-- Highlighted with restrained brand blue stroke & soft elevation ring -->
+<!-- NODE 2: CustomersServiceClient (PRIMARY SELECTED NODE - Service) --><div class="absolute left-[320px] top-[140px] w-[210px] bg-white border-2 border-sky-600 rounded-lg p-3 node-selected-ring cursor-pointer transition-all z-20"><div class="flex items-center justify-between"><div class="flex items-center space-x-1.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-300">SERVICE</span><span class="text-[10px] font-mono font-semibold text-sky-600 bg-sky-100/60 px-1 py-0.2 rounded">SELECTED</span></div><span class="text-[10px] font-mono text-sky-700 font-semibold">1 in · 2 out</span></div><div class="font-bold text-sm text-slate-900 mt-1.5 truncate flex items-center justify-between" title="CustomersServiceClient"><span>CustomersServiceClient</span><span class="w-2 h-2 rounded-full bg-sky-600"></span></div><div class="text-[10px] font-mono text-slate-500 truncate mt-0.5" title="org.springframework.samples.petclinic.gateway.boundary.web">o.s.s.p.gateway.boundary.web</div><div class="mt-2 pt-1.5 border-t border-sky-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-sky-700 font-medium">Service</span></div></div>
+<!-- NODE 3: CustomerRepository (Connected Target - Repository) -->
+<!-- NODE 3: ReactiveFilterConfig (Configuration) --><div class="absolute left-[600px] top-[60px] w-[200px] bg-white border border-sky-400 rounded-lg p-3 shadow-xs hover:border-sky-500 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">CONFIGURATION</span><span class="text-[10px] font-mono text-slate-400">1 in · 0 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="ReactiveFilterConfig">ReactiveFilterConfig</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5" title="org.springframework.samples.petclinic.gateway.filter">o.s.s.p.gateway.filter</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-amber-700 font-medium">Configuration</span></div></div>
+<!-- NODE 4: ReactiveFilterConfig (Connected Target - Configuration) -->
+<!-- NODE 4: GatewayRoutingConfig (Configuration) --><div class="absolute left-[600px] top-[220px] w-[200px] bg-white border border-sky-400 rounded-lg p-3 shadow-xs hover:border-sky-500 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">CONFIGURATION</span><span class="text-[10px] font-mono text-slate-400">2 in · 0 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="GatewayRoutingConfig">GatewayRoutingConfig</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5" title="org.springframework.samples.petclinic.gateway.config">o.s.s.p.gateway.config</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-amber-700 font-medium">Configuration</span></div></div>
+<!-- NODE 5: ApiGatewayApplication (Entry Point Component) -->
+<!-- NODE 6: PaymentClientComponent (Generic Component) -->
+<!-- NODE 5: PaymentClientComponent --><div class="absolute left-[320px] top-[305px] w-[210px] bg-white border border-slate-200 rounded-lg p-3 shadow-xs hover:border-slate-300 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">COMPONENT</span><span class="text-[10px] font-mono text-slate-400">1 in · 0 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="PaymentClientComponent">PaymentClientComponent</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5">o.s.s.p.gateway.client</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-slate-400 font-mono">Component</span></div></div><!-- NODE 6: SecurityConfiguration --><div class="absolute left-[40px] top-[305px] w-[200px] bg-white border border-slate-200 rounded-lg p-3 shadow-xs hover:border-slate-300 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">CONFIGURATION</span><span class="text-[10px] font-mono text-slate-400">0 in · 1 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="SecurityConfiguration">SecurityConfiguration</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5">o.s.s.p.gateway.config</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-slate-400 font-mono">Configuration</span></div></div><!-- NODE 7: FallbackUriComponent --><div class="absolute left-[320px] top-[440px] w-[210px] bg-white border border-slate-200 rounded-lg p-3 shadow-xs hover:border-slate-300 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">COMPONENT</span><span class="text-[10px] font-mono text-slate-400">1 in · 0 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="FallbackUriComponent">FallbackUriComponent</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5">o.s.s.p.gateway.boundary.web</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-slate-400 font-mono">Component</span></div></div><!-- NODE 8: DiscoveryClientConfig --><div class="absolute left-[40px] top-[440px] w-[200px] bg-white border border-slate-200 rounded-lg p-3 shadow-xs hover:border-slate-300 cursor-pointer transition-all z-10"><div class="flex items-center justify-between"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200">CONFIGURATION</span><span class="text-[10px] font-mono text-slate-400">0 in · 1 out</span></div><div class="font-semibold text-xs text-slate-900 mt-1.5 truncate" title="DiscoveryClientConfig">DiscoveryClientConfig</div><div class="text-[10px] font-mono text-slate-400 truncate mt-0.5">o.s.s.p.gateway.config</div><div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500"><span class="bg-slate-100 px-1 py-0.2 rounded text-[9px] border border-slate-200">api-gateway</span><span class="text-slate-400 font-mono">Configuration</span></div></div>
+<!-- Canvas Floating Bottom Controls (Zoom in, Zoom out, Fit View, Center, Mini Scope Info) -->
+<div class="absolute bottom-4 right-4 flex items-center space-x-1.5 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-lg p-1.5 shadow-sm z-30 font-mono text-xs">
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-100 text-slate-700 transition-colors" title="Zoom In">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<span class="text-slate-500 text-[11px] px-1 font-semibold">100%</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-100 text-slate-700 transition-colors" title="Zoom Out">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M20 12H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-100 text-slate-700 transition-colors" title="Fit to Viewport">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Canvas Floating Bottom-Left Keyboard Helper -->
+<div class="absolute bottom-4 left-4 bg-white/90 border border-slate-200 rounded px-2.5 py-1 text-[11px] font-mono text-slate-500 shadow-xs flex items-center space-x-2">
+<span>Click node or edge to inspect</span>
+<span>·</span>
+<span><kbd class="bg-slate-100 border border-slate-300 px-1 py-0.5 rounded text-[10px]">Esc</kbd> clear</span>
+<span>·</span>
+<span>Pan canvas to explore</span>
+</div>
+</div>
+<!-- Bottom Status Bar (Aligning with AnalysisReport Schema 1.2) -->
+<footer class="h-7 border-t border-slate-200 bg-white px-4 flex items-center justify-between text-[11px] font-mono text-slate-500 shrink-0 z-20">
+<div class="flex items-center space-x-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>AnalysisReport Schema 1.2</span><span>·</span><span class="text-slate-700">Confirmed component graph</span></div>
+<div class="flex items-center space-x-4">
+<span>Scope: 1 module</span>
+<span>Confirmed edges: 6</span>
+</div>
+</footer>
+</main>
+<!-- Right Inspector Pane (Width 360px: Selected Component Focus & Source Evidence) -->
+<aside class="w-[360px] border-l border-slate-200 bg-white flex flex-col justify-between shrink-0 select-none overflow-y-auto z-20">
+<!-- Top Inspector Header -->
+<div>
+<div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+<div class="flex items-center space-x-2">
+<svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-xs font-bold text-slate-900 tracking-tight">Component Inspector</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-200">
+            KIND: SERVICE
+          </span>
+</div>
+<div class="p-4 space-y-4">
+<!-- 1. Identity -->
+<div>
+<div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Selected Component</div>
+<div class="text-base font-bold text-slate-900 tracking-tight">
+              CustomersServiceClient
+            </div>
+<div class="font-mono text-xs text-slate-500 bg-slate-50 p-1.5 rounded border border-slate-200 mt-1.5 break-all select-text">
+              org.springframework.samples.petclinic.gateway.boundary.web.CustomersServiceClient
+            </div>
+<!-- Declared bean / component name if present -->
+<div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mt-1.5">
+<span>Declared Name:</span>
+<span class="font-medium text-slate-700">customersServiceClient</span>
+</div>
+</div>
+<!-- 2. Architecture & Module Identity -->
+<div class="pt-3 border-t border-slate-100">
+<div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-2">Module &amp; Framework</div>
+<div class="space-y-1.5 text-xs">
+<div class="flex items-center justify-between">
+<span class="text-slate-500">Owning Module:</span>
+<span class="font-mono font-medium text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-[11px]">
+                  spring-petclinic-api-gateway
+                </span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-500">Framework:</span>
+<span class="font-medium text-slate-800">Spring Boot</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-500">Component Role:</span>
+<span class="font-medium text-sky-700">Service</span>
+</div>
+</div>
+</div>
+<!-- 3. Confirmed Relationships Summary (Incoming & Outgoing counts) -->
+<div class="pt-3 border-t border-slate-100">
+<div class="flex items-center justify-between mb-2">
+<div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Confirmed Relations</div>
+</div>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<div class="p-2 bg-slate-50 rounded border border-slate-200">
+<div class="text-[10px] font-mono text-slate-500">Incoming Injections</div>
+<div class="text-sm font-bold text-slate-900 mt-0.5">1 confirmed</div>
+<div class="text-[10px] font-mono text-sky-600 truncate mt-0.5">← BoundaryApiController</div>
+</div>
+<div class="p-2 bg-slate-50 rounded border border-slate-200">
+<div class="text-[10px] font-mono text-slate-500">Outgoing Targets</div>
+<div class="text-sm font-bold text-slate-900 mt-0.5">2 confirmed</div>
+<div class="text-[10px] font-mono text-sky-600 truncate mt-0.5">→ CustomerRepo, Config</div>
+</div>
+</div>
+</div>
+<!-- 4. Source Evidence (Primary First-Class Citizen) -->
+<div class="pt-3 border-t border-slate-100">
+<div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-2">Source Evidence</div>
+<div class="bg-slate-50 p-2.5 rounded border border-slate-200 space-y-2 text-xs font-mono"><div><div class="text-[10px] text-slate-400 uppercase">Declaration File</div><div class="text-slate-800 font-medium truncate select-text mt-0.5" title="src/main/java/org/springframework/samples/petclinic/gateway/boundary/web/CustomersServiceClient.java">src/main/java/.../boundary/web/CustomersServiceClient.java</div></div><div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200/60"><div><div class="text-[10px] text-slate-400 uppercase">Location</div><div class="text-slate-800 font-medium">Lines 24–78</div></div><div><div class="text-[10px] text-slate-400 uppercase">Symbol</div><div class="text-slate-800 font-medium truncate">CustomersServiceClient</div></div></div><div class="pt-1 border-t border-slate-200/60"><div class="text-[10px] text-slate-400 uppercase">Evidence Type</div><div class="text-slate-700 text-[11px] mt-0.5">Spring Component Annotation</div></div><div class="pt-1 border-t border-slate-200/60"><div class="text-[10px] text-slate-400 uppercase">Rule</div><div class="text-slate-700 text-[11px] mt-0.5">Spring Component Stereotype Resolution (<code class="text-sky-700 font-semibold">RULE_SPRING_COMPONENT_DETECTED</code>)</div></div></div>
+</div>
+<!-- 5. Confirmed Stereotypes & Annotations -->
+<div class="pt-3 border-t border-slate-100"><div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-2">Detected Stereotype</div><div class="space-y-1 text-xs"><div class="flex items-center space-x-2 text-slate-700"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span><span class="font-mono font-medium text-slate-800">@Service</span><span class="text-slate-400 text-[11px]">(Stereotype: Service)</span></div></div></div>
+</div>
+</div>
+<!-- Bottom Inspector Actions (Deterministic Copy / Trace) -->
+<div class="p-4 border-t border-slate-200 bg-slate-50/50 space-y-2">
+<button class="w-full flex items-center justify-center space-x-1.5 py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-300 rounded text-xs font-mono font-medium text-slate-700 shadow-xs transition-colors">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Copy Qualified Name</span>
+</button>
+<button class="w-full flex items-center justify-center space-x-1.5 py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-300 rounded text-xs font-mono font-medium text-slate-700 shadow-xs transition-colors">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Copy Source Location</span>
+</button>
+</div>
+</aside>
+</div>
+</body>
+</html>

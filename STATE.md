@@ -5,9 +5,9 @@
 RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 
 - M0 至 M6 已完成。
-- **T-0701 至 T-0704** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview 和 Module Explorer 已建立。
-- 当前下一任务是 **T-0705 — Architecture Workspace**，但编码前先由 Codex 基于 TODO、公共模型和当前实现提供 Data Contract Audit 与 Stitch 设计方案；用户完成并导入 Stitch 设计后再实现。
-- Java 21 / Maven 3.9.16 `clean verify` 当前运行 34 项前端测试和 139 项 Java 测试并全部通过；Vite production build、JAR 资源、真实 CLI 报告、本地生命周期以及 Module Explorer 的真实浏览器宽屏渲染、导航与搜索空状态已验证。
+- **T-0701 至 T-0705** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer 和 Architecture Workspace 已建立。
+- 当前下一任务是 **T-0706 — Architecture Exploration & Filtering**；必须先按既定流程完成数据契约审计和 Stitch 设计交接，本次没有提前实现其搜索、组合筛选或邻域功能。
+- Java 21 / Maven 3.9.16 `clean verify` 当前运行 42 项前端测试和 139 项 Java 测试并全部通过；Vite production build、JAR 资源以及 Architecture Workspace 在真实 `spring-dependency-project` 报告上的宽屏渲染、节点/关系选择、Inspector 和 Evidence 已验证。
 
 ## 2. 已完成任务
 
@@ -49,6 +49,7 @@ RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 - **T-0702**：建立集中 design tokens、全局基础样式和响应式产品 Shell；新增可复用 Sidebar、Context Header、Page Layout、Inspector 与 loading/empty/error/ready 状态组件，并加入 skip link、可见键盘焦点、文本对比度门禁和 reduced-motion 支持。宽屏采用三栏布局，紧凑桌面尺寸折叠 Inspector，窄屏导航可横向滚动。
 - **T-0703**：实现 Repository Overview，展示仓库身份、构建系统、已报告语言/框架、模块/源码根摘要、组件角色与主要实体计数、应用入口和显式覆盖诊断。SUCCESS、PARTIAL、FAILED 分别呈现完成、受限和失败状态；缺失事实显示不可用或明确空状态。
 - **T-0704**：实现本地 Stitch 原型对应的 Module Explorer。公共 `Module` 增加显式聚合父 ID、带 Evidence 的 Java / Framework 版本 facts；Maven 依赖仅在完整 GAV 唯一匹配时连接真实模块。页面提供模块层级、搜索/筛选、统计、Maven 元数据、源码根、技术版本、内部模块关系、组件/入口内容和 Inspector，并明确区分已知 0 与不可用数据。schema 当前为 `1.2`，继续兼容读取 `1.0` / `1.1`。
+- **T-0705**：按照 UI Data Contract Audit、用户导入的 Stitch 原型和产品需求实现 Architecture Workspace。Cytoscape.js 仅绘制当前模块中的 `COMPONENT_INJECTION + CONFIRMED` 边，提供 zoom、pan、fit、节点/关系选择、Inspector、源码位置与原始 Evidence；PARTIAL、FAILED、Unavailable、Unresolved、Ambiguous 和已知 0 保持不同语义。移动端以组件列表回退，超过 60 个节点或 120 条确认边时拒绝绘制误导性的残缺图。
 
 ## 3. 当前实现能力
 
@@ -63,6 +64,7 @@ RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 - 分析成功后在系统分配的 loopback 端口启动本地服务；`/api/report` 返回本次报告，固定静态路由返回打包的前端资源，未知路径和非只读请求不会访问用户文件。
 - Repository Overview 能在 30 秒摘要层展示仓库上下文、报告状态、技术事实、统计、应用入口和覆盖限制，全部来自报告字段或可重现的实体派生规则。
 - Module Explorer 能按显式 Maven aggregation 关系浏览模块，按报告实体确定性计算模块统计，查看元数据、源码根、通用版本 facts、确认的内部模块依赖、组件/入口、诊断与 Evidence；不从路径、名称、坐标或类名补造事实。
+- Architecture Workspace 能按模块查看确认的 Spring 组件注入图，区分 Controller、REST Controller、Service、Repository、Component 和 Configuration；可缩放、平移、适配画布并选择节点或关系，在 Inspector 中查看报告原值、当前范围内的确认关系、源码位置和原始 Evidence。Maven 边、Mapper、Endpoint、EntryPoint、歧义/未解析边和任何推断关系都不会混入组件图。
 - loading、empty、warning、error、ready 具有统一组件、文案层级和 live-region 语义；键盘用户可使用 skip link 和清晰的 `:focus-visible` 状态。
 - 集中 tokens 管理色彩、字体、间距、边框、圆角、阴影和布局尺寸；响应式布局覆盖宽屏、紧凑桌面与窄屏模式。
 - 浏览器无法自动打开时服务保持运行并给出地址；Ctrl+C 后服务线程和端口释放。
@@ -97,10 +99,11 @@ RepoOnboard
 - **`web/LocalUiLauncher`**：CLI 与 UI 生命周期之间的最小接口。
 - **`web/LocalUiApplication`**：协调本地服务、浏览器启动、`--no-open`、关闭钩子和等待生命周期。
 - **`web/LocalUiServer`**：使用 JDK `HttpServer` 绑定 `127.0.0.1`，只提供固定前端资源与当前报告，不暴露通用文件系统路由。
-- **`frontend/src/components`**：`AppShell`、`SidebarNav`、`ContextHeader`、`PageLayout`、`InspectorPanel`、`StatePanel` 构成可复用展示骨架；`OverviewView` / `MetricCard` 负责 Overview，`ModuleExplorerView` / `ModuleInspector` 负责模块工作台，`App.vue` 负责报告加载、页面切换和选中模块状态。
+- **`frontend/src/components`**：`AppShell`、`SidebarNav`、`ContextHeader`、`PageLayout`、`InspectorPanel`、`StatePanel` 构成可复用展示骨架；`OverviewView` / `MetricCard` 负责 Overview，`ModuleExplorerView` / `ModuleInspector` 负责模块工作台，`ArchitectureWorkspaceView` / `ArchitectureGraph` / `ArchitectureInspector` 负责组件关系工作台，`App.vue` 负责报告加载、页面切换、范围和选择状态。
 - **`frontend/src/lib/reportOverview.js`**：把 Summary 和报告实体转换为纯展示模型，集中管理计数回退、技术事实去重、状态/覆盖说明、入口位置与缺失值语义。
 - **`frontend/src/lib/reportModules.js`**：以显式 parent ID 构造模块树，按 moduleId 分组实体与统计，只读取 schema `1.2` 的确认内部 Maven 边，并集中处理 Unavailable / 0 语义。
-- **`frontend/src/styles`**：`tokens.css` 集中视觉变量，`base.css` 提供全局与无障碍基础，`shell.css` 负责通用组件，`overview.css` 定义 Overview，`modules.css` 定义 Stitch 对应的浅色四区 workbench 和响应式降级。
+- **`frontend/src/lib/reportArchitecture.js`**：从公共报告构造组件图展示模型，仅接受有真实源/目标组件的确认注入边，计算模块范围、未确认关系覆盖和图规模预算，并保持 Unavailable 与 0 的区别。
+- **`frontend/src/styles`**：`tokens.css` 集中视觉变量，`base.css` 提供全局与无障碍基础，`shell.css` 负责通用组件，`overview.css`、`modules.css` 和 `architecture.css` 分别定义业务页面及响应式降级。
 - **前端构建与测试**：Vue 3 + JavaScript + Vite；Vitest + happy-dom 测试在 Maven `generate-resources` 阶段随锁文件安装、测试和生产构建，产物复制到 JAR classpath。
 
 ## 5. 重要技术决策
@@ -110,7 +113,7 @@ RepoOnboard
 - **ADR-0007 至 ADR-0009**：公共模型保持最小且框架中立；分析器与展示边界明确；依赖为有类型、有方向、带状态和证据的边。
 - **ADR-0010**：报告使用 UTF-8、版本化 JSON、显式 DTO、稳定排序和受限反序列化；当前 schema `1.2`，兼容读取 `1.0` / `1.1`。
 - **ADR-0011**：本地服务使用 JDK `HttpServer` 并只绑定 loopback；默认使用系统分配端口，固定只读路由，不提供任意文件读取。
-- **ADR-0012**：前端使用 Vue 3 + JavaScript + Vite，测试使用 Vitest；Cytoscape.js 留给后续图视图；所有生产资源随 JAR 提供，不使用运行时 CDN。开发/发布构建需要 Node，最终用户不需要。
+- **ADR-0012**：前端使用 Vue 3 + JavaScript + Vite，测试使用 Vitest，组件图使用 Cytoscape.js；所有生产资源随 JAR 提供，不使用运行时 CDN。开发/发布构建需要 Node，最终用户不需要。
 - **ADR-0013 至 ADR-0015**：Start Here 采用可解释确定性启发式；测试按 unit → fixture → integration → real repository 分层；局部失败优先返回部分成功。
 - **ADR-0016 / ADR-0017**：V0.1 交付 JAR 和启动脚本，保持 Web-first、Desktop-ready；桌面容器、安装器和自带 Runtime 延后到 V0.2 候选。
 - V0.1 继续只支持 Java + Maven + Spring Boot，不引入 LLM、RAG、云服务、数据库、遥测或自动改码能力。
@@ -125,6 +128,7 @@ RepoOnboard
 - T-0702 将临时单文件样式替换为集中视觉系统和可复用 Shell 组件，后续业务页面必须复用这些边界，而不是自建竞争样式。
 - T-0703 将空白工作区替换为第一个正式业务页面；Overview 保持仓库级摘要，不展示模块技术版本，也不从 Maven 坐标或名称推断。
 - T-0704 根据 UI Data Contract Audit 只补充产品明确需要的最小公共 facts：Maven 聚合父 ID、通用语言/框架版本及唯一 GAV 确认的内部模块目标；Stitch 中的示例状态、计数和路由没有被硬编码。
+- T-0705 未为贴合原型而扩展后端模型；Architecture 直接消费现有 Component、Dependency、Diagnostic、SourceLocation 和 Evidence。图只呈现确定事实，未确认关系以覆盖提示和计数表达，超预算范围整体停止绘制。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -132,15 +136,19 @@ RepoOnboard
 
 - **Mapper 未实现**：T-0404 的 MyBatis / MyBatis-Plus Mapper 专用识别仍为可选延后项。
 - **分析范围有限**：不支持 Java/Maven/Spring Boot 以外的生态；Maven 不联网、不执行插件/生命周期、不计算传递依赖；Java/Spring 采用保守静态分析，不覆盖运行时代理、反射和动态注册。
-- **后续业务视图尚未实现**：Overview 和 Module Explorer 已可用，但尚无 Architecture Workspace、API Map、独立证据浏览或源码导航。
+- **Architecture 探索能力仍有限**：T-0705 只提供模块范围、基础图操作和选择；节点搜索、组件/关系类型组合筛选、一阶邻域、隐藏数量和可搜索替代列表属于 T-0706。
+- **后续业务视图尚未实现**：API Map、独立 Source Navigation 和 Start Here 尚未实现。
+- **图规模受限**：单一模块超过 60 个组件或 120 条确认关系时，当前页面显示缩小范围提示而不绘图；可组合缩小范围能力将在 T-0706 提供。
 - **Web 边界仍需里程碑级加固**：当前已固定 loopback 与只读路由并设置基础响应头；Host/Origin/CSP、恶意文本、并发和完整打包边界验证属于 T-0709。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
+- **Windows Wrapper 启动缺陷**：当前 `mvnw.cmd` 在本机 `.m2` 目录不是链接时会读取空的 `Target[0]` 并提前失败；本轮使用 Wrapper 已下载且校验过的 Maven 3.9.16 完成全量验证，启动脚本本身仍需单独修复。
+- **前端包体警告**：引入 Cytoscape.js 后单一生产 JavaScript 产物约 555 kB（gzip 约 178 kB），Vite 会提示超过 500 kB；当前离线 JAR 可正常工作，是否拆包应结合 T-0709 的打包与加载验证再决定。
 - **发布尚未就绪**：当前仍为 `0.1.0-SNAPSHOT`，安装体验、许可、演示资源和正式 V0.1 Release 尚未完成。
 
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M7**：T-0705 Architecture Workspace；T-0706 Architecture Exploration & Filtering；T-0707 API Map；T-0708 Source Navigation；T-0709 Local Web Boundary and Packaged UI Validation。
+- **M7**：T-0706 Architecture Exploration & Filtering；T-0707 API Map；T-0708 Source Navigation；T-0709 Local Web Boundary and Packaged UI Validation。
 - **M8**：T-0801 至 T-0804，完成可解释 Start Here 排序、阅读路径、解释和 UI。
 - **M9**：T-0901 至 T-0907，完成综合 fixture、真实仓库和 onboarding 价值验证。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
@@ -148,12 +156,12 @@ RepoOnboard
 
 ## 9. 下一步
 
-下一项应开发：
+下一项开发任务：
 
-> **T-0705 — Architecture Workspace（先设计交接，不直接编码）**
+> **T-0706 — Architecture Exploration & Filtering**
 
-先结合 T-0705 TODO、`AnalysisReport`、公共模型与现有前端做页面级 Data Contract Audit，并向用户提供可直接用于 Stitch 的 Architecture Workspace 设计方案，包括页面结构、字段来源、节点/边语义、Inspector、状态、交互、图规模限制和响应式行为。用户完成并导入 Stitch 高保真设计前，不修改 Architecture UI；不提前实现 T-0706 及之后任务。
+先基于 T-0706 TODO、公共报告和现有 Architecture Workspace 完成页面级 Data Contract Audit 与 Stitch 设计方案，交给用户完成并导入设计；之后才实现模块、组件类型、关系类型、节点搜索、一阶邻域以及 Reset / Focus / Fit Selection。不得把未确认关系画成事实，也不得提前开始 T-0707。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 已完成，公共报告当前为 schema `1.2` 且兼容读取 `1.0` / `1.1`。T-0701 建立 CLI → loopback 只读服务 → 打包 Vue UI 的运行闭环；T-0702 建立视觉系统、响应式 Shell、Inspector 和统一状态组件；T-0703 实现事实驱动的 Repository Overview；T-0704 完成 Stitch 对应 Module Explorer，并通过显式 aggregation parent、通用 version facts 和唯一完整 GAV 匹配补齐模块数据契约，UI 不推断缺失 facts。当前下一任务是 **T-0705 — Architecture Workspace**，但必须先向用户提供基于 TODO、公共模型和当前实现的 Data Contract Audit 与 Stitch 设计方案，待用户设计并导入后再编码；不提前实现 T-0706 及后续功能。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 及 T-0701 至 T-0705 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer 和 Architecture Workspace。Architecture 使用 `reportArchitecture.js` + Cytoscape.js，只在当前模块绘制有真实 Component 源/目标的 `COMPONENT_INJECTION + CONFIRMED` 边；节点/关系 Inspector 显示源码位置与原始 Evidence，未确认关系只作为覆盖状态，超过 60 节点或 120 条确认边不绘图，移动端回退为组件列表。下一任务是 **T-0706 — Architecture Exploration & Filtering**：先执行 Data Contract Audit → Stitch 方案 → 用户设计导入，再实现组合筛选、搜索和邻域，不提前实现 T-0707。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。

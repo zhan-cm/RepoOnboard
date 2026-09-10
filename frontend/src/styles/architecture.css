@@ -1,0 +1,489 @@
+.app-shell--workbench > .architecture-inspector {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.architecture-workspace {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) 1.8rem;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  container-type: inline-size;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.architecture-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem 1.35rem 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.architecture-header__copy {
+  min-width: 0;
+}
+
+.architecture-header h1 {
+  margin-top: 0.15rem;
+  font-size: 1.18rem;
+  letter-spacing: -0.025em;
+}
+
+.architecture-header__copy > p:last-child {
+  max-width: 43rem;
+  margin-top: 0.35rem;
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.architecture-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  padding: 0.42rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.45rem;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+}
+
+.architecture-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.architecture-kind {
+  display: grid;
+  width: 1rem;
+  height: 1rem;
+  place-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.25rem;
+  font-size: 0.52rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.architecture-kind--controller { color: #6d28d9; border-color: #c4b5fd; background: #f5f3ff; }
+.architecture-kind--service { color: #0369a1; border-color: #7dd3fc; background: #f0f9ff; }
+.architecture-kind--repository { color: #087a51; border-color: #86efac; background: #f0fdf4; }
+.architecture-kind--configuration { color: #a45f08; border-color: #fcd34d; background: #fffbeb; }
+.architecture-kind--component { color: #475569; border-color: #cbd5e1; background: #f8fafc; }
+
+.architecture-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.8rem;
+  padding: 0.65rem 1.35rem;
+  border-bottom: 1px solid var(--color-border);
+  background: #fff;
+}
+
+.architecture-scope {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 650;
+}
+
+.architecture-scope select {
+  width: min(28rem, 28vw);
+  height: 2rem;
+  padding: 0 1.8rem 0 0.6rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.4rem;
+  outline: 0;
+  color: var(--color-text);
+  background: var(--color-surface-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.architecture-scope select:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.architecture-tool-button,
+.architecture-deselect {
+  min-height: 2rem;
+  padding: 0 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  color: var(--color-text-secondary);
+  background: white;
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+
+.architecture-tool-button:hover:not(:disabled),
+.architecture-deselect:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-subtle);
+}
+
+.architecture-tool-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.architecture-deselect {
+  border-color: transparent;
+  color: var(--color-text-muted);
+}
+
+.architecture-scope-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.architecture-scope-summary strong {
+  color: var(--color-text);
+}
+
+.architecture-coverage {
+  display: flex;
+  gap: 0.55rem;
+  padding: 0.45rem 1.35rem;
+  border-bottom: 1px solid #ead8a7;
+  color: #745620;
+  background: #fff9e9;
+  font-size: 0.66rem;
+}
+
+.architecture-canvas {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle, #dce3ec 1px, transparent 1px) 0 0 / 20px 20px,
+    #f8fafc;
+}
+
+.architecture-canvas > .state-panel {
+  width: min(40rem, calc(100% - 3rem));
+  margin: 3rem auto;
+}
+
+.architecture-graph-frame,
+.architecture-graph {
+  width: 100%;
+  height: 100%;
+  min-height: 28rem;
+}
+
+.architecture-graph-controls {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 0.45rem;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 4px 14px rgb(31 45 68 / 10%);
+}
+
+.architecture-graph-controls button {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  background: transparent;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.architecture-graph-controls button:last-child { border-right: 0; }
+.architecture-graph-controls button:hover { color: var(--color-accent); background: var(--color-accent-soft); }
+
+.architecture-no-edges {
+  position: absolute;
+  z-index: 4;
+  top: 0.8rem;
+  left: 50%;
+  max-width: calc(100% - 2rem);
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  color: var(--color-text-secondary);
+  background: rgb(255 255 255 / 94%);
+  font-size: 0.66rem;
+  transform: translateX(-50%);
+}
+
+.architecture-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.1rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+}
+
+.architecture-statusbar span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.architecture-statusbar i {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--color-success);
+}
+
+.architecture-inspector {
+  min-width: 0;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.architecture-inspector__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-subtle);
+}
+
+.architecture-inspector h2 {
+  margin-top: 0.2rem;
+  font-size: 0.88rem;
+}
+
+.architecture-inspector__badge {
+  max-width: 9rem;
+  padding: 0.2rem 0.42rem;
+  overflow: hidden;
+  border: 1px solid #7dd3fc;
+  border-radius: 0.35rem;
+  color: #0369a1;
+  background: #f0f9ff;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+}
+
+.architecture-inspector__body {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.architecture-inspector__body section {
+  min-width: 0;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.architecture-inspector__label {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.architecture-inspector h3 {
+  margin: 0.28rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-size: 0.88rem;
+}
+
+.architecture-inspector__identity {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  font-size: 0.62rem;
+}
+
+.architecture-inspector__facts {
+  margin-top: 0.55rem;
+}
+
+.architecture-inspector__facts > div {
+  display: grid;
+  grid-template-columns: 6.3rem minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 0.38rem 0;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.architecture-inspector__facts dt {
+  color: var(--color-text-muted);
+  font-size: 0.62rem;
+}
+
+.architecture-inspector__facts dd {
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+}
+
+.architecture-relation-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.architecture-relation-counts article {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  background: var(--color-surface-subtle);
+}
+
+.architecture-relation-counts span { color: var(--color-text-muted); font-size: 0.56rem; }
+.architecture-relation-counts strong { color: var(--color-text); font-size: 0.9rem; }
+.architecture-relation-list, .architecture-evidence-list, .architecture-mobile-list, .architecture-fallback-list { margin: 0; padding: 0; list-style: none; }
+.architecture-relation-list { display: grid; gap: 0.25rem; margin-top: 0.55rem; color: var(--color-accent); font-family: var(--font-mono); font-size: 0.6rem; }
+
+.architecture-evidence-list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.55rem;
+}
+
+.architecture-evidence-list li {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  background: var(--color-surface-subtle);
+}
+
+.architecture-evidence-list strong { color: var(--color-text); font-size: 0.62rem; }
+.architecture-evidence-list code, .architecture-evidence-list span { overflow-wrap: anywhere; color: var(--color-text-muted); font-size: 0.58rem; line-height: 1.4; }
+.architecture-inspector__empty, .architecture-inspector__hint { margin-top: 0.5rem; color: var(--color-text-muted); font-size: 0.65rem; line-height: 1.5; }
+
+.architecture-mobile-list { display: none; }
+.architecture-fallback-list { display: grid; gap: 0.4rem; width: min(34rem, calc(100% - 3rem)); margin: 0 auto 2rem; }
+.architecture-fallback-list button, .architecture-mobile-list button { display: grid; gap: 0.1rem; width: 100%; padding: 0.6rem; border: 1px solid var(--color-border); border-radius: 0.4rem; color: var(--color-text); background: #fff; text-align: left; }
+.architecture-fallback-list span, .architecture-mobile-list span { color: var(--color-text-muted); font-size: 0.62rem; }
+
+@media (max-width: 78rem) {
+  .app-shell--workbench > .architecture-inspector {
+    grid-column: 2;
+    grid-row: 3;
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+  }
+
+  .architecture-workspace { min-height: 46rem; }
+}
+
+@media (max-width: 90rem) {
+  .architecture-header {
+    display: grid;
+  }
+
+  .architecture-legend {
+    justify-content: flex-start;
+  }
+
+  .architecture-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .architecture-scope-summary {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@container (max-width: 62rem) {
+  .architecture-header {
+    display: grid;
+  }
+
+  .architecture-legend {
+    justify-content: flex-start;
+  }
+
+  .architecture-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .architecture-scope-summary {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 68rem) {
+  .architecture-scope select { width: min(28rem, 42vw); }
+}
+
+@media (max-width: 57rem) {
+  .architecture-graph-frame { display: none; }
+  .architecture-mobile-list {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  .architecture-mobile-list button.active { border-color: var(--color-accent); background: var(--color-accent-soft); }
+  .architecture-canvas { overflow-y: auto; background: var(--color-surface-subtle); }
+  .architecture-no-edges { position: static; margin: 0.8rem; transform: none; }
+}
+
+@media (max-width: 47.5rem) {
+  .architecture-workspace { min-height: 48rem; overflow: visible; }
+  .architecture-header, .architecture-toolbar { padding-inline: 1rem; }
+  .architecture-scope { align-items: flex-start; width: 100%; flex-direction: column; }
+  .architecture-scope select { width: 100%; }
+  .architecture-statusbar span:nth-child(2) { display: none; }
+}
+
+@media (max-width: 34rem) {
+  .architecture-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .architecture-scope-summary { flex-wrap: wrap; }
+  .architecture-statusbar span:last-child { display: none; }
+  .architecture-relation-counts { grid-template-columns: 1fr; }
+}
