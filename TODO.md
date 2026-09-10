@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0704 — Module Explorer。**
+> **T-0706 — Architecture Exploration & Filtering。**
 
-M0 至 M6 及 T-0701、T-0702、T-0703 已经完成。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 至 T-0705 已经完成。Architecture Workspace 已按数据契约与 Stitch 原型实现并通过浏览器验证；下一项是 T-0706，需先完成页面级数据契约审计与 Stitch 设计交接，再实现复杂探索和筛选。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1860,20 +1860,32 @@ Inter-module Dependencies
 Status:
 
 ```text
-[ ]
+[x]
+```
+
+Design Handoff:
+
+```text
+[x] UI Data Contract Audit
+[x] Stitch Design Brief
+[x] User-reviewed Stitch prototype imported
+[x] Vue implementation and browser validation
 ```
 
 展示主要：
 
 ```text
 Controller
+REST Controller
 Service
 Repository
-Mapper
 Component
+Configuration
 ```
 
 以及 Dependency。
+
+Mapper 仅在可选 T-0404 提供公共 `ComponentKind` 后进入页面；当前 T-0705 不得显示推断的 Mapper 或 `0 Mappers`。
 
 重点：
 
@@ -1884,9 +1896,9 @@ Component
 Acceptance Criteria:
 
 ```text
-[ ] Module graph 与 Component graph 不混用边类型
-[ ] 默认视图不会一次渲染无界全仓库图
-[ ] 图节点可回到详情和 Source Evidence
+[x] Module graph 与 Component graph 不混用边类型
+[x] 默认视图不会一次渲染无界全仓库图
+[x] 图节点可回到详情和 Source Evidence
 ```
 
 ---
@@ -2998,18 +3010,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0705
-Architecture Workspace
+T-0706
+Architecture Exploration & Filtering
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701 至 T-0704 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701 至 T-0705 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0705
+T-0706
 ```
 
 ---
@@ -3038,7 +3050,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0704 complete)
+M7 Local Web UI — in progress (T-0701 through T-0705 complete; T-0706 is next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3049,6 +3061,6 @@ Release
 
 Next:
 
-> **T-0705 — Architecture Workspace.**
+> **T-0706 — Architecture Exploration & Filtering.**
 
 ````
