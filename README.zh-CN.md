@@ -198,6 +198,7 @@ cd RepoOnboard
 - [DECISIONS.md](./DECISIONS.md)——已接受的架构与技术决策
 - [TODO.md](./TODO.md)——开发路线和当前任务状态
 - [AGENTS.md](./AGENTS.md)——编码代理的仓库执行说明
+- [前端产品需求文档](./docs/product/FRONTEND-PRODUCT-REQUIREMENTS.md)——页面结构、交互、视觉方向、响应式规则与未来桌面体验
 
 ## 目标用户
 
