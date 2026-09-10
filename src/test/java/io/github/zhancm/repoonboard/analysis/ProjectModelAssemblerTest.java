@@ -15,14 +15,18 @@ import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentAnalysis;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyAnalysis;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyFact;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringDependencyKind;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringDependencyStatus;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointAnalysis;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointFact;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringHttpMethod;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringMappingConditions;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringConfigurationAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringMvcMappingAnalyzer;
 import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
 import io.github.zhancm.repoonboard.core.model.ComponentKind;
 import io.github.zhancm.repoonboard.core.model.DependencyKind;
@@ -99,6 +103,7 @@ class ProjectModelAssemblerTest {
                 .anyMatch(d -> d.kind() == DependencyKind.MAVEN_DECLARATION));
         assertTrue(report.dependencies().stream()
                 .anyMatch(d -> d.kind() == DependencyKind.COMPONENT_INJECTION));
+        assertEquals("3.5.0", report.modules().getFirst().frameworkVersions().getFirst().version());
         assertEquals(AnalysisStatus.PARTIAL, report.status());
         assertTrue(report.diagnostics().stream()
                 .anyMatch(diagnostic -> diagnostic.code().equals("REPORT_ID_COLLISION")));
@@ -138,6 +143,58 @@ class ProjectModelAssemblerTest {
         assertNotEquals(publicGet.id(), StableIdentifiers.endpoint(
                 publicGet.componentId(), "findAll", publicGet.httpMethod(), publicGet.path(),
                 publicGet.unresolvedPath(), publicGet.conditions()));
+    }
+
+    @Test
+    void exposesAggregationHierarchyAndConfirmedInternalModuleDependencies() {
+        var report = assembleFixture("multi-module-project");
+        var root = report.modules().stream()
+                .filter(module -> module.pomFileId().equals("pom.xml"))
+                .findFirst().orElseThrow();
+        var api = report.modules().stream()
+                .filter(module -> module.pomFileId().equals("api/pom.xml"))
+                .findFirst().orElseThrow();
+        var library = report.modules().stream()
+                .filter(module -> module.pomFileId().equals("library/pom.xml"))
+                .findFirst().orElseThrow();
+
+        assertEquals(Optional.empty(), root.aggregationParentModuleId());
+        assertEquals(Optional.of(root.id()), api.aggregationParentModuleId());
+        assertEquals(Optional.of(root.id()), library.aggregationParentModuleId());
+        assertTrue(api.evidence().stream()
+                .anyMatch(evidence -> evidence.type().equals("MAVEN_MODULE_AGGREGATION")));
+        assertTrue(report.dependencies().stream().anyMatch(dependency ->
+                dependency.kind() == DependencyKind.MAVEN_DECLARATION
+                        && dependency.sourceId().equals(api.id())
+                        && dependency.targetId().equals(Optional.of(library.id()))));
+    }
+
+    @Test
+    void exposesJavaVersionOnlyFromResolvedMavenMetadata() {
+        var report = assembleFixture("minimal-maven-project");
+
+        assertEquals(1, report.modules().getFirst().languageVersions().size());
+        assertEquals("21", report.modules().getFirst().languageVersions().getFirst().version());
+        assertTrue(report.modules().getFirst().languageVersions().getFirst().evidence().stream()
+                .anyMatch(evidence -> evidence.type().equals("MAVEN_LANGUAGE_VERSION")));
+    }
+
+    private io.github.zhancm.repoonboard.core.model.AnalysisReport assembleFixture(String fixtureName) {
+        Path root = FixturePaths.project(fixtureName);
+        MavenModuleAnalysis maven = new MavenModuleAnalyzer().analyze(
+                root, new MavenModelOptions(temporaryDirectory.resolve(fixtureName), List.of(), 1_048_576));
+        var roots = new JavaSourceRootDiscoverer().discover(root, maven);
+        var files = new JavaFileDiscoverer().discover(root, roots);
+        JavaParseAnalysis java = new JavaTypeReferenceResolver().resolve(
+                new JavaSourceParser().parse(root, files), maven);
+        var components = new SpringComponentAnalyzer().analyze(java);
+        var configuration = new SpringConfigurationAnalyzer().analyze(java);
+        var injection = new SpringInjectionAnalyzer().analyze(java, components, configuration);
+        var mappings = new SpringMvcMappingAnalyzer().analyze(java, components);
+        var endpoints = new SpringEndpointAnalyzer().analyze(mappings);
+        var dependencies = new SpringComponentDependencyAnalyzer().analyze(components, injection);
+        return new ProjectModelAssembler().assemble(new ProjectAnalysisInput(
+                maven, java, components, configuration, endpoints, dependencies));
     }
 
     private static SpringComponentDependencyFact dependency(

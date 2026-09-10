@@ -4,5 +4,6 @@ import './styles/tokens.css'
 import './styles/base.css'
 import './styles/shell.css'
 import './styles/overview.css'
+import './styles/modules.css'
 
 createApp(App).mount('#app')

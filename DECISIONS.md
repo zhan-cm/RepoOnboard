@@ -146,7 +146,7 @@ TODO 不能自行改变架构。
 
 > **M7 Local Web UI — in progress**
 
-M0 至 M6 及 T-0701 至 T-0703 已完成。CLI 已将统一 `AnalysisReport` 接入仅绑定 loopback 的本地只读服务；Vue 前端已有集中视觉系统、可复用产品 Shell 和基于报告事实的 Repository Overview。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0704 Module Explorer。
+M0 至 M6 及 T-0701 至 T-0704 已完成。CLI 已将统一 `AnalysisReport` 接入仅绑定 loopback 的本地只读服务；Vue 前端已有集中视觉系统、Repository Overview 和基于显式报告事实的 Module Explorer。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0705 Architecture Workspace。
 
 ---
 
@@ -1789,7 +1789,7 @@ ACCEPTED
 
 ### Context and Decision
 
-核心模型包含 Project、Module、SourceFile、Component、Endpoint、EntryPoint、Dependency、SourceLocation、Evidence、Diagnostic 和 AnalysisReport。模型使用 Java records/enums 表达稳定值，实体通过稳定结构身份引用；Spring 语义以 kind/framework 标识映射，不创建通用 AST。
+核心模型包含 Project、Module、SourceFile、Component、Endpoint、EntryPoint、Dependency、SourceLocation、Evidence、Diagnostic 和 AnalysisReport。模型使用 Java records/enums 表达稳定值，实体通过稳定结构身份引用；Spring 语义以 kind/framework 标识映射，不创建通用 AST。Module 使用显式聚合父 ID 表达 Maven `<modules>` 层级，并用带 Evidence 的通用 LanguageVersion / FrameworkVersion 值表达可确认版本，不把 Maven property 或 Spring 专用分析器对象直接暴露给 UI。
 
 Endpoint 保存方法、路径、handler、条件、解析状态和类/方法级证据。源码位置使用 1-based 行列，未知值为空。默认报告使用扫描根相对路径，不包含整份源码或用户绝对路径。
 
@@ -1799,7 +1799,7 @@ Spring 专用核心会阻碍长期方向；通用语言类型系统会让 V0.1 �
 
 ### Consequences and Validation
 
-T-0601 固化字段，T-0602 用 fixture 确定 ID 编码、排序、冲突和重命名行为。ADR 只要求稳定身份不依赖内存地址或遍历顺序，暂不固定 SHA-256 等编码细节。新实体必须由当前产品需求驱动。
+T-0601 固化基础字段，T-0602 用 fixture 确定 ID 编码、排序、冲突和重命名行为；T-0704 仅为 Module Explorer 的明确产品价值补充聚合父 ID 与通用版本事实。ADR 只要求稳定身份不依赖内存地址或遍历顺序，暂不固定 SHA-256 等编码细节。新实体必须由当前产品需求驱动。
 
 ---
 
@@ -1847,7 +1847,7 @@ ACCEPTED
 
 ### Context and Decision
 
-组件关系以带类型、解析状态和证据的有向边列表存储，查询时建立邻接表。Maven 模块/构建依赖与组件依赖分别建图。循环合法保存，未解析目标保留名称和诊断，默认不画为确定边。
+组件关系以带类型、解析状态和证据的有向边列表存储，查询时建立邻接表。Maven 模块/构建依赖与组件依赖分别建图。Maven dependency 只有在解析后的 groupId、artifactId、version 完整且唯一匹配报告内模块时，才把 targetId 指向该 Module；无匹配保持外部目标，多匹配保持 AMBIGUOUS。循环合法保存，未解析目标保留名称和诊断，默认不画为确定边。
 
 ### Alternatives and Rationale
 
@@ -1855,7 +1855,7 @@ ACCEPTED
 
 ### Consequences and Validation
 
-T-0503/T-0604 验证去重、多证据、循环、未解析关系和稳定排序。出现确需复杂算法且自有实现开始膨胀时，再评估 JGraphT 等图库。
+T-0503/T-0604 验证去重、多证据、循环、未解析关系和稳定排序；T-0704 fixture 验证唯一 GAV 的内部模块边。出现确需复杂算法且自有实现开始膨胀时，再评估 JGraphT 等图库。
 
 ---
 
@@ -1883,7 +1883,7 @@ ACCEPTED
 
 ### Consequences and Validation
 
-T-0603 定义主/次版本兼容、快照和未知版本错误。M1 用最终版本验证 Java 21 兼容。若报告规模使解析或内存不可接受，应先测量和分片，再决定格式变化。
+T-0603 定义主/次版本兼容、快照和未知版本错误；T-0604 将 schema 加法式升级为 `1.1`，T-0704 再升级为 `1.2`，加入模块聚合父 ID 和通用语言/框架版本 facts，同时继续兼容读取 `1.0` / `1.1`。M1 用最终版本验证 Java 21 兼容。若报告规模使解析或内存不可接受，应先测量和分片，再决定格式变化。
 
 ---
 
@@ -2112,13 +2112,13 @@ Implementation
 ✓ M4 Spring Boot Analysis complete
 ✓ M5 API & Dependency Analysis complete
 ✓ M6 Report Assembly & Serialization complete
-◐ M7 Local Web UI in progress (T-0701 through T-0703 complete)
+◐ M7 Local Web UI in progress (T-0701 through T-0704 complete)
 ```
 
 下一步：
 
-> 完成 T-0704 — Module Explorer。
+> 在设计和实现前完成 T-0705 — Architecture Workspace 的页面级 Data Contract Audit 与 Stitch 交接。
 
-M0 至 M6 及 T-0701 至 T-0703 已关闭；后续按 TODO.md 校准后的里程碑和任务依赖推进。
+M0 至 M6 及 T-0701 至 T-0704 已关闭；后续前端任务先由 Codex 根据 TODO、公共模型和当前实现提供 Data Contract Audit / Stitch 设计方案，用户完成 Stitch 设计后再进入 Vue 实现与浏览器验证。
 
 ````

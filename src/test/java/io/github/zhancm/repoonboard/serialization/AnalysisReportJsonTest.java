@@ -19,7 +19,9 @@ import io.github.zhancm.repoonboard.core.model.EndpointConditions;
 import io.github.zhancm.repoonboard.core.model.EntryPoint;
 import io.github.zhancm.repoonboard.core.model.Evidence;
 import io.github.zhancm.repoonboard.core.model.Framework;
+import io.github.zhancm.repoonboard.core.model.FrameworkVersion;
 import io.github.zhancm.repoonboard.core.model.Language;
+import io.github.zhancm.repoonboard.core.model.LanguageVersion;
 import io.github.zhancm.repoonboard.core.model.Module;
 import io.github.zhancm.repoonboard.core.model.Project;
 import io.github.zhancm.repoonboard.core.model.ResolutionStatus;
@@ -41,7 +43,7 @@ class AnalysisReportJsonTest {
 
         String expected = """
                 {
-                  "schemaVersion" : "1.1",
+                  "schemaVersion" : "1.2",
                   "project" : {
                     "id" : "project:demo",
                     "name" : "demo",
@@ -108,7 +110,7 @@ class AnalysisReportJsonTest {
     void acceptsAdditiveMinorVersionsAndIgnoresUnknownFieldsWithoutTypeActivation() {
         AnalysisReport report = completeReport();
         String json = codec.serialize(report)
-                .replace("\"schemaVersion\" : \"1.1\"", "\"schemaVersion\" : \"1.9\"")
+                .replace("\"schemaVersion\" : \"1.2\"", "\"schemaVersion\" : \"1.9\"")
                 .replaceFirst("\\{", "{\n  \"@class\" : \"java.lang.Runtime\",\n"
                         + "  \"futureConfiguration\" : { \"secret\" : \"not-loaded\" },");
 
@@ -118,7 +120,7 @@ class AnalysisReportJsonTest {
     @Test
     void rejectsUnknownMajorVersionBeforeBindingTheReport() {
         String json = codec.serialize(completeReport())
-                .replace("\"schemaVersion\" : \"1.1\"", "\"schemaVersion\" : \"2.0\"");
+                .replace("\"schemaVersion\" : \"1.2\"", "\"schemaVersion\" : \"2.0\"");
 
         UnsupportedReportSchemaVersionException exception = assertThrows(
                 UnsupportedReportSchemaVersionException.class,
@@ -141,8 +143,8 @@ class AnalysisReportJsonTest {
                 ReportSerializationException.class,
                 () -> codec.deserialize(codec.serialize(completeReport()) + " {}"));
         String duplicateVersion = codec.serialize(completeReport()).replace(
-                "\"schemaVersion\" : \"1.1\"",
-                "\"schemaVersion\" : \"2.0\",\n  \"schemaVersion\" : \"1.1\"");
+                "\"schemaVersion\" : \"1.2\"",
+                "\"schemaVersion\" : \"2.0\",\n  \"schemaVersion\" : \"1.2\"");
         assertThrows(
                 ReportSerializationException.class,
                 () -> codec.deserialize(duplicateVersion));
@@ -189,10 +191,22 @@ class AnalysisReportJsonTest {
                   },
                 """;
         String json = codec.serialize(minimalReport())
-                .replace("\"schemaVersion\" : \"1.1\"", "\"schemaVersion\" : \"1.0\"")
+                .replace("\"schemaVersion\" : \"1.2\"", "\"schemaVersion\" : \"1.0\"")
                 .replace(legacySummaryBlock, "");
 
         assertEquals(minimalReport(), codec.deserialize(json));
+    }
+
+    @Test
+    void readsVersionOnePointOneModulesWithoutVersionAndHierarchyFields() {
+        AnalysisReport legacy = legacyModuleReport();
+        String json = codec.serialize(legacy)
+                .replace("\"schemaVersion\" : \"1.2\"", "\"schemaVersion\" : \"1.1\"")
+                .replace("      \"aggregationParentModuleId\" : null,\n", "")
+                .replace("      \"languageVersions\" : [ ],\n", "")
+                .replace("      \"frameworkVersions\" : [ ],\n", "");
+
+        assertEquals(legacy, codec.deserialize(json));
     }
 
     @Test
@@ -205,7 +219,7 @@ class AnalysisReportJsonTest {
 
     @Test
     void schemaVersionUsesStrictMajorMinorSyntax() {
-        assertEquals("1.1", ReportSchemaVersion.CURRENT.toString());
+        assertEquals("1.2", ReportSchemaVersion.CURRENT.toString());
         assertEquals(new ReportSchemaVersion(12, 34), ReportSchemaVersion.parse("12.34"));
         assertTrue(new ReportSchemaVersion(1, 99).isCompatibleWith(ReportSchemaVersion.CURRENT));
         assertFalse(new ReportSchemaVersion(2, 0).isCompatibleWith(ReportSchemaVersion.CURRENT));
@@ -251,12 +265,16 @@ class AnalysisReportJsonTest {
                 "module:.",
                 "pom.xml",
                 ".",
+                Optional.empty(),
                 Optional.of("example"),
                 Optional.of("demo"),
                 Optional.of("1.0.0"),
                 Optional.of("jar"),
                 List.of("src/main/java"),
                 List.of(Framework.SPRING_BOOT),
+                List.of(new LanguageVersion(Language.JAVA, "21", List.of(mavenEvidence))),
+                List.of(new FrameworkVersion(
+                        Framework.SPRING_BOOT, "3.5.0", List.of(mavenEvidence))),
                 List.of(mavenEvidence));
         SourceFile sourceFile = new SourceFile(
                 "source:controller",
@@ -326,5 +344,18 @@ class AnalysisReportJsonTest {
                 List.of(dependency),
                 AnalysisStatus.PARTIAL,
                 List.of(diagnostic));
+    }
+
+    private static AnalysisReport legacyModuleReport() {
+        Module module = new Module(
+                "module:.", "pom.xml", ".", Optional.empty(),
+                Optional.of("example"), Optional.of("legacy"), Optional.of("1"),
+                Optional.of("jar"), List.of(), List.of(), List.of(), List.of(),
+                List.of(new Evidence(
+                        "MAVEN_MODULE", SourceLocation.file("pom.xml"), List.of(), "maven.module")));
+        return new AnalysisReport(
+                new Project("project:legacy", "legacy", BuildSystem.MAVEN, List.of()),
+                List.of(module), List.of(), List.of(), List.of(), List.of(), List.of(),
+                AnalysisStatus.SUCCESS, List.of());
     }
 }

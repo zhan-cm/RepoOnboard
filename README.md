@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Local Web UI In Progress**
 >
-> Maven, Java, Spring, API, component-dependency, and stable report analysis are available. The CLI serves each report to a packaged Vue application over a loopback-only endpoint. The responsive product Shell now includes a report-backed Repository Overview; the remaining product views are still under development, and the first release is not available yet.
+> Maven, Java, Spring, API, component-dependency, and stable report analysis are available. The CLI serves each report to a packaged Vue application over a loopback-only endpoint. The responsive product Shell now includes a report-backed Repository Overview and Module Explorer; the remaining product views are still under development, and the first release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -190,7 +190,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.1` JSON serialization feed the loopback service, packaged responsive product Shell, and Repository Overview. Module, Architecture, API, and source-navigation views remain future M7 tasks.
+The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.2` JSON serialization feed the loopback service, packaged responsive product Shell, Repository Overview, and Module Explorer. The module view uses explicit Maven aggregation relationships, confirmed exact-coordinate internal module dependencies, module-scoped counts, metadata, source roots, version facts, diagnostics, and evidence. Architecture, API, and source-navigation views remain future M7 tasks.
 
 ## Documentation
 

@@ -15,7 +15,9 @@ import io.github.zhancm.repoonboard.core.model.EndpointConditions;
 import io.github.zhancm.repoonboard.core.model.EntryPoint;
 import io.github.zhancm.repoonboard.core.model.Evidence;
 import io.github.zhancm.repoonboard.core.model.Framework;
+import io.github.zhancm.repoonboard.core.model.FrameworkVersion;
 import io.github.zhancm.repoonboard.core.model.Language;
+import io.github.zhancm.repoonboard.core.model.LanguageVersion;
 import io.github.zhancm.repoonboard.core.model.Module;
 import io.github.zhancm.repoonboard.core.model.Project;
 import io.github.zhancm.repoonboard.core.model.ResolutionStatus;
@@ -67,7 +69,8 @@ public record ReportJsonDocument(
         }
         AnalysisReport report = new AnalysisReport(
                 Objects.requireNonNull(project, "project").toModel(),
-                requiredList(modules, "modules").stream().map(ModuleDto::toModel).toList(),
+                requiredList(modules, "modules").stream()
+                        .map(module -> module.toModel(version)).toList(),
                 requiredList(sourceFiles, "sourceFiles").stream()
                         .map(SourceFileDto::toModel).toList(),
                 requiredList(components, "components").stream()
@@ -172,32 +175,47 @@ public record ReportJsonDocument(
             String id,
             String pomFileId,
             String baseDirectory,
+            String aggregationParentModuleId,
             String groupId,
             String artifactId,
             String version,
             String packaging,
             List<String> sourceRoots,
             List<String> frameworks,
+            List<LanguageVersionDto> languageVersions,
+            List<FrameworkVersionDto> frameworkVersions,
             List<EvidenceDto> evidence) {
         static ModuleDto fromModel(Module module) {
             return new ModuleDto(
                     module.id(),
                     module.pomFileId(),
                     module.baseDirectory(),
+                    module.aggregationParentModuleId().orElse(null),
                     module.groupId().orElse(null),
                     module.artifactId().orElse(null),
                     module.version().orElse(null),
                     module.packaging().orElse(null),
                     module.sourceRoots(),
                     module.frameworks().stream().map(Enum::name).toList(),
+                    module.languageVersions().stream().map(LanguageVersionDto::fromModel).toList(),
+                    module.frameworkVersions().stream().map(FrameworkVersionDto::fromModel).toList(),
                     module.evidence().stream().map(EvidenceDto::fromModel).toList());
         }
 
-        Module toModel() {
+        Module toModel(ReportSchemaVersion schemaVersion) {
+            List<LanguageVersion> normalizedLanguageVersions = schemaVersion.minor() >= 2
+                    ? requiredList(languageVersions, "module.languageVersions").stream()
+                            .map(LanguageVersionDto::toModel).toList()
+                    : List.of();
+            List<FrameworkVersion> normalizedFrameworkVersions = schemaVersion.minor() >= 2
+                    ? requiredList(frameworkVersions, "module.frameworkVersions").stream()
+                            .map(FrameworkVersionDto::toModel).toList()
+                    : List.of();
             return new Module(
                     id,
                     pomFileId,
                     baseDirectory,
+                    Optional.ofNullable(aggregationParentModuleId),
                     Optional.ofNullable(groupId),
                     Optional.ofNullable(artifactId),
                     Optional.ofNullable(version),
@@ -206,7 +224,49 @@ public record ReportJsonDocument(
                     requiredList(frameworks, "module.frameworks").stream()
                             .map(value -> enumValue(Framework.class, value, "module.frameworks"))
                             .toList(),
+                    normalizedLanguageVersions,
+                    normalizedFrameworkVersions,
                     requiredList(evidence, "module.evidence").stream()
+                            .map(EvidenceDto::toModel).toList());
+        }
+    }
+
+    public record LanguageVersionDto(
+            String language,
+            String version,
+            List<EvidenceDto> evidence) {
+        static LanguageVersionDto fromModel(LanguageVersion value) {
+            return new LanguageVersionDto(
+                    value.language().name(),
+                    value.version(),
+                    value.evidence().stream().map(EvidenceDto::fromModel).toList());
+        }
+
+        LanguageVersion toModel() {
+            return new LanguageVersion(
+                    enumValue(Language.class, language, "module.languageVersions.language"),
+                    version,
+                    requiredList(evidence, "module.languageVersions.evidence").stream()
+                            .map(EvidenceDto::toModel).toList());
+        }
+    }
+
+    public record FrameworkVersionDto(
+            String framework,
+            String version,
+            List<EvidenceDto> evidence) {
+        static FrameworkVersionDto fromModel(FrameworkVersion value) {
+            return new FrameworkVersionDto(
+                    value.framework().name(),
+                    value.version(),
+                    value.evidence().stream().map(EvidenceDto::fromModel).toList());
+        }
+
+        FrameworkVersion toModel() {
+            return new FrameworkVersion(
+                    enumValue(Framework.class, framework, "module.frameworkVersions.framework"),
+                    version,
+                    requiredList(evidence, "module.frameworkVersions.evidence").stream()
                             .map(EvidenceDto::toModel).toList());
         }
     }
