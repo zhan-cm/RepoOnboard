@@ -3,6 +3,8 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import ArchitectureInspector from './components/ArchitectureInspector.vue'
 import ArchitectureWorkspaceView from './components/ArchitectureWorkspaceView.vue'
+import ApiInspector from './components/ApiInspector.vue'
+import ApiMapView from './components/ApiMapView.vue'
 import InspectorPanel from './components/InspectorPanel.vue'
 import ModuleExplorerView from './components/ModuleExplorerView.vue'
 import ModuleInspector from './components/ModuleInspector.vue'
@@ -16,12 +18,13 @@ import {
   defaultArchitectureExploration
 } from './lib/reportArchitecture.js'
 import { createModuleExplorerModel } from './lib/reportModules.js'
+import { createApiModel, createApiScope, defaultApiExploration } from './lib/reportEndpoints.js'
 
 const navigationItems = Object.freeze([
   { id: 'overview', label: 'Overview', glyph: 'O', disabled: false },
   { id: 'modules', label: 'Modules', glyph: 'M', disabled: false },
   { id: 'architecture', label: 'Architecture', glyph: 'A', active: false, disabled: false },
-  { id: 'apis', label: 'APIs', glyph: '↗', active: false, disabled: true },
+  { id: 'apis', label: 'APIs', glyph: '↗', active: false, disabled: false },
   { id: 'start-here', label: 'Start Here', glyph: 'S', active: false, disabled: true }
 ])
 
@@ -32,12 +35,15 @@ const selectedModuleId = ref('')
 const selectedArchitectureModuleId = ref('')
 const architectureSelection = ref(null)
 const architectureExploration = ref(defaultArchitectureExploration())
+const apiSelection = ref(null)
+const apiExploration = ref(defaultApiExploration())
 const navigation = computed(() => navigationItems.map((item) => ({
   ...item,
   active: item.id === activePage.value
 })))
 const moduleModel = computed(() => report.value ? createModuleExplorerModel(report.value) : null)
 const architectureModel = computed(() => report.value ? createArchitectureModel(report.value) : null)
+const apiModel = computed(() => report.value ? createApiModel(report.value) : null)
 const selectedModule = computed(() => moduleModel.value?.modules.find(
   (module) => module.id === selectedModuleId.value) ?? moduleModel.value?.modules[0] ?? null)
 const architectureScope = computed(() => architectureModel.value
@@ -48,7 +54,10 @@ const architectureScope = computed(() => architectureModel.value
         : null
     })
   : null)
-const workbench = computed(() => activePage.value === 'modules' || activePage.value === 'architecture')
+const apiScope = computed(() => apiModel.value
+  ? createApiScope(apiModel.value, apiExploration.value)
+  : null)
+const workbench = computed(() => ['modules', 'architecture', 'apis'].includes(activePage.value))
 
 const repositoryName = computed(() => {
   if (!report.value) return 'Preparing workspace'
@@ -90,6 +99,18 @@ watch(architectureScope, (scope) => {
   }
 })
 
+watch(apiModel, () => {
+  apiSelection.value = null
+  apiExploration.value = defaultApiExploration()
+})
+
+watch(apiScope, (scope) => {
+  if (!scope || !apiSelection.value) return
+  if (!scope.endpoints.some((item) => item.id === apiSelection.value.id)) {
+    apiSelection.value = null
+  }
+})
+
 function selectArchitectureModule(moduleId) {
   selectedArchitectureModuleId.value = moduleId
   architectureSelection.value = null
@@ -123,55 +144,69 @@ onMounted(async () => {
         <div class="workbench-topbar__summary">
           <span>{{ moduleModel?.modules.length ?? '—' }} modules</span>
           <span v-if="activePage === 'modules'">{{ report?.summary?.sourceFileCount ?? report?.sourceFiles?.length ?? '—' }} source files</span>
-          <span v-else>{{ architectureModel?.counts.components ?? '—' }} components</span>
+          <span v-else-if="activePage === 'architecture'">{{ architectureModel?.counts.components ?? '—' }} components</span>
+          <span v-else>{{ apiModel?.counts.endpoints ?? '—' }} endpoints</span>
           <span v-if="activePage === 'architecture'">{{ architectureModel?.counts.confirmedRelations ?? '—' }} confirmed relations</span>
           <span class="workbench-status" :class="`workbench-status--${statusTone}`">{{ analysisStatus || 'UNKNOWN' }}</span>
         </div>
       </div>
     </template>
 
-    <StatePanel
-      v-if="activePage === 'modules' && error"
-      variant="error"
-      heading="Report unavailable"
-      :message="error"
-    />
-    <StatePanel
-      v-else-if="activePage === 'modules' && !report"
-      variant="loading"
-      heading="Loading module report"
-      message="Connecting to the local RepoOnboard service…"
-    />
-    <ModuleExplorerView
-      v-else-if="activePage === 'modules'"
-      :model="moduleModel"
-      :selected-module-id="selectedModule?.id"
-      @select="selectedModuleId = $event"
-    />
+    <template v-if="activePage === 'modules'">
+      <StatePanel v-if="error" variant="error" heading="Report unavailable" :message="error" />
+      <StatePanel
+        v-else-if="!report"
+        variant="loading"
+        heading="Loading module report"
+        message="Connecting to the local RepoOnboard service…"
+      />
+      <ModuleExplorerView
+        v-else
+        :model="moduleModel"
+        :selected-module-id="selectedModule?.id"
+        @select="selectedModuleId = $event"
+      />
+    </template>
 
-    <StatePanel
-      v-else-if="activePage === 'architecture' && error"
-      variant="error"
-      heading="Report unavailable"
-      :message="error"
-    />
-    <StatePanel
-      v-else-if="activePage === 'architecture' && !report"
-      variant="loading"
-      heading="Loading architecture report"
-      message="Connecting to the local RepoOnboard service…"
-    />
-    <ArchitectureWorkspaceView
-      v-else-if="activePage === 'architecture'"
-      :model="architectureModel"
-      :module-id="selectedArchitectureModuleId"
-      :selection="architectureSelection"
-      :scope="architectureScope"
-      :exploration="architectureExploration"
-      @select-module="selectArchitectureModule"
-      @select="architectureSelection = $event"
-      @update-exploration="architectureExploration = $event"
-    />
+    <template v-else-if="activePage === 'architecture'">
+      <StatePanel v-if="error" variant="error" heading="Report unavailable" :message="error" />
+      <StatePanel
+        v-else-if="!report"
+        variant="loading"
+        heading="Loading architecture report"
+        message="Connecting to the local RepoOnboard service…"
+      />
+      <ArchitectureWorkspaceView
+        v-else
+        :model="architectureModel"
+        :module-id="selectedArchitectureModuleId"
+        :selection="architectureSelection"
+        :scope="architectureScope"
+        :exploration="architectureExploration"
+        @select-module="selectArchitectureModule"
+        @select="architectureSelection = $event"
+        @update-exploration="architectureExploration = $event"
+      />
+    </template>
+
+    <template v-else-if="activePage === 'apis'">
+      <StatePanel v-if="error" variant="error" heading="Report unavailable" :message="error" />
+      <StatePanel
+        v-else-if="!report"
+        variant="loading"
+        heading="Loading endpoint report"
+        message="Connecting to the local RepoOnboard service…"
+      />
+      <ApiMapView
+        v-else
+        :model="apiModel"
+        :scope="apiScope"
+        :exploration="apiExploration"
+        :selection="apiSelection"
+        @select="apiSelection = $event"
+        @update-exploration="apiExploration = $event"
+      />
+    </template>
 
     <PageLayout
       v-else
@@ -214,6 +249,12 @@ onMounted(async () => {
         :model="architectureModel"
         :scope="architectureScope"
         :selection="architectureSelection"
+      />
+      <ApiInspector
+        v-else-if="activePage === 'apis'"
+        :model="apiModel"
+        :scope="apiScope"
+        :selection="apiSelection"
       />
       <InspectorPanel
         v-else

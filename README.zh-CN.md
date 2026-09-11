@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / 本地 Web UI 开发中**
 >
-> Maven、Java、Spring、API、组件依赖和稳定报告分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式产品 Shell 现在已包含基于报告事实的 Repository Overview、Module Explorer 与 Architecture Workspace；其余产品页面仍在开发中，首个版本尚未发布。
+> Maven、Java、Spring、API、组件依赖和稳定报告分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式产品 Shell 现在已包含基于报告事实的 Repository Overview、Module Explorer、Architecture Workspace 与 API Map；其余产品页面仍在开发中，首个版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -133,7 +133,7 @@ Spring Boot 构建识别使用模块声明的 `org.springframework.boot:spring-b
 
 ### API 地图
 
-展示 HTTP 方法、路径、Controller、处理方法和源码证据。
+展示报告中的 HTTP 方法、路径、Controller、处理方法、源码位置和 mapping conditions。模块、method 与文本筛选可以组合，且不会把 `ANY` 当成通配符；未解析 path 或 conditions 会保持显式。选中 Endpoint 后可查看 handler source，以及方法级与 Controller 类级 mapping Evidence。
 
 ### Start Here
 
@@ -190,7 +190,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.2` JSON 序列化现已接入 loopback 服务、响应式产品 Shell、Repository Overview、Module Explorer 与 Architecture Workspace。模块页面使用显式 Maven 聚合关系、精确坐标唯一确认的内部模块依赖、模块级统计、元数据、源码根、版本事实、诊断与证据。架构页面使用 Cytoscape.js，仅在单一模块范围内绘制确认的组件注入边，并提供可组合筛选、搜索、所选节点一阶邻域、缩放、平移、适配、选择、源码证据、响应式可搜索列表回退，以及明确的部分/不可用/超预算状态。API 和源码导航等视图仍属于后续 M7 任务。
+当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.2` JSON 序列化现已接入 loopback 服务、响应式产品 Shell、Repository Overview、Module Explorer、Architecture Workspace 与 API Map。模块页面使用显式 Maven 聚合关系、精确坐标唯一确认的内部模块依赖、模块级统计、元数据、源码根、版本事实、诊断与证据。架构页面使用 Cytoscape.js，仅在单一模块范围内绘制确认的组件注入边，并提供可组合筛选、搜索、所选节点一阶邻域、缩放、平移、适配、选择、源码证据、响应式可搜索列表回退，以及明确的部分/不可用/超预算状态。API 页面提供模块/method/文本组合筛选、明确的未解析状态、handler 源码位置和两级 mapping Evidence。Source Navigation 仍属于后续 M7 任务。
 
 ## 项目文档
 
