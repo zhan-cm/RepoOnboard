@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0801 — Reading Importance Heuristics。**
+> **T-0802 — Recommended Reading Path。**
 
-M0 至 M7 已经完成。本地 UI 只绑定 `127.0.0.1`，校验 Host / Origin，拒绝非规范路径与任意文件读取，并统一发送 CSP、no-store、nosniff、same-origin resource policy、no-referrer 和 frame denial；生产前端由 JAR 离线提供，并在 Java、HTML marker 与前端运行时之间校验 schema。下一步只执行 T-0801，使用可验证 facts 建立 Start Here 的确定性阅读重要度规则。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M7 和 T-0801 已经完成。Start Here 现有一组只使用公共报告可验证 facts 的确定性重要度信号，下一步只执行 T-0802，将这些信号按文件去重并形成稳定、默认最多 10 项且可展开的阅读路径。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2071,7 +2071,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -2094,8 +2094,14 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-11
+
+Deliverable: `ReadingImportanceHeuristics` 从公共 `AnalysisReport` 生成未按文件去重的稳定重要度信号，显式区分根 POM、应用入口、配置、拥有 Endpoint 的 Controller 和沿确认组件注入边可达的 Service / Repository。排序仅使用规则优先级、Endpoint 数量、确认边数量、依赖距离及稳定身份；每个依赖邻域信号保留支持它的确认 dependency ID，不生成业务语义或不透明分数。
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 通过，共运行 74 项前端测试和 146 项 Java 测试。新增 `start-here-project` fixture 与 4 项聚焦测试，覆盖根 POM、应用入口、配置、Controller Endpoint 数量、Controller → Service → Repository 距离、输入顺序稳定性，以及对未确认关系、Maven 关系和仅凭显眼类名的排除。
 
 根据技术方案实现第一版可解释规则。
 
@@ -2112,9 +2118,9 @@ Configuration Importance
 Acceptance Criteria:
 
 ```text
-[ ] 规则只使用可验证 facts 和明确计数
-[ ] 根 POM、应用入口、配置、Controller、确定依赖邻域优先级有 fixture
-[ ] 不从类名生成业务语义结论
+[x] 规则只使用可验证 facts 和明确计数
+[x] 根 POM、应用入口、配置、Controller、确定依赖邻域优先级有 fixture
+[x] 不从类名生成业务语义结论
 ```
 
 ---
@@ -3052,18 +3058,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0801
-Reading Importance Heuristics
+T-0802
+Recommended Reading Path
 ```
 
 本阶段：
 
 > **M8 — Start Here**
 
-M0 至 M7 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M7 和 T-0801 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0801 Reading Importance Heuristics
+T-0802 Recommended Reading Path
 ```
 
 ---
@@ -3093,7 +3099,7 @@ M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
 M7 Local Web UI — complete
-M8 Start Here — not started (T-0801 next)
+M8 Start Here — in progress (T-0801 complete, T-0802 next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3104,6 +3110,6 @@ Release
 
 Next:
 
-> **T-0801 — Implement deterministic reading importance heuristics.**
+> **T-0802 — Generate the stable, file-deduplicated recommended reading path.**
 
 ````
