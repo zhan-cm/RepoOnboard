@@ -6,9 +6,9 @@ RepoOnboard 已完成 **M7 — Local Web UI**，当前处于 **M8 — Start Here
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
-- **T-0801 / T-0802** 已完成，确定性重要度信号和文件级推荐阅读路径已经建立，M8 正在进行。
-- 下一任务是 **T-0803 — Recommendation Explanation**，尚未开始。
-- Java 21 / Maven 3.9.16 `clean verify` 当前运行 74 项前端测试和 152 项 Java 测试并全部通过，并在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 loopback 服务的安全响应头、外部 Origin 拒绝、1280×800 / 1024×640 四个主要页面布局和干净浏览器控制台均已验证。
+- **T-0801 至 T-0803** 已完成，确定性重要度信号、文件级推荐阅读路径和来源可回溯的解释已经建立，M8 正在进行。
+- 下一任务是 **T-0804 — Start Here UI**，尚未开始。
+- Java 21 / Maven 3.9.16 `clean verify` 当前运行 74 项前端测试和 156 项 Java 测试并全部通过，并在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 loopback 服务的安全响应头、外部 Origin 拒绝、1280×800 / 1024×640 四个主要页面布局和干净浏览器控制台均已验证。
 
 ## 2. 已完成任务
 
@@ -60,6 +60,7 @@ RepoOnboard 已完成 **M7 — Local Web UI**，当前处于 **M8 — Start Here
 
 - **T-0801**：新增框架中立的 `ReadingImportanceHeuristics` 和显式重要度信号。根 POM、应用入口、配置、拥有 Endpoint 的 Controller，以及沿确认组件注入边可达的 Service / Repository 按固定规则、明确计数与依赖距离排序；依赖邻域保留支持它的 dependency ID。规则不按文件去重、不限制数量、不生成最终解释，以保持 T-0802 / T-0803 边界。
 - **T-0802**：新增 `RecommendedReadingPathGenerator`、文件级 `RecommendedReadingItem` 和带默认边界的 `RecommendedReadingPath`。同一文件的多条重要度信号按原优先级合并且全部保留，模块间使用稳定身份定序；完整路径不可变，默认最多返回 10 项并可切换到完整列表。unresolved dependency 不会通过 T-0801 边界进入路径。
+- **T-0803**：新增 `RecommendationExplanationGenerator`、结构化原因和 `ExplainedReadingPath`。每个推荐文件的根构建、应用入口、配置、Endpoint 暴露和确认依赖原因均保留报告实体 ID 与原始 Evidence；Endpoint、确认入边/出边计数直接由当前 `AnalysisReport` 事实计算，依赖路径保留距离。PARTIAL / FAILED 和异常覆盖状态携带显式限制代码与说明，解释顺序严格对应 T-0802 阅读路径。
 
 ## 3. 当前实现能力
 
@@ -167,7 +168,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M8**：T-0803 至 T-0804，完成推荐解释和 Start Here UI；T-0801/T-0802 已完成。
+- **M8**：T-0804，完成 Start Here UI；T-0801 至 T-0803 已完成。
 - **M9**：T-0901 至 T-0907，完成综合 fixture、真实仓库和 onboarding 价值验证。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
 - **V0.2 候选**：Desktop Application 技术试验与打包。
@@ -176,10 +177,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-0803 — Recommendation Explanation**
+> **T-0804 — Start Here UI**
 
-为 T-0802 的每个文件级推荐项生成可回溯到 entry point、endpoint、component role 或 confirmed dependency Evidence 的原因，计数必须与 `AnalysisReport` 一致，PARTIAL 报告必须标注推荐依据不完整；不提前实现 T-0804 页面。
+先依据 TODO、公共报告模型和当前实现向用户提供页面级数据契约审计与 Stitch 设计提案；等待用户完成并导入 Stitch 设计后，再实现可浏览阅读顺序、原因、模块和 Source Location 的 Start Here 页面，以及到相关 API / 组件详情的导航和空结果 / PARTIAL 说明。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M7 和 T-0801/T-0802 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map，以及从 Component / Endpoint 进入的 Source & Evidence Detail；Start Here 已有只消费确认事实的稳定重要度信号和默认 10 项、可展开的文件级阅读路径，尚未生成解释或 UI。下一任务是 **T-0803 — Recommendation Explanation**：为每个推荐文件提供可追溯原因、准确计数和 PARTIAL 覆盖说明，不提前实现 T-0804。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M7 和 T-0801 至 T-0803 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map，以及从 Component / Endpoint 进入的 Source & Evidence Detail；Start Here 后端已有只消费确认事实的稳定重要度信号、默认 10 项且可展开的文件级阅读路径，以及携带报告实体、Source Evidence、准确计数和 PARTIAL 覆盖说明的结构化解释，尚未实现 UI。下一任务是 **T-0804 — Start Here UI**：必须先提供页面级数据契约审计和 Stitch 设计提案，等待用户导入设计后再编码。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。

@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0803 — Recommendation Explanation。**
+> **T-0804 — Start Here UI。**
 
-M0 至 M7、T-0801 和 T-0802 已经完成。Start Here 现有确定性重要度信号和按文件去重的稳定阅读路径，下一步只执行 T-0803，为每个推荐文件生成可回溯到报告事实、明确计数和 Source Evidence 的解释，并在 PARTIAL 时保留覆盖限制。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M7、T-0801 至 T-0803 已经完成。Start Here 现有确定性重要度信号、按文件去重的稳定阅读路径，以及可回溯到报告事实、明确计数和 Source Evidence 的解释；下一步只执行 T-0804，在用户界面中交付完整阅读引导。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2165,8 +2165,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-11
+
+Deliverable: `RecommendationExplanationGenerator` 为 T-0802 的每个文件级推荐项生成结构化、确定性的解释。原因显式区分根构建文件、应用入口、配置组件、HTTP Endpoint 暴露、确认依赖路径，以及确认入边/出边计数；每条原因保留支持它的报告实体 ID、原始 `Evidence` 和可选依赖距离。`ExplainedReadingPath` 保持与推荐路径完全一致的顺序，并在 PARTIAL / FAILED 或成功状态与显著诊断不一致时携带覆盖限制代码和说明。
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 通过，共运行 74 项前端测试和 156 项 Java 测试。新增 4 项聚焦测试，覆盖真实 Start Here fixture 中全部解释的实体和 Source Evidence 回溯、Endpoint 与确认依赖计数、两级依赖距离、输入重排稳定性、PARTIAL 覆盖提示，以及拒绝无证据原因、错位解释和缺失覆盖说明。
 
 每个推荐项说明：
 
@@ -2185,9 +2191,9 @@ Central service used by 5 controllers
 Acceptance Criteria:
 
 ```text
-[ ] 每个原因可回溯到 entry point、endpoint、role 或 dependency evidence
-[ ] 计数与 AnalysisReport 一致
-[ ] PARTIAL 情况包含覆盖限制说明
+[x] 每个原因可回溯到 entry point、endpoint、role 或 dependency evidence
+[x] 计数与 AnalysisReport 一致
+[x] PARTIAL 情况包含覆盖限制说明
 ```
 
 ---
@@ -3116,6 +3122,6 @@ Release
 
 Next:
 
-> **T-0803 — Generate source-backed explanations for each recommended file.**
+> **T-0804 — Build the Start Here UI from the explained reading path.**
 
 ````
