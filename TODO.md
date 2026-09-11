@@ -123,7 +123,7 @@ Legend:
 
 > **T-0804 — Start Here UI。**
 
-M0 至 M7、T-0801 至 T-0803 已经完成。Start Here 现有确定性重要度信号、按文件去重的稳定阅读路径，以及可回溯到报告事实、明确计数和 Source Evidence 的解释；下一步只执行 T-0804，在用户界面中交付完整阅读引导。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M7、T-0801 至 T-0803 已经完成。T-0804 页面级数据契约审计与 Stitch Design Brief 已完成；审计确认推荐结果尚未进入前端 transport，后续实现应从同一不可变 `AnalysisReport` 生成独立只读 `/api/start-here` projection，不在 Vue 中重复启发式，也不修改公共报告 schema `1.2`。下一步等待用户生成、审阅并导入 Stitch 原型，在此之前不编码页面。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2203,7 +2203,16 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[-]
+```
+
+Design Handoff:
+
+```text
+[x] 页面级 UI Data Contract Audit
+[x] Stitch Design Brief
+[ ] 用户生成、审阅并导入 Stitch 原型
+[ ] Vue / loopback projection 实现与浏览器验证
 ```
 
 在 Web UI 中形成完整：
@@ -3070,18 +3079,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0803
-Recommendation Explanation
+T-0804
+Generate, review, and import the Start Here Stitch prototype
 ```
 
 本阶段：
 
 > **M8 — Start Here**
 
-M0 至 M7、T-0801 和 T-0802 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M7、T-0801 至 T-0803 已完成；T-0804 页面级数据契约审计与 Stitch Design Brief 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0803 Recommendation Explanation
+T-0804 Generate, review, and import the Start Here Stitch prototype
 ```
 
 ---
@@ -3111,7 +3120,7 @@ M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
 M7 Local Web UI — complete
-M8 Start Here — in progress (T-0801/T-0802 complete, T-0803 next)
+M8 Start Here — in progress (T-0801 to T-0803 complete; T-0804 design handoff complete, Stitch prototype next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3122,6 +3131,6 @@ Release
 
 Next:
 
-> **T-0804 — Build the Start Here UI from the explained reading path.**
+> **T-0804 — Generate, review, and import the Start Here Stitch prototype.**
 
 ````
