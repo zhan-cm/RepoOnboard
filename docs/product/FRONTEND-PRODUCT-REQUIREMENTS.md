@@ -6,8 +6,8 @@
 
 - 产品：RepoOnboard
 - 文档类型：前端产品需求文档（PRD）
-- 当前产品阶段：M7 — Local Web UI
-- 当前实现：产品 Shell、视觉系统、Repository Overview、Module Explorer
+- 当前产品阶段：M7 — Local Web UI 已完成，M8 — Start Here 待开始
+- 当前实现：产品 Shell、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、API Map、Source / Evidence Detail 与本地 Web 安全边界
 - V0.1 交付形态：本地 Web UI + 可执行 JAR + 启动脚本
 - 未来候选形态：复用同一套 Web 前端的桌面应用窗口
 
@@ -186,10 +186,10 @@ Shell 的固定职责：
 | --- | --- | --- | --- |
 | Repository Overview | 这是一个什么项目？分析是否可信？ | 必需 | 已实现基础版本 |
 | Module Explorer | 项目由哪些模块组成？ | 必需 | 已实现，T-0704 |
-| Architecture Workspace | 主要组件如何组织和依赖？ | 必需 | 计划中，T-0705 / T-0706 |
-| API Map | 项目暴露哪些 HTTP API？ | 必需 | 计划中，T-0707 |
-| Source / Evidence Detail | 这个结论来自哪里？ | 必需 | 计划中，T-0708 |
-| Diagnostics / Coverage | 哪些结果不完整或失败？ | 必需的辅助表面 | 分阶段完善，T-0708 / T-0709 |
+| Architecture Workspace | 主要组件如何组织和依赖？ | 必需 | 已实现，T-0705 / T-0706 |
+| API Map | 项目暴露哪些 HTTP API？ | 必需 | 已实现，T-0707 |
+| Source / Evidence Detail | 这个结论来自哪里？ | 必需 | 已实现，T-0708 |
+| Diagnostics / Coverage | 哪些结果不完整或失败？ | 必需的辅助表面 | 已完成 M7 基础版本，T-0708 / T-0709 |
 | Start Here | 第一次阅读应该从哪里开始？ | 必需 | 计划中，M8 |
 | Desktop Home / Open Repository | 如何在桌面应用中打开项目？ | V0.2 候选 | 不属于 V0.1 |
 | Desktop Settings / About | 如何管理本地偏好和版本？ | V0.2 候选 | 不属于 V0.1 |

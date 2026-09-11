@@ -123,6 +123,7 @@ describe('App', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
+        schemaVersion: '1.2',
         status: 'SUCCESS',
         project: {},
         summary: { coverageLimited: false, coverageLimitationCodes: [] },
@@ -140,6 +141,52 @@ describe('App', () => {
     await flushUi()
 
     expect(view.container.querySelector('h1').textContent).toBe('Repository name unavailable')
+    view.unmount()
+  })
+
+  it('rejects a report with an incompatible schema before rendering facts', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        schemaVersion: '2.0',
+        status: 'SUCCESS',
+        project: { name: 'must-not-render' }
+      })
+    }))
+
+    const view = mount(App)
+    await flushUi()
+
+    expect(view.container.querySelector('.state-panel--error').textContent)
+      .toContain('Unsupported report schema (2.0)')
+    expect(view.container.textContent).not.toContain('must-not-render')
+    view.unmount()
+  })
+
+  it('renders hostile repository and diagnostic strings only as text', async () => {
+    const hostileName = '<img src=x onerror="globalThis.repoOnboardInjected=true">'
+    const hostileDiagnostic = '<script>globalThis.repoOnboardInjected=true</script>'
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        schemaVersion: '1.2', status: 'PARTIAL',
+        project: { name: hostileName, buildSystem: 'MAVEN' },
+        summary: { coverageLimited: true, coverageLimitationCodes: ['HOSTILE_TEXT'] },
+        modules: [], sourceFiles: [], components: [], endpoints: [], entryPoints: [], dependencies: [],
+        diagnostics: [{
+          code: 'HOSTILE_TEXT', severity: 'WARNING', stage: 'test', message: hostileDiagnostic
+        }]
+      })
+    }))
+
+    const view = mount(App)
+    await flushUi()
+
+    expect(view.container.textContent).toContain(hostileName)
+    expect(view.container.textContent).toContain(hostileDiagnostic)
+    expect(view.container.querySelector('img')).toBeNull()
+    expect(view.container.querySelector('script')).toBeNull()
+    expect(globalThis.repoOnboardInjected).not.toBe(true)
     view.unmount()
   })
 

@@ -6,7 +6,7 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Local Web UI In Progress**
+> **Status: Early Development / Local Web UI Complete**
 >
 > Maven, Java, Spring, API, component-dependency, and stable report analysis are available. The CLI serves each report to a packaged Vue application over a loopback-only endpoint. The responsive product Shell now includes a report-backed Repository Overview, Module Explorer, Architecture Workspace, API Map, and shared Source & Evidence Detail; the remaining product views are still under development, and the first release is not available yet.
 
@@ -75,6 +75,8 @@ repoonboard .
 ```
 
 After analysis, RepoOnboard starts a read-only local UI on a system-assigned `127.0.0.1` port and opens the default browser. Use `--no-open` to keep browser opening manual; the printed URL remains available until the process is stopped with Ctrl+C.
+
+The service accepts only its exact loopback Host and same-origin browser requests. It exposes fixed `GET` / `HEAD` routes for the packaged UI and current report, rejects non-canonical paths, foreign origins, writes, and arbitrary file access, and sends a restrictive Content Security Policy plus `no-store` and related browser security headers. The production build verifies that its JavaScript and CSS are present inside the JAR, use no runtime CDN, and declare the same report schema as the Java application.
 
 ```bash
 repoonboard . --no-open
@@ -164,7 +166,7 @@ M3  Java Source Analysis                   ✓
 M4  Spring Boot Analysis                  ✓
 M5  API & Dependency Analysis             ✓
 M6  Report Assembly & Serialization          ✓
-M7  Local Web UI                           ◐
+M7  Local Web UI                           ✓
 M8  Start Here
 M9  Regression & Real Repository Validation
 M10 Release Preparation

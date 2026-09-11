@@ -50,13 +50,26 @@ describe('SourceDetailView', () => {
 
   it('renders diagnostic and source text without executing markup', () => {
     const sourceReport = report()
-    sourceReport.diagnostics[0].message = '<img src=x onerror=alert(1)>'
+    const hostileText = '<img src=x onerror="globalThis.repoOnboardInjected=true">'
+    sourceReport.diagnostics[0].message = hostileText
+    sourceReport.sourceFiles[0].path = hostileText
+    sourceReport.sourceFiles[0].id = hostileText
+    sourceReport.components[0].location.sourceFileId = hostileText
+    sourceReport.endpoints[0].location.sourceFileId = hostileText
+    sourceReport.diagnostics[0].fileId = hostileText
     const model = createSourceDetailModel(sourceReport, { type: 'endpoint', id: 'get' })
+    const detail = mount(SourceDetailView, {
+      props: { model, host: createSourceNavigationHost({ clipboard: null }) }
+    })
     const inspector = mount(SourceRelatedInspector, { props: { model } })
 
-    expect(inspector.container.textContent).toContain('<img src=x onerror=alert(1)>')
+    expect(detail.container.textContent).toContain(hostileText)
+    expect(inspector.container.textContent).toContain(hostileText)
+    expect(detail.container.querySelector('img')).toBeNull()
     expect(inspector.container.querySelector('img')).toBeNull()
+    expect(globalThis.repoOnboardInjected).not.toBe(true)
     expect(inspector.container.textContent).toContain('not a handler call chain')
+    detail.unmount()
     inspector.unmount()
   })
 })

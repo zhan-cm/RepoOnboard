@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0709 — Local Web Boundary and Packaged UI Validation。**
+> **T-0801 — Reading Importance Heuristics。**
 
-M0 至 M6 及 T-0701 至 T-0708 已经完成。Architecture 与 API Inspector 现在可进入统一的 Source & Evidence Detail，展示并安全复制扫描根相对位置和 symbol，并通过精确报告连接呈现 module、Evidence 与可确认 related facts；不读取源码、不构造绝对路径，也不伪造 IDE 或调用链能力。下一步只执行 T-0709，验证 loopback 服务、安全响应头、恶意文本、离线 JAR 资源、schema 匹配和关闭释放边界。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M7 已经完成。本地 UI 只绑定 `127.0.0.1`，校验 Host / Origin，拒绝非规范路径与任意文件读取，并统一发送 CSP、no-store、nosniff、same-origin resource policy、no-referrer 和 frame denial；生产前端由 JAR 离线提供，并在 Java、HTML marker 与前端运行时之间校验 schema。下一步只执行 T-0801，使用可验证 facts 建立 Start Here 的确定性阅读重要度规则。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1654,7 +1654,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+● COMPLETE
 ```
 
 Boundary:
@@ -1665,11 +1665,11 @@ Exit Criteria:
 
 ```text
 [x] 最小 App Shell 与统一视觉系统已建立
-[ ] Overview、Module、Architecture、API 和 Evidence 浏览流程可用
-[ ] Architecture 默认使用筛选/邻域并有列表回退
-[ ] 服务绑定 loopback，路径/内容注入/关闭流程测试通过
-[ ] 前端资源随离线 JAR 构建产物提供，无运行时 CDN
-[ ] 所有用户可见事实来自 AnalysisReport 或明确派生值，缺失数据不伪造
+[x] Overview、Module、Architecture、API 和 Evidence 浏览流程可用
+[x] Architecture 默认使用筛选/邻域并有列表回退
+[x] 服务绑定 loopback，路径/内容注入/关闭流程测试通过
+[x] 前端资源随离线 JAR 构建产物提供，无运行时 CDN
+[x] 所有用户可见事实来自 AnalysisReport 或明确派生值，缺失数据不伪造
 ```
 
 ---
@@ -2035,8 +2035,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-11
+
+Deliverable: 本地服务将绑定严格限制为 `127.0.0.1`，校验精确 Host 和可选同源 Origin，拒绝编码/非规范路径、query、任意文件与非只读请求，并为成功和错误响应统一发送 CSP、no-store、nosniff、same-origin resource policy、no-referrer 和 frame denial。生产 JAR 的 verify 阶段直接检查 HTML、JavaScript、CSS、离线资源引用及 Java / HTML / 前端 schema 契约；前端同时拒绝不兼容 major schema，不使用浏览器地址栏、filesystem API 或 Desktop runtime。报告组装补齐源码发现、注入和 MVC mapping 阶段诊断，保证 CLI 与 UI 的 PARTIAL 状态及覆盖提示一致。
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 运行 74 项前端测试和 142 项 Java 测试并通过，随后从生成的 JAR 直接完成离线资源校验。真实 loopback 服务返回预期安全响应头，外部 Origin 返回 403；Repository Overview、Module Explorer、Architecture Workspace 与 API Map 在 1280×800 和 1024×640 viewport 可用。最终浏览器报告正确显示 PARTIAL 和 2 条 MVC mapping 诊断；修正 Cytoscape 容器定位后，干净浏览器会话无 warning / error，Ctrl+C 后服务端口释放。
 
 Goal:
 
@@ -2045,13 +2051,13 @@ Goal:
 Acceptance Criteria:
 
 ```text
-[ ] 路径穿越、错误 Host/Origin 和任意文件读取被拒绝
-[ ] CSP、no-store 和无通配 CORS 配置有效
-[ ] 恶意项目名、路径和诊断文本不会执行为页面内容
-[ ] 生产前端资源从 JAR 离线加载并与 schemaVersion 匹配
-[ ] 服务关闭后端口和资源释放
-[ ] UI 不依赖浏览器地址栏，不直接访问 filesystem，不包含 Desktop-specific dependency
-[ ] 在桌面应用尺寸的 viewport 下主要布局可用
+[x] 路径穿越、错误 Host/Origin 和任意文件读取被拒绝
+[x] CSP、no-store 和无通配 CORS 配置有效
+[x] 恶意项目名、路径和诊断文本不会执行为页面内容
+[x] 生产前端资源从 JAR 离线加载并与 schemaVersion 匹配
+[x] 服务关闭后端口和资源释放
+[x] UI 不依赖浏览器地址栏，不直接访问 filesystem，不包含 Desktop-specific dependency
+[x] 在桌面应用尺寸的 viewport 下主要布局可用
 ```
 
 ---
@@ -3046,18 +3052,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0709
-Local Web Boundary and Packaged UI Validation
+T-0801
+Reading Importance Heuristics
 ```
 
 本阶段：
 
-> **M7 — Local Web UI**
+> **M8 — Start Here**
 
-M0 至 M6 及 T-0701 至 T-0708 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M7 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0709 Local Web Boundary and Packaged UI Validation
+T-0801 Reading Importance Heuristics
 ```
 
 ---
@@ -3086,7 +3092,8 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0708 complete; T-0709 boundary validation next)
+M7 Local Web UI — complete
+M8 Start Here — not started (T-0801 next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3097,6 +3104,6 @@ Release
 
 Next:
 
-> **T-0709 — Validate the local Web boundary and packaged UI.**
+> **T-0801 — Implement deterministic reading importance heuristics.**
 
 ````

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 const tokens = readFileSync(resolve('src/styles/tokens.css'), 'utf8')
 const shell = readFileSync(resolve('src/styles/shell.css'), 'utf8')
+const architecture = readFileSync(resolve('src/styles/architecture.css'), 'utf8')
 
 function token(name) {
   const match = tokens.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`))
@@ -66,5 +67,9 @@ describe('visual system', () => {
     expect(shell).toContain('@media (max-width: 47.5rem)')
     expect(shell).toContain('@media (max-width: 31rem)')
     expect(shell).toContain('overflow-x: auto')
+  })
+
+  it('provides the positioned container required by Cytoscape UI rendering', () => {
+    expect(architecture).toContain('.architecture-graph { position: relative; }')
   })
 })

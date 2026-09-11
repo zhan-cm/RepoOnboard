@@ -163,6 +163,20 @@
                             </arguments>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>verify-packaged-ui</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>io.github.zhancm.repoonboard.web.PackagedUiVerifier</mainClass>
+                            <classpathScope>test</classpathScope>
+                            <arguments>
+                                <argument>${project.build.directory}/${project.build.finalName}.jar</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

@@ -407,6 +407,8 @@
   min-height: 20rem;
 }
 
+.architecture-graph { position: relative; }
+
 .architecture-graph-controls {
   position: absolute;
   right: 1rem;

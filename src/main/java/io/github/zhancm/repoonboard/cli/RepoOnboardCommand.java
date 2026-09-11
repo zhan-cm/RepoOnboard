@@ -253,13 +253,23 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                         diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
             }
             if (analysis.root().isPresent()) {
+                List<io.github.zhancm.repoonboard.core.model.Diagnostic> additionalDiagnostics =
+                        java.util.stream.Stream.of(
+                                        sourceRoots.diagnostics(),
+                                        javaFiles.diagnostics(),
+                                        springInjection.diagnostics(),
+                                        springMappings.diagnostics())
+                                .flatMap(List::stream)
+                                .distinct()
+                                .toList();
                 var report = new ProjectModelAssembler().assemble(new ProjectAnalysisInput(
                         analysis,
                         javaFacts,
                         springComponents,
                         springConfiguration,
                         springEndpoints,
-                        springDependencies));
+                        springDependencies,
+                        additionalDiagnostics));
                 try {
                     uiLauncher.launch(
                             report,
