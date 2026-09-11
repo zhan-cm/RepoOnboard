@@ -6,7 +6,7 @@ RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 
 - M0 至 M6 已完成。
 - **T-0701 至 T-0707** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力和 API Map 已建立。
-- 下一项任务是 **T-0708 — Source Navigation**。先完成页面级数据契约审计与 Stitch 设计 Brief，等待用户生成、审阅并导入 Stitch 原型后再实现页面。
+- 当前任务是 **T-0708 — Source Navigation**。页面级数据契约审计与 Stitch 设计 Brief 已完成；下一步等待用户生成、审阅并导入 Stitch 原型，在此之前不实现页面。
 - Java 21 / Maven 3.9.16 `clean verify` 当前运行 56 项前端测试和 139 项 Java 测试并全部通过；Vite production build、JAR 资源以及 API Map 在真实 `spring-api-project` 报告上的宽屏、窄屏、筛选、搜索、选择、Inspector、未解析状态和两级 Evidence 已验证。
 
 ## 2. 已完成任务
@@ -136,6 +136,7 @@ RepoOnboard
 - T-0706 延续同一公共报告边界；搜索只影响替代列表，筛选和邻域确定图范围，预算在组合筛选后判定。宽屏紧凑高度默认折叠列表以保留图画布，窄屏隐藏图并以完整组件列表作为主入口。
 - T-0707 数据契约审计确认 schema `1.2` 已足以实现 API Map，无需扩展后端。Endpoint 的 final path、method、conditions、handler location 与两级 mapping Evidence 可直接展示；公共报告没有 class / method 原始 path 片段、方法签名、请求响应模型、鉴权或调用链，设计不得补造。
 - T-0707 实现严格排除了 Stitch 原型中的示例仓库状态、固定计数、伪方法签名、Copy Path、Open IDE 和 Jump to Symbol 等无数据或越过 T-0708 边界的内容；宽屏保留可扫描表格与 Inspector，窄屏切换为 Endpoint 卡片和顺序详情。
+- T-0708 数据契约审计确认 schema `1.2` 足以实现 Component / Endpoint 的 Source / Evidence Detail，无需增加源码读取路由或后端模型。V0.1 Source Navigation 只展示并复制扫描根相对 path、真实 1-based 位置、可选 symbol、module、Evidence 与可确认 related facts；它不是文件树、源码编辑器或 IDE 集成。Related Components 只允许 exact ID / source path joins 和两端可确认的 Dependency，Endpoint 上下文必须说明组件关系不等于 handler 调用链。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -166,8 +167,8 @@ RepoOnboard
 
 > **T-0708 — Source Navigation**
 
-下一步只完成 T-0708 的页面级 Data Contract Audit 与 Stitch Design Brief，明确 Source File、Line、Module、Related Components 以及安全复制 path/symbol 的真实数据边界。由用户生成、审阅并导入 Stitch 原型后，再审计并实现 Vue 页面；本轮不提前实现 Source Navigation。
+T-0708 页面级 Data Contract Audit 与 Stitch Design Brief 已完成。下一步由用户据此生成、审阅并导入 Stitch 原型；导入后先审计原型是否遵守报告边界，再实现 Vue 页面。设计不得加入源码正文、绝对路径、文件树、Git 信息、方法签名、调用链或没有真实宿主能力的 Open / IDE 动作。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 及 T-0701 至 T-0707 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace 和 API Map。API Map 使用 `reportEndpoints.js` 精确连接 Endpoint、module 与 Controller，支持 module/method/search 组合过滤，并显式呈现 `ANY`、未解析 path/conditions、handler source 和两级 mapping Evidence；不补造原始分层 path、方法签名、请求响应模型、鉴权或调用链。下一步是 **T-0708 — Source Navigation** 的 Data Contract Audit 与 Stitch Design Brief，等待用户导入设计后再编码。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 及 T-0701 至 T-0707 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace 和 API Map。当前任务是 **T-0708 — Source Navigation**：Data Contract Audit 与 Stitch Design Brief 已完成，等待用户生成、审阅并导入原型；导入前不编码页面。Source Detail 是 Architecture / API 的跨页面辅助表面，只展示并复制 scan-root-relative path、真实 1-based position、可选 symbol、module、Evidence 与 exact related facts；不读取源码、不构造绝对路径、不显示虚假 Open / IDE 动作。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。

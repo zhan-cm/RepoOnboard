@@ -123,7 +123,7 @@ Legend:
 
 > **T-0708 — Source Navigation 设计交接。**
 
-M0 至 M6 及 T-0701 至 T-0707 已经完成。API Map 现在支持按 module、HTTP method 和 path/handler/source 搜索过滤，明确显示 `ANY`、未解析 path 与 mapping conditions，并可检查 handler source 及类级/方法级 mapping Evidence。下一步只为 T-0708 完成页面级数据契约审计与 Stitch 设计 Brief，等待用户生成、审阅并导入原型后再实现 Source Navigation。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 至 T-0707 已经完成。API Map 现在支持按 module、HTTP method 和 path/handler/source 搜索过滤，明确显示 `ANY`、未解析 path 与 mapping conditions，并可检查 handler source 及类级/方法级 mapping Evidence。T-0708 的页面级数据契约审计与 Stitch 设计 Brief 已完成；下一步由用户生成、审阅并导入 Stitch 原型，在此之前不实现 Source Navigation。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1243,7 +1243,16 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[-]
+```
+
+Design Handoff:
+
+```text
+[x] UI Data Contract Audit
+[x] Stitch Design Brief
+[ ] User-reviewed Stitch prototype imported
+[ ] Vue implementation and browser validation
 ```
 
 Priority:
@@ -3029,17 +3038,17 @@ Remaining Issues:
 
 ```text
 T-0708
-Source Navigation data contract audit and Stitch design brief
+User-reviewed Source Navigation Stitch prototype generation and import
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701 至 T-0707 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701 至 T-0707 已完成；T-0708 的数据契约审计与 Stitch Brief 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0708 Source Navigation data contract audit and Stitch design brief
+T-0708 Source Navigation Stitch prototype generation and import
 ```
 
 ---
@@ -3068,7 +3077,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0707 complete; T-0708 design handoff next)
+M7 Local Web UI — in progress (T-0701 through T-0707 complete; T-0708 data contract and Stitch brief complete, user design next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3079,6 +3088,6 @@ Release
 
 Next:
 
-> **T-0708 — Audit the Source Navigation data contract and prepare its Stitch design brief.**
+> **T-0708 — Generate, review, and import the Source Navigation Stitch prototype.**
 
 ````
