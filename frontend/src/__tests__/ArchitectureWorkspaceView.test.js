@@ -141,13 +141,21 @@ describe('ArchitectureInspector', () => {
   it('shows exact component and relationship evidence without inferred annotations', () => {
     const model = createArchitectureModel(report())
     const scope = createArchitectureScope(model, 'api')
+    const opened = []
     const componentView = mount(ArchitectureInspector, {
-      props: { model, scope, selection: { type: 'component', id: 'service' } }
+      props: {
+        model,
+        scope,
+        selection: { type: 'component', id: 'service' },
+        onOpenSource: (value) => opened.push(value)
+      }
     })
 
     expect(componentView.container.textContent).toContain('example.OrderService')
     expect(componentView.container.textContent).toContain('SPRING_COMPONENT_STEREOTYPE')
     expect(componentView.container.textContent).not.toContain('@Service')
+    componentView.container.querySelector('.source-detail-trigger').click()
+    expect(opened).toEqual([{ type: 'component', id: 'service' }])
     componentView.unmount()
 
     const edgeView = mount(ArchitectureInspector, {

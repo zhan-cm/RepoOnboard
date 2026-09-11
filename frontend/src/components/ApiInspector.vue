@@ -7,6 +7,8 @@ const props = defineProps({
   selection: { type: Object, default: null }
 })
 
+const emit = defineEmits(['open-source'])
+
 const endpoint = computed(() => props.selection?.type === 'endpoint'
   ? props.model?.endpoints.find((item) => item.id === props.selection.id) ?? null
   : null)
@@ -89,6 +91,12 @@ function evidenceTitle(type) {
           <div><dt>Position</dt><dd>{{ position(endpoint.location) }}</dd></div>
           <div><dt>Symbol</dt><dd>{{ shown(endpoint.location?.symbol) }}</dd></div>
         </dl>
+        <button
+          v-if="endpoint.location"
+          type="button"
+          class="source-detail-trigger"
+          @click="emit('open-source', { type: 'endpoint', id: endpoint.id })"
+        >View source details</button>
       </section>
 
       <section>

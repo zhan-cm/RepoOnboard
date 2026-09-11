@@ -8,7 +8,7 @@ RepoOnboard is an open-source, local-first **codebase comprehension and develope
 
 > **Status: Early Development / Local Web UI In Progress**
 >
-> Maven, Java, Spring, API, component-dependency, and stable report analysis are available. The CLI serves each report to a packaged Vue application over a loopback-only endpoint. The responsive product Shell now includes a report-backed Repository Overview, Module Explorer, Architecture Workspace, and API Map; the remaining product views are still under development, and the first release is not available yet.
+> Maven, Java, Spring, API, component-dependency, and stable report analysis are available. The CLI serves each report to a packaged Vue application over a loopback-only endpoint. The responsive product Shell now includes a report-backed Repository Overview, Module Explorer, Architecture Workspace, API Map, and shared Source & Evidence Detail; the remaining product views are still under development, and the first release is not available yet.
 
 ## Why RepoOnboard?
 
@@ -135,6 +135,10 @@ Shows confirmed Spring component-injection relationships in a module-scoped inte
 
 Lists reported HTTP methods, paths, controllers, handler methods, source locations, and mapping conditions. Module, method, and text filters compose without treating `ANY` as a wildcard. Unresolved paths or conditions remain explicit, and selecting an endpoint opens its handler source plus method-level and controller-level mapping evidence.
 
+### Source & Evidence Detail
+
+Opens from a selected Architecture component or API endpoint without becoming a separate top-level view. It shows the scan-root-relative source path, real 1-based position, optional symbol, module, source-file metadata, recorded evidence, and only exactly joined related facts. Paths, symbols, and formatted locations can be copied when browser clipboard access is available; selectable text and explicit fallback feedback remain available otherwise. RepoOnboard does not read source text, construct absolute paths, infer handler call chains, or advertise unavailable IDE actions.
+
 ### Start Here
 
 Provides an explainable reading order based on build files, entry points, configuration, public APIs, and confirmed dependencies.
@@ -190,7 +194,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.2` JSON serialization feed the loopback service, packaged responsive product Shell, Repository Overview, Module Explorer, Architecture Workspace, and API Map. The module view uses explicit Maven aggregation relationships, confirmed exact-coordinate internal module dependencies, module-scoped counts, metadata, source roots, version facts, diagnostics, and evidence. The architecture view uses Cytoscape.js to render only confirmed component-injection edges within one module at a time, with composable filters, search, selected-node 1-hop exploration, zoom, pan, fit, selection, source evidence, responsive searchable-list fallback, and explicit partial/unavailable/over-budget states. The API view provides composable module/method/text filtering, explicit unresolved states, handler source locations, and both levels of mapping evidence. Source Navigation remains a future M7 task.
+The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.2` JSON serialization feed the loopback service, packaged responsive product Shell, Repository Overview, Module Explorer, Architecture Workspace, API Map, and shared Source & Evidence Detail. The module view uses explicit Maven aggregation relationships, confirmed exact-coordinate internal module dependencies, module-scoped counts, metadata, source roots, version facts, diagnostics, and evidence. The architecture view uses Cytoscape.js to render only confirmed component-injection edges within one module at a time, with composable filters, search, selected-node 1-hop exploration, zoom, pan, fit, selection, source evidence, responsive searchable-list fallback, and explicit partial/unavailable/over-budget states. The API view provides composable module/method/text filtering, explicit unresolved states, handler source locations, and both levels of mapping evidence. Component and endpoint inspectors now open a shared, report-backed source detail surface with safe copy feedback and exact related facts.
 
 ## Documentation
 

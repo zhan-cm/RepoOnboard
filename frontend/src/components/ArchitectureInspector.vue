@@ -7,6 +7,8 @@ const props = defineProps({
   selection: { type: Object, default: null }
 })
 
+const emit = defineEmits(['open-source'])
+
 const component = computed(() => props.selection?.type === 'component'
   ? props.scope?.nodes.find((item) => item.id === props.selection.id) ?? null
   : null)
@@ -78,6 +80,12 @@ function position(value) {
           <div><dt>Position</dt><dd>{{ position(component.location) }}</dd></div>
           <div><dt>Symbol</dt><dd>{{ shown(component.location?.symbol) }}</dd></div>
         </dl>
+        <button
+          v-if="component.location"
+          type="button"
+          class="source-detail-trigger"
+          @click="emit('open-source', { type: 'component', id: component.id })"
+        >View source details</button>
       </section>
 
       <section>

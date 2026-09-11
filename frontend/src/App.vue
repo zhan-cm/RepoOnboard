@@ -12,6 +12,8 @@ import OverviewView from './components/OverviewView.vue'
 import PageLayout from './components/PageLayout.vue'
 import SidebarNav from './components/SidebarNav.vue'
 import StatePanel from './components/StatePanel.vue'
+import SourceDetailView from './components/SourceDetailView.vue'
+import SourceRelatedInspector from './components/SourceRelatedInspector.vue'
 import {
   createArchitectureModel,
   createArchitectureScope,
@@ -19,6 +21,8 @@ import {
 } from './lib/reportArchitecture.js'
 import { createModuleExplorerModel } from './lib/reportModules.js'
 import { createApiModel, createApiScope, defaultApiExploration } from './lib/reportEndpoints.js'
+import { createSourceDetailModel } from './lib/reportSources.js'
+import { createSourceNavigationHost } from './lib/sourceNavigationHost.js'
 
 const navigationItems = Object.freeze([
   { id: 'overview', label: 'Overview', glyph: 'O', disabled: false },
@@ -37,6 +41,8 @@ const architectureSelection = ref(null)
 const architectureExploration = ref(defaultArchitectureExploration())
 const apiSelection = ref(null)
 const apiExploration = ref(defaultApiExploration())
+const sourceSelection = ref(null)
+const sourceNavigationHost = createSourceNavigationHost()
 const navigation = computed(() => navigationItems.map((item) => ({
   ...item,
   active: item.id === activePage.value
@@ -56,6 +62,9 @@ const architectureScope = computed(() => architectureModel.value
   : null)
 const apiScope = computed(() => apiModel.value
   ? createApiScope(apiModel.value, apiExploration.value)
+  : null)
+const sourceModel = computed(() => report.value && sourceSelection.value
+  ? createSourceDetailModel(report.value, sourceSelection.value)
   : null)
 const workbench = computed(() => ['modules', 'architecture', 'apis'].includes(activePage.value))
 
@@ -117,6 +126,18 @@ function selectArchitectureModule(moduleId) {
   architectureExploration.value = defaultArchitectureExploration()
 }
 
+function selectPage(pageId) {
+  sourceSelection.value = null
+  activePage.value = pageId
+}
+
+function openSource(selection) {
+  sourceSelection.value = {
+    ...selection,
+    originPage: activePage.value
+  }
+}
+
 onMounted(async () => {
   try {
     const response = await fetch('/api/report', {
@@ -135,7 +156,7 @@ onMounted(async () => {
 <template>
   <AppShell :workbench="workbench">
     <template #sidebar>
-      <SidebarNav :items="navigation" @select="activePage = $event" />
+      <SidebarNav :items="navigation" @select="selectPage" />
     </template>
 
     <template v-if="workbench" #topbar>
@@ -152,7 +173,16 @@ onMounted(async () => {
       </div>
     </template>
 
-    <template v-if="activePage === 'modules'">
+    <template v-if="sourceSelection">
+      <SourceDetailView
+        v-if="sourceModel"
+        :model="sourceModel"
+        :host="sourceNavigationHost"
+        @close="sourceSelection = null"
+      />
+    </template>
+
+    <template v-else-if="activePage === 'modules'">
       <StatePanel v-if="error" variant="error" heading="Report unavailable" :message="error" />
       <StatePanel
         v-else-if="!report"
@@ -245,17 +275,20 @@ onMounted(async () => {
         :schema-version="report?.schemaVersion"
       />
       <ArchitectureInspector
-        v-else-if="activePage === 'architecture'"
+        v-else-if="activePage === 'architecture' && !sourceSelection"
         :model="architectureModel"
         :scope="architectureScope"
         :selection="architectureSelection"
+        @open-source="openSource"
       />
       <ApiInspector
-        v-else-if="activePage === 'apis'"
+        v-else-if="activePage === 'apis' && !sourceSelection"
         :model="apiModel"
         :scope="apiScope"
         :selection="apiSelection"
+        @open-source="openSource"
       />
+      <SourceRelatedInspector v-else-if="sourceSelection && sourceModel" :model="sourceModel" />
       <InspectorPanel
         v-else
         title="About this overview"
