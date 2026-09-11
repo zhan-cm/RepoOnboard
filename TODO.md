@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0707 — API Map。**
+> **T-0708 — Source Navigation 设计交接。**
 
-M0 至 M6 及 T-0701 至 T-0706 已经完成。Architecture Workspace 现在支持可组合筛选、搜索、一阶邻域、图规模预算和可搜索列表回退。T-0707 的页面级数据契约审计与 Stitch 设计 Brief 已完成；下一步由用户生成、审阅并导入 Stitch 原型，在此之前不实现 API Map。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 至 T-0707 已经完成。API Map 现在支持按 module、HTTP method 和 path/handler/source 搜索过滤，明确显示 `ANY`、未解析 path 与 mapping conditions，并可检查 handler source 及类级/方法级 mapping Evidence。下一步只为 T-0708 完成页面级数据契约审计与 Stitch 设计 Brief，等待用户生成、审阅并导入原型后再实现 Source Navigation。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1948,7 +1948,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[-]
+[x]
 ```
 
 Design Handoff:
@@ -1956,8 +1956,8 @@ Design Handoff:
 ```text
 [x] UI Data Contract Audit
 [x] Stitch Design Brief
-[ ] User-reviewed Stitch prototype imported
-[ ] Vue implementation and browser validation
+[x] User-reviewed Stitch prototype imported
+[x] Vue implementation and browser validation
 ```
 
 展示：
@@ -1975,9 +1975,9 @@ Source
 Acceptance Criteria:
 
 ```text
-[ ] 可按 HTTP method、path 和 module 过滤
-[ ] ANY、unresolvedPath 和 mapping conditions 清晰展示
-[ ] Endpoint 可打开 handler 和两级 mapping Evidence
+[x] 可按 HTTP method、path 和 module 过滤
+[x] ANY、unresolvedPath 和 mapping conditions 清晰展示
+[x] Endpoint 可打开 handler 和两级 mapping Evidence
 ```
 
 ---
@@ -3028,18 +3028,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0707
-User-reviewed Stitch prototype generation and import
+T-0708
+Source Navigation data contract audit and Stitch design brief
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701 至 T-0706 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701 至 T-0707 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0707 Stitch prototype generation and import
+T-0708 Source Navigation data contract audit and Stitch design brief
 ```
 
 ---
@@ -3068,7 +3068,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0706 complete; T-0707 data contract and Stitch brief complete, user design next)
+M7 Local Web UI — in progress (T-0701 through T-0707 complete; T-0708 design handoff next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3079,6 +3079,6 @@ Release
 
 Next:
 
-> **T-0707 — Generate, review, and import the API Map Stitch prototype.**
+> **T-0708 — Audit the Source Navigation data contract and prepare its Stitch design brief.**
 
 ````

@@ -91,6 +91,15 @@ describe('App', () => {
     await flushUi()
     expect(view.container.querySelector('.architecture-workspace')).not.toBeNull()
     expect(view.container.textContent).toContain('No framework components were reported')
+
+    const apiButton = [...view.container.querySelectorAll('.nav-item')]
+      .find((button) => button.textContent.includes('APIs'))
+    expect(apiButton.disabled).toBe(false)
+    apiButton.click()
+    await flushUi()
+    expect(view.container.querySelector('.api-map')).not.toBeNull()
+    expect(view.container.textContent).toContain('No HTTP endpoints were reported')
+    expect(view.container.querySelector('.page-layout')).toBeNull()
     view.unmount()
   })
 

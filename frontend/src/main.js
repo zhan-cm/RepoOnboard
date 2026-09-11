@@ -6,5 +6,6 @@ import './styles/shell.css'
 import './styles/overview.css'
 import './styles/modules.css'
 import './styles/architecture.css'
+import './styles/api.css'
 
 createApp(App).mount('#app')
