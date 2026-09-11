@@ -2,6 +2,16 @@ import { displayName } from './reportOverview.js'
 
 export const ARCHITECTURE_NODE_BUDGET = 60
 export const ARCHITECTURE_EDGE_BUDGET = 120
+export const ARCHITECTURE_RELATIONSHIP_KIND = 'COMPONENT_INJECTION'
+
+const KIND_ORDER = [
+  'REST_CONTROLLER',
+  'CONTROLLER',
+  'SERVICE',
+  'REPOSITORY',
+  'COMPONENT',
+  'CONFIGURATION'
+]
 
 export function createArchitectureModel(report) {
   const rawModules = list(report?.modules)
@@ -112,28 +122,96 @@ export function createArchitectureModel(report) {
   }
 }
 
-export function createArchitectureScope(model, moduleId) {
+export function createArchitectureScope(model, moduleId, exploration = {}) {
   const module = model.modules.find((item) => item.id === moduleId) ?? null
-  const nodes = module
+  const reportedNodes = module
     ? model.components.filter((component) => component.moduleId === module.id)
     : []
+  const reportedNodeIds = new Set(reportedNodes.map((node) => node.id))
+  const reportedEdges = model.confirmedRelations.filter(
+    (edge) => reportedNodeIds.has(edge.sourceId) && reportedNodeIds.has(edge.targetId))
+
+  const availableKinds = kindOptions(reportedNodes)
+  const selectedKinds = selectedValues(exploration.componentKinds, availableKinds.map((item) => item.kind))
+  const selectedKindSet = new Set(selectedKinds)
+  const kindFilteredNodes = reportedNodes.filter((node) => selectedKindSet.has(node.kind))
+  const kindFilteredNodeIds = new Set(kindFilteredNodes.map((node) => node.id))
+
+  const selectedRelationshipKinds = selectedValues(
+    exploration.relationshipKinds,
+    model.relationshipsAvailable ? [ARCHITECTURE_RELATIONSHIP_KIND] : [])
+  const selectedRelationshipSet = new Set(selectedRelationshipKinds)
+  const kindFilteredEdges = reportedEdges.filter((edge) => selectedRelationshipSet.has(edge.kind)
+    && kindFilteredNodeIds.has(edge.sourceId)
+    && kindFilteredNodeIds.has(edge.targetId))
+
+  const selectedComponentId = text(exploration.selectedComponentId)
+  const neighborhoodRequested = exploration.neighborhood === true
+  const neighborhoodCenter = neighborhoodRequested
+    ? kindFilteredNodes.find((node) => node.id === selectedComponentId) ?? null
+    : null
+  const neighborhoodNodeIds = neighborhoodCenter
+    ? firstDegreeNodeIds(neighborhoodCenter.id, kindFilteredEdges)
+    : null
+  const nodes = neighborhoodNodeIds
+    ? kindFilteredNodes.filter((node) => neighborhoodNodeIds.has(node.id))
+    : kindFilteredNodes
   const nodeIds = new Set(nodes.map((node) => node.id))
-  const edges = model.confirmedRelations.filter(
+  const edges = kindFilteredEdges.filter(
     (edge) => nodeIds.has(edge.sourceId) && nodeIds.has(edge.targetId))
   const limitedRelations = model.limitedRelations.filter((edge) => nodeIds.has(edge.sourceId))
+
+  const query = typeof exploration.query === 'string' ? exploration.query.trim() : ''
+  const listNodes = query
+    ? nodes.filter((node) => matchesNode(node, query))
+    : nodes
+  const moduleSearchMatches = query
+    ? reportedNodes.filter((node) => matchesNode(node, query))
+    : []
   const overBudget = nodes.length > ARCHITECTURE_NODE_BUDGET
     || edges.length > ARCHITECTURE_EDGE_BUDGET
 
   return {
     module,
+    reportedNodes,
+    reportedEdges,
+    kindFilteredNodes,
     nodes,
     edges,
+    listNodes,
     limitedRelations,
     overBudget,
+    withheldComponents: overBudget ? nodes.length : 0,
     nodeBudget: ARCHITECTURE_NODE_BUDGET,
     edgeBudget: ARCHITECTURE_EDGE_BUDGET,
+    availableKinds,
+    relationshipOptions: model.relationshipsAvailable
+      ? [{
+          kind: ARCHITECTURE_RELATIONSHIP_KIND,
+          label: 'Component injection',
+          count: reportedEdges.length
+        }]
+      : [],
+    exploration: {
+      componentKinds: selectedKinds,
+      relationshipKinds: selectedRelationshipKinds,
+      query,
+      neighborhood: Boolean(neighborhoodCenter),
+      neighborhoodRequested,
+      selectedComponentId
+    },
+    filtersActive: selectedKinds.length !== availableKinds.length
+      || selectedRelationshipKinds.length !== (model.relationshipsAvailable ? 1 : 0)
+      || Boolean(query)
+      || neighborhoodRequested,
+    searchMatchExcludedByKind: Boolean(query)
+      && listNodes.length === 0
+      && moduleSearchMatches.some((node) => !selectedKindSet.has(node.kind)),
     counts: {
+      reportedComponents: reportedNodes.length,
       components: nodes.length,
+      listResults: listNodes.length,
+      filteredComponents: reportedNodes.length - nodes.length,
       confirmedRelations: model.relationshipsAvailable ? edges.length : null,
       ambiguousRelations: model.relationshipsAvailable
         ? limitedRelations.filter((edge) => edge.status === 'AMBIGUOUS').length
@@ -142,6 +220,15 @@ export function createArchitectureScope(model, moduleId) {
         ? limitedRelations.filter((edge) => edge.status === 'UNRESOLVED').length
         : null
     }
+  }
+}
+
+export function defaultArchitectureExploration() {
+  return {
+    componentKinds: null,
+    relationshipKinds: [ARCHITECTURE_RELATIONSHIP_KIND],
+    query: '',
+    neighborhood: false
   }
 }
 
@@ -210,6 +297,51 @@ function kindFamily(value) {
   if (value === 'REPOSITORY') return 'repository'
   if (value === 'CONFIGURATION') return 'configuration'
   return 'component'
+}
+
+function kindOptions(nodes) {
+  const counts = new Map()
+  for (const node of nodes) counts.set(node.kind, (counts.get(node.kind) ?? 0) + 1)
+  return [...counts.entries()]
+    .map(([kind, count]) => ({
+      kind,
+      label: displayName(kind) ?? 'Unknown',
+      count,
+      family: kindFamily(kind)
+    }))
+    .sort((left, right) => {
+      const leftOrder = KIND_ORDER.indexOf(left.kind)
+      const rightOrder = KIND_ORDER.indexOf(right.kind)
+      const normalizedLeft = leftOrder === -1 ? KIND_ORDER.length : leftOrder
+      const normalizedRight = rightOrder === -1 ? KIND_ORDER.length : rightOrder
+      return normalizedLeft - normalizedRight || left.label.localeCompare(right.label)
+    })
+}
+
+function selectedValues(supplied, available) {
+  if (!Array.isArray(supplied)) return [...available]
+  const availableSet = new Set(available)
+  return supplied.filter((value, index) => availableSet.has(value) && supplied.indexOf(value) === index)
+}
+
+function firstDegreeNodeIds(centerId, edges) {
+  const result = new Set([centerId])
+  for (const edge of edges) {
+    if (edge.sourceId === centerId) result.add(edge.targetId)
+    if (edge.targetId === centerId) result.add(edge.sourceId)
+  }
+  return result
+}
+
+function matchesNode(node, query) {
+  const normalized = query.toLocaleLowerCase()
+  return [
+    node.label,
+    node.qualifiedName,
+    node.name,
+    node.location?.sourceFileId,
+    node.location?.symbol
+  ].some((value) => typeof value === 'string' && value.toLocaleLowerCase().includes(normalized))
 }
 
 function list(value) {

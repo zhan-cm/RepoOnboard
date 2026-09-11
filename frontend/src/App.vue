@@ -10,7 +10,11 @@ import OverviewView from './components/OverviewView.vue'
 import PageLayout from './components/PageLayout.vue'
 import SidebarNav from './components/SidebarNav.vue'
 import StatePanel from './components/StatePanel.vue'
-import { createArchitectureModel, createArchitectureScope } from './lib/reportArchitecture.js'
+import {
+  createArchitectureModel,
+  createArchitectureScope,
+  defaultArchitectureExploration
+} from './lib/reportArchitecture.js'
 import { createModuleExplorerModel } from './lib/reportModules.js'
 
 const navigationItems = Object.freeze([
@@ -27,6 +31,7 @@ const activePage = ref('overview')
 const selectedModuleId = ref('')
 const selectedArchitectureModuleId = ref('')
 const architectureSelection = ref(null)
+const architectureExploration = ref(defaultArchitectureExploration())
 const navigation = computed(() => navigationItems.map((item) => ({
   ...item,
   active: item.id === activePage.value
@@ -36,7 +41,12 @@ const architectureModel = computed(() => report.value ? createArchitectureModel(
 const selectedModule = computed(() => moduleModel.value?.modules.find(
   (module) => module.id === selectedModuleId.value) ?? moduleModel.value?.modules[0] ?? null)
 const architectureScope = computed(() => architectureModel.value
-  ? createArchitectureScope(architectureModel.value, selectedArchitectureModuleId.value)
+  ? createArchitectureScope(architectureModel.value, selectedArchitectureModuleId.value, {
+      ...architectureExploration.value,
+      selectedComponentId: architectureSelection.value?.type === 'component'
+        ? architectureSelection.value.id
+        : null
+    })
   : null)
 const workbench = computed(() => activePage.value === 'modules' || activePage.value === 'architecture')
 
@@ -62,12 +72,28 @@ watch(architectureModel, (model) => {
   if (!model?.modules.some((module) => module.id === selectedArchitectureModuleId.value)) {
     selectedArchitectureModuleId.value = model?.defaultModuleId ?? ''
     architectureSelection.value = null
+    architectureExploration.value = defaultArchitectureExploration()
+  }
+})
+
+watch(architectureScope, (scope) => {
+  if (!scope || !architectureSelection.value) return
+  const values = architectureSelection.value.type === 'component' ? scope.nodes : scope.edges
+  if (!values.some((item) => item.id === architectureSelection.value.id)) {
+    architectureSelection.value = null
+    if (architectureExploration.value.neighborhood) {
+      architectureExploration.value = {
+        ...architectureExploration.value,
+        neighborhood: false
+      }
+    }
   }
 })
 
 function selectArchitectureModule(moduleId) {
   selectedArchitectureModuleId.value = moduleId
   architectureSelection.value = null
+  architectureExploration.value = defaultArchitectureExploration()
 }
 
 onMounted(async () => {
@@ -140,8 +166,11 @@ onMounted(async () => {
       :model="architectureModel"
       :module-id="selectedArchitectureModuleId"
       :selection="architectureSelection"
+      :scope="architectureScope"
+      :exploration="architectureExploration"
       @select-module="selectArchitectureModule"
       @select="architectureSelection = $event"
+      @update-exploration="architectureExploration = $event"
     />
 
     <PageLayout
