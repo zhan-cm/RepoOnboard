@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0802 — Recommended Reading Path。**
+> **T-0803 — Recommendation Explanation。**
 
-M0 至 M7 和 T-0801 已经完成。Start Here 现有一组只使用公共报告可验证 facts 的确定性重要度信号，下一步只执行 T-0802，将这些信号按文件去重并形成稳定、默认最多 10 项且可展开的阅读路径。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M7、T-0801 和 T-0802 已经完成。Start Here 现有确定性重要度信号和按文件去重的稳定阅读路径，下一步只执行 T-0803，为每个推荐文件生成可回溯到报告事实、明确计数和 Source Evidence 的解释，并在 PARTIAL 时保留覆盖限制。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2130,8 +2130,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-11
+
+Deliverable: `RecommendedReadingPathGenerator` 消费 T-0801 的稳定重要度信号，以首次出现的最高优先级信号确定文件顺序，并将同一扫描根相对文件的全部信号合并为一个 `RecommendedReadingItem`。`RecommendedReadingPath` 保留完整不可变列表，默认视图最多返回 10 项，同时公开是否可展开、隐藏数量和展开后的完整列表；条目强制保持单一文件与模块归属。
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 通过，共运行 74 项前端测试和 152 项 Java 测试。新增 6 项聚焦测试，覆盖真实 Start Here fixture 的文件去重与多信号保留、跨模块稳定顺序、默认 10 项和完整展开、输入重排稳定性、unresolved dependency 排除，以及重复文件和归属冲突校验。
 
 生成：
 
@@ -2147,9 +2153,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] 按文件去重，模块间顺序稳定
-[ ] 默认最多展示 10 项并可展开
-[ ] unresolved dependency 不参与确定排名
+[x] 按文件去重，模块间顺序稳定
+[x] 默认最多展示 10 项并可展开
+[x] unresolved dependency 不参与确定排名
 ```
 
 ---
@@ -3058,18 +3064,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0802
-Recommended Reading Path
+T-0803
+Recommendation Explanation
 ```
 
 本阶段：
 
 > **M8 — Start Here**
 
-M0 至 M7 和 T-0801 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M7、T-0801 和 T-0802 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0802 Recommended Reading Path
+T-0803 Recommendation Explanation
 ```
 
 ---
@@ -3099,7 +3105,7 @@ M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
 M7 Local Web UI — complete
-M8 Start Here — in progress (T-0801 complete, T-0802 next)
+M8 Start Here — in progress (T-0801/T-0802 complete, T-0803 next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3110,6 +3116,6 @@ Release
 
 Next:
 
-> **T-0802 — Generate the stable, file-deduplicated recommended reading path.**
+> **T-0803 — Generate source-backed explanations for each recommended file.**
 
 ````

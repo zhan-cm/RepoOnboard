@@ -6,9 +6,9 @@ RepoOnboard 已完成 **M7 — Local Web UI**，当前处于 **M8 — Start Here
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
-- **T-0801 — Reading Importance Heuristics** 已完成，M8 正在进行。
-- 下一任务是 **T-0802 — Recommended Reading Path**，尚未开始。
-- Java 21 / Maven 3.9.16 `clean verify` 当前运行 74 项前端测试和 146 项 Java 测试并全部通过，并在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 loopback 服务的安全响应头、外部 Origin 拒绝、1280×800 / 1024×640 四个主要页面布局和干净浏览器控制台均已验证。
+- **T-0801 / T-0802** 已完成，确定性重要度信号和文件级推荐阅读路径已经建立，M8 正在进行。
+- 下一任务是 **T-0803 — Recommendation Explanation**，尚未开始。
+- Java 21 / Maven 3.9.16 `clean verify` 当前运行 74 项前端测试和 152 项 Java 测试并全部通过，并在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 loopback 服务的安全响应头、外部 Origin 拒绝、1280×800 / 1024×640 四个主要页面布局和干净浏览器控制台均已验证。
 
 ## 2. 已完成任务
 
@@ -59,6 +59,7 @@ RepoOnboard 已完成 **M7 — Local Web UI**，当前处于 **M8 — Start Here
 ### M8 — Start Here
 
 - **T-0801**：新增框架中立的 `ReadingImportanceHeuristics` 和显式重要度信号。根 POM、应用入口、配置、拥有 Endpoint 的 Controller，以及沿确认组件注入边可达的 Service / Repository 按固定规则、明确计数与依赖距离排序；依赖邻域保留支持它的 dependency ID。规则不按文件去重、不限制数量、不生成最终解释，以保持 T-0802 / T-0803 边界。
+- **T-0802**：新增 `RecommendedReadingPathGenerator`、文件级 `RecommendedReadingItem` 和带默认边界的 `RecommendedReadingPath`。同一文件的多条重要度信号按原优先级合并且全部保留，模块间使用稳定身份定序；完整路径不可变，默认最多返回 10 项并可切换到完整列表。unresolved dependency 不会通过 T-0801 边界进入路径。
 
 ## 3. 当前实现能力
 
@@ -70,7 +71,7 @@ RepoOnboard 已完成 **M7 — Local Web UI**，当前处于 **M8 — Start Here
 - 识别 Spring 组件、配置类、应用入口、注入候选、组合注解、MVC Endpoint 和组件依赖。
 - 对确认、歧义和未解析关系分别表达，并为重要结果保留来源证据和诊断。
 - 将全部分析结果组装为稳定、确定排序的 `AnalysisReport`，生成派生 Summary，并以 schema `1.2` JSON 序列化；旧 `1.0` / `1.1` 报告仍可读取。
-- 从统一 `AnalysisReport` 派生稳定的 Start Here 重要度信号；只接受可验证的入口、配置、Endpoint 和确认组件注入关系，不从类名猜测业务重要性。
+- 从统一 `AnalysisReport` 派生稳定的 Start Here 重要度信号和文件级阅读路径；只接受可验证的入口、配置、Endpoint 和确认组件注入关系，不从类名猜测业务重要性。路径按文件去重，保留完整结果并提供默认 10 项视图。
 - 分析成功后在系统分配的 loopback 端口启动本地服务；`/api/report` 返回本次报告，固定静态路由返回打包的前端资源，未知路径和非只读请求不会访问用户文件。
 - Repository Overview 能在 30 秒摘要层展示仓库上下文、报告状态、技术事实、统计、应用入口和覆盖限制，全部来自报告字段或可重现的实体派生规则。
 - Module Explorer 能按显式 Maven aggregation 关系浏览模块，按报告实体确定性计算模块统计，查看元数据、源码根、通用版本 facts、确认的内部模块依赖、组件/入口、诊断与 Evidence；不从路径、名称、坐标或类名补造事实。
@@ -166,7 +167,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M8**：T-0802 至 T-0804，完成文件级阅读路径、解释和 Start Here UI；T-0801 已完成。
+- **M8**：T-0803 至 T-0804，完成推荐解释和 Start Here UI；T-0801/T-0802 已完成。
 - **M9**：T-0901 至 T-0907，完成综合 fixture、真实仓库和 onboarding 价值验证。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
 - **V0.2 候选**：Desktop Application 技术试验与打包。
@@ -175,10 +176,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-0802 — Recommended Reading Path**
+> **T-0803 — Recommendation Explanation**
 
-消费 T-0801 的重要度信号，按文件去重并形成模块间顺序稳定、默认最多 10 项且可展开的推荐阅读路径；unresolved dependency 不参与确定排名，不提前实现 T-0803 解释文案或 T-0804 页面。
+为 T-0802 的每个文件级推荐项生成可回溯到 entry point、endpoint、component role 或 confirmed dependency Evidence 的原因，计数必须与 `AnalysisReport` 一致，PARTIAL 报告必须标注推荐依据不完整；不提前实现 T-0804 页面。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M7 和 T-0801 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map，以及从 Component / Endpoint 进入的 Source & Evidence Detail；Start Here 已有只消费确认事实的稳定重要度信号，尚未生成最终文件路径或 UI。下一任务是 **T-0802 — Recommended Reading Path**：按文件去重、保持模块间稳定顺序、默认最多 10 项并可展开，不提前实现 T-0803/T-0804。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M7 和 T-0801/T-0802 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map，以及从 Component / Endpoint 进入的 Source & Evidence Detail；Start Here 已有只消费确认事实的稳定重要度信号和默认 10 项、可展开的文件级阅读路径，尚未生成解释或 UI。下一任务是 **T-0803 — Recommendation Explanation**：为每个推荐文件提供可追溯原因、准确计数和 PARTIAL 覆盖说明，不提前实现 T-0804。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
