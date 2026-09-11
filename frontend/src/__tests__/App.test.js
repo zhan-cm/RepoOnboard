@@ -142,4 +142,60 @@ describe('App', () => {
     expect(view.container.querySelector('h1').textContent).toBe('Repository name unavailable')
     view.unmount()
   })
+
+  it('opens endpoint source detail and returns to the preserved API selection', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => sourceReport()
+    }))
+
+    const view = mount(App)
+    await flushUi()
+    const apiButton = [...view.container.querySelectorAll('.nav-item')]
+      .find((button) => button.textContent.includes('APIs'))
+    apiButton.click()
+    await flushUi()
+    view.container.querySelector('.api-method-button').click()
+    await flushUi()
+    view.container.querySelector('.source-detail-trigger').click()
+    await flushUi()
+
+    expect(view.container.querySelector('.source-detail')).not.toBeNull()
+    expect(view.container.querySelector('.source-related')).not.toBeNull()
+    expect(view.container.textContent).toContain('src/main/java/example/UserController.java')
+    expect(view.container.querySelector('.nav-item--active').textContent).toContain('APIs')
+
+    view.container.querySelector('.source-back').click()
+    await flushUi()
+    expect(view.container.querySelector('.source-detail')).toBeNull()
+    expect(view.container.querySelector('.api-inspector__route')).not.toBeNull()
+    view.unmount()
+  })
 })
+
+function sourceReport() {
+  const path = 'src/main/java/example/UserController.java'
+  return {
+    schemaVersion: '1.2', status: 'SUCCESS',
+    project: { name: 'source-sample', buildSystem: 'MAVEN' },
+    summary: { moduleCount: 1, sourceFileCount: 1, componentCount: 1, endpointCount: 1 },
+    modules: [{ id: 'api', artifactId: 'api', baseDirectory: 'api', pomFileId: 'pom.xml' }],
+    sourceFiles: [{ id: path, moduleId: 'api', path, language: 'JAVA', location: { sourceFileId: path } }],
+    components: [{
+      id: 'controller', moduleId: 'api', qualifiedName: 'example.UserController',
+      kind: 'REST_CONTROLLER', framework: 'SPRING_BOOT',
+      location: { sourceFileId: path, startLine: 5, symbol: 'example.UserController' }, evidence: []
+    }],
+    endpoints: [{
+      id: 'get', moduleId: 'api', componentId: 'controller', httpMethod: 'GET',
+      path: '/api/users', unresolvedPath: false, handlerMethod: 'get', framework: 'SPRING_BOOT',
+      conditions: { params: [], headers: [], consumes: [], produces: [], unresolved: false },
+      location: { sourceFileId: path, startLine: 12, startColumn: 3, symbol: 'example.UserController#get' },
+      evidence: [{
+        type: 'SPRING_MVC_METHOD_MAPPING', ruleId: 'spring.mvc.GET',
+        location: { sourceFileId: path, startLine: 12 }, relatedLocations: []
+      }]
+    }],
+    entryPoints: [], dependencies: [], diagnostics: []
+  }
+}

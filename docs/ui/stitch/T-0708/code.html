@@ -1,0 +1,605 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Source &amp; Evidence Detail — RepoOnboard (T-0708 Ready)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+          },
+          fontSize: {
+            '2xs': ['10px', '14px'],
+            'xs': ['11px', '16px'],
+            'sm': ['12px', '18px'],
+            'base': ['13px', '20px'],
+            'md': ['14px', '22px'],
+            'lg': ['16px', '24px'],
+          },
+          colors: {
+            slate: {
+              850: '#141e2e',
+              900: '#0f172a',
+            },
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom utility scrollbars & focus rings matching frozen baseline */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .selection-highlight {
+      background-color: #f0fdf4;
+      border-color: #86efac;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-900 font-sans antialiased min-h-screen flex flex-col h-screen overflow-hidden select-text">
+
+  <!-- TOP WORKBENCH GLOBAL HEADER -->
+  <header class="h-10 border-b border-slate-200 bg-white flex items-center justify-between px-3 text-xs flex-shrink-0 z-30">
+    <!-- Breadcrumb & Path Context -->
+    <div class="flex items-center gap-2 text-slate-600">
+      <span class="font-mono text-slate-700 font-medium">spring-petclinic-microservices</span>
+      <span class="text-slate-300">/</span>
+      <span class="text-slate-500">APIs</span>
+      <span class="text-slate-300">/</span>
+      <span class="px-1.5 py-0.5 rounded bg-brand-50 border border-brand-200 text-brand-700 font-mono text-2xs font-medium">GET /api/gateway/owners/{ownerId}</span>
+      <span class="text-slate-300">/</span>
+      <span class="text-slate-900 font-medium flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+        Source &amp; Evidence Detail
+      </span>
+    </div>
+
+    <!-- Repository Context Metrics -->
+    <div class="flex items-center gap-4 text-2xs font-mono text-slate-600">
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="font-semibold text-slate-700">REPO:</span>
+        <span class="">8 Modules</span>
+        <span class="text-slate-300">·</span>
+        <span class="">42 Components</span>
+        <span class="text-slate-300">·</span>
+        <span class="">28 Endpoints</span>
+      </div>
+      <div class="h-3 w-px bg-slate-200"></div>
+      <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span class="">Analysis Engine Live (Schema 1.2)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- WORKSPACE BODY: 3-PANE LAYOUT -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- LEFT SIDEBAR NAVIGATION (Frozen RepoOnboard App Shell) -->
+    <aside class="w-56 border-r border-slate-200 bg-slate-50/50 flex flex-col justify-between flex-shrink-0">
+      <!-- Top Section -->
+      <div class="flex flex-col">
+        <!-- Brand identity + local version -->
+        <div class="h-12 border-b border-slate-200 flex items-center justify-between px-3">
+          <div class="flex items-center gap-2">
+            <div class="w-5 h-5 rounded bg-brand-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">R</div>
+            <span class="font-semibold text-slate-900 text-xs tracking-tight">RepoOnboard</span>
+          </div>
+          <span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-500 font-mono text-2xs flex-shrink-0">v0.1.0-local</span>
+        </div>
+
+        <!-- Target Repo Selector / Scope indicator -->
+        <div class="p-3 border-b border-slate-200/80 bg-white">
+          <div class="flex items-center justify-between text-2xs text-slate-500 mb-1">
+            <span class="font-mono uppercase tracking-wider font-semibold text-slate-400">Target Repo</span>
+            <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </div>
+          <div class="font-mono text-xs font-semibold text-slate-800 truncate" title="spring-petclinic-microservices">spring-petclinic-micr...</div>
+          <div class="text-2xs text-slate-500 mt-1 flex items-center gap-1.5">
+            <span class="">Java 17</span>
+            <span class="text-slate-300">·</span>
+            <span class="">Boot 3.2</span>
+            <span class="text-slate-300">·</span>
+            <span class="">Maven</span>
+          </div>
+        </div>
+
+        <!-- Perspectives Menu -->
+        <nav class="p-2 space-y-0.5">
+          <div class="px-2 pt-2 pb-1 text-2xs font-mono uppercase tracking-wider text-slate-400 font-semibold">Perspectives</div>
+
+          <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            <span class="">Overview</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m16 0v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            <span class="">Modules</span>
+          </a>
+
+          <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+            <span class="">Architecture</span>
+          </a>
+
+          <!-- APIs Active (Drilldown context) -->
+          <a href="#" class="flex items-center justify-between px-2.5 py-1.5 rounded text-xs bg-brand-50 text-brand-700 font-medium border border-brand-200/60 shadow-xs">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              <span class="">API Map</span>
+            </div>
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-600"></span>
+          </a>
+
+          <div class="flex items-center justify-between px-2.5 py-1.5 rounded text-xs text-slate-400 cursor-not-allowed">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <span class="">Start Here</span>
+            </div>
+            <span class="px-1 rounded bg-slate-100 text-slate-400 font-mono text-2xs">M8</span>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Bottom Engine Status -->
+      <div class="p-3 border-t border-slate-200 bg-white text-2xs space-y-1 font-mono text-slate-500">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center gap-1.5 text-slate-700 font-medium">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            AST ENGINE
+          </span>
+          <span class="text-emerald-700 font-semibold">READY</span>
+        </div>
+        <div class="">8/8 modules analyzed</div>
+        <div class="text-slate-400">port 8080 · file-backed</div>
+        <div class="pt-1.5 flex items-center justify-between text-slate-400 border-t border-slate-100">
+          <span class="hover:text-slate-600 cursor-pointer">⚙ Settings</span>
+          <span class="hover:text-slate-600 cursor-pointer">📖 Docs</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER WORKSPACE: SOURCE & EVIDENCE DETAIL -->
+    <main class="flex-1 flex flex-col min-w-0 bg-white overflow-y-auto">
+
+      <!-- Return Context & Action Bar -->
+      <div class="border-b border-slate-200 bg-slate-50/70 px-6 py-3 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <!-- Back button returning to previous exploration context -->
+          <a href="#" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-300 rounded text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <span class="">Back to GET /api/gateway/owners/{ownerId}</span>
+          </a>
+          <span class="text-slate-300">|</span>
+          <span class="px-2 py-0.5 rounded bg-blue-50 border border-blue-200 text-blue-700 text-2xs font-mono font-medium">Endpoint Source Detail</span>
+          <span class="text-slate-400 text-2xs font-mono">entityId: ep-gateway-019</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+
+          <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-2xs font-medium">Status: SUCCESS</span>
+        </div>
+      </div>
+
+      <!-- Page Header & Entity Identity Card -->
+      <div class="px-6 pt-5 pb-4 border-b border-slate-200">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-2xs font-mono uppercase tracking-wider text-brand-600 font-bold">SOURCE NAVIGATION · EVIDENCE AUDIT</span>
+
+            </div>
+            <h1 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
+              <span class="">Source &amp; Evidence Detail</span>
+              <span class="text-xs font-normal text-slate-500 font-mono">BoundaryApiController.java</span>
+            </h1>
+            <p class="text-xs text-slate-600 mt-1 max-w-3xl leading-relaxed">
+              Trace reported scan-root-relative locations, 1-based start/end line bounds, symbol identifiers, module ownership, and verified static-analysis evidence.
+            </p>
+          </div>
+
+          <!-- Quick Navigation Pill -->
+          <div class="text-right">
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-100/80 border border-slate-200 text-2xs font-mono text-slate-600">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span class="">3 source locations reported</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entity Identity Bar -->
+        <div class="mt-4 p-3 bg-slate-50 rounded-md border border-slate-200 grid grid-cols-12 gap-4 items-center">
+          <div class="col-span-4 border-r border-slate-200/80 pr-3">
+            <div class="text-2xs font-mono uppercase text-slate-400 font-semibold mb-0.5">Reported Entity</div>
+            <div class="flex items-center gap-1.5">
+              <span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-mono text-2xs font-bold">GET</span>
+              <span class="font-mono text-xs font-semibold text-slate-900">/api/gateway/owners/{ownerId}</span>
+            </div>
+            <div class="text-2xs text-slate-500 font-mono mt-0.5">Handler: <span class="text-slate-800 font-medium">BoundaryApiController.getOwnerDetails</span></div>
+          </div>
+
+          <div class="col-span-4 border-r border-slate-200/80 px-2">
+            <div class="text-2xs font-mono uppercase text-slate-400 font-semibold mb-0.5">Owning Controller</div>
+            <div class="font-mono text-xs font-medium text-brand-700 truncate" title="org.springframework.samples.petclinic.gateway.boundary.web.BoundaryApiController">
+              BoundaryApiController
+            </div>
+            <div class="text-2xs text-slate-500 font-mono mt-0.5 flex items-center gap-1">
+              <span class="px-1 rounded bg-purple-50 text-purple-700 border border-purple-200 text-2xs">REST_CONTROLLER</span>
+              <span class="">Spring Boot 3.2</span>
+            </div>
+          </div>
+
+          <div class="col-span-4 pl-2">
+            <div class="text-2xs font-mono uppercase text-slate-400 font-semibold mb-0.5">Owning Module</div>
+            <div class="font-mono text-xs font-medium text-slate-800 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m16 0v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+              <span class="truncate">spring-petclinic-api-gateway</span>
+            </div>
+            <div class="text-2xs text-slate-500 font-mono mt-0.5">pom.xml:12-38 · jar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Central Content: Primary Location & Evidence Breakdown -->
+      <div class="p-6 space-y-6 flex-1">
+
+        <!-- SECTION 1: PRIMARY SOURCE LOCATION & SAFE COPY ACTIONS -->
+        <div class="border border-slate-200 rounded-lg bg-white shadow-2xs overflow-hidden">
+          <div class="bg-slate-50/80 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span class="text-xs font-semibold text-slate-800">Primary Source Location</span>
+              <span class="px-1.5 py-0.2 rounded bg-slate-200/70 text-slate-700 font-mono text-2xs">Handler Declaration</span>
+            </div>
+
+          </div>
+
+          <div class="p-4 space-y-4">
+            <!-- Source Path Row with Copy Path -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-2xs font-mono uppercase text-slate-500 font-semibold tracking-wider">Scan-Root-Relative Source Path</label>
+                <!-- Copy Action 1 -->
+                <button type="button" class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 border border-slate-300 rounded text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 font-mono transition-colors" title="Copy scan-root-relative path to clipboard">
+                  <svg class="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  <span class="">Copy Path</span>
+                </button>
+              </div>
+              <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-xs text-slate-900 select-all break-all leading-relaxed">
+                src/main/java/org/springframework/samples/petclinic/gateway/boundary/web/BoundaryApiController.java
+              </div>
+            </div>
+
+            <!-- Position & Symbol Grid -->
+            <div class="grid grid-cols-12 gap-3">
+              <!-- Start Line / Column -->
+              <div class="col-span-3 p-2.5 bg-slate-50 rounded border border-slate-200">
+                <div class="text-2xs font-mono uppercase text-slate-500 font-semibold">Start Position (1-based)</div>
+                <div class="mt-1 font-mono text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200">Line 48</span>
+                  <span class="text-slate-400">·</span>
+                  <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200">Col 5</span>
+                </div>
+              </div>
+
+              <!-- End Line / Column -->
+              <div class="col-span-3 p-2.5 bg-slate-50 rounded border border-slate-200">
+                <div class="text-2xs font-mono uppercase text-slate-500 font-semibold">End Position (1-based)</div>
+                <div class="mt-1 font-mono text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200">Line 56</span>
+                  <span class="text-slate-400">·</span>
+                  <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200">Col 5</span>
+                </div>
+              </div>
+
+              <!-- Source Language & Join State -->
+              <div class="col-span-6 p-2.5 bg-slate-50 rounded border border-slate-200 flex items-center justify-between">
+                <div>
+                  <div class="text-2xs font-mono uppercase text-slate-500 font-semibold">Source File Metadata</div>
+                  <div class="mt-1 font-mono text-xs text-slate-800 flex items-center gap-2"><span class="font-semibold text-slate-700">Language: Java</span></div>
+                </div>
+                <!-- Copy Location Action -->
+                <button type="button" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-300 rounded text-xs text-slate-700 hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100 font-mono transition-colors shadow-2xs" title="Copy path:startLine:startColumn">
+                  <svg class="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  <span class="">Copy Location</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Symbol Identification & Copy Symbol -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-2xs font-mono uppercase text-slate-500 font-semibold tracking-wider">Reported Symbol</label>
+                <button type="button" class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 border border-slate-300 rounded text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 font-mono transition-colors" title="Copy raw symbol identifier">
+                  <svg class="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  <span class="">Copy Symbol</span>
+                </button>
+              </div>
+              <div class="p-2 bg-slate-50 rounded border border-slate-200 font-mono text-xs text-slate-900 select-all">
+                org.springframework.samples.petclinic.gateway.boundary.web.BoundaryApiController#getOwnerDetails
+              </div>
+            </div>
+
+            <!-- Interactive Copy Live Status Notice (Aria-live polite) -->
+            <div class="flex items-center justify-between text-2xs font-mono pt-1 text-slate-500 border-t border-slate-100"><div class="flex items-center gap-2" aria-live="polite"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span class="text-slate-600">Copy location format: <code class="text-slate-800 font-semibold">src/main/java/org/springframework/samples/petclinic/gateway/boundary/web/BoundaryApiController.java:48:5</code></span></div><span class="text-slate-400">Click or manual select</span></div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: EVIDENCE CHAIN (Verified Analysis Facts) -->
+        <div class="border border-slate-200 rounded-lg bg-white shadow-2xs overflow-hidden">
+          <div class="bg-slate-50/80 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg><span class="text-xs font-semibold text-slate-800">Evidence</span><span class="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono text-2xs font-medium">2 evidence records</span></div>
+
+          </div>
+
+          <div class="p-4 space-y-4">
+            <!-- Evidence Item 1: Controller Type Mapping -->
+            <div class="p-3 bg-slate-50/60 rounded-md border border-slate-200">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-200/80 mb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center font-mono">1</span>
+                  <span class="font-mono text-xs font-semibold text-slate-900">SPRING_MVC_TYPE_MAPPING</span>
+                  <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-mono text-2xs">Class-Level Mapping</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" class="text-2xs font-mono text-brand-600 hover:text-brand-800 underline">Copy Location</button>
+                  <span class="text-slate-300">·</span>
+                  <span class="font-mono text-2xs text-slate-500">Index: 0</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-12 gap-3 text-xs">
+                <div class="col-span-4">
+                  <div class="text-2xs font-mono uppercase text-slate-400 font-semibold">Rule Identifier</div>
+                  <div class="font-mono text-xs text-slate-800 font-medium mt-0.5">RULE_SPRING_MVC_REQUEST_MAPPING</div>
+                </div>
+                <div class="col-span-5">
+                  <div class="text-2xs font-mono uppercase text-slate-400 font-semibold">Primary Declaration Location</div>
+                  <div class="font-mono text-xs text-slate-800 mt-0.5 truncate" title="BoundaryApiController.java: Lines 32-34">
+                    BoundaryApiController.java: Lines 32–34
+                  </div>
+                </div>
+                <div class="col-span-3">
+                  <div class="text-2xs font-mono uppercase text-slate-400 font-semibold">Related Locations</div>
+                  <div class="font-mono text-xs text-slate-500 mt-0.5">0 related locations</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Evidence Item 2: Handler Method Mapping -->
+            <div class="p-3 bg-slate-50/60 rounded-md border border-slate-200">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-200/80 mb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center font-mono">2</span>
+                  <span class="font-mono text-xs font-semibold text-slate-900">SPRING_MVC_METHOD_MAPPING</span>
+                  <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono text-2xs">Method-Level Mapping</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" class="text-2xs font-mono text-brand-600 hover:text-brand-800 underline">Copy Location</button>
+                  <span class="text-slate-300">·</span>
+                  <span class="font-mono text-2xs text-slate-500">Index: 1</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-12 gap-3 text-xs">
+                <div class="col-span-4">
+                  <div class="text-2xs font-mono uppercase text-slate-400 font-semibold">Rule Identifier</div>
+                  <div class="font-mono text-xs text-slate-800 font-medium mt-0.5">RULE_SPRING_MVC_GET_MAPPING</div>
+                </div>
+                <div class="col-span-5">
+                  <div class="text-2xs font-mono uppercase text-slate-400 font-semibold">Primary Declaration Location</div>
+                  <div class="font-mono text-xs text-slate-800 mt-0.5 truncate" title="BoundaryApiController.java: Lines 48-56 (Col 5)">
+                    BoundaryApiController.java: Lines 48–56 (Col 5)
+                  </div>
+                </div>
+                <div class="col-span-3">
+                  <div class="text-2xs font-mono uppercase text-slate-400 font-semibold">Related Locations</div>
+                  <div class="font-mono text-xs text-slate-700 mt-0.5 font-medium">1 related location (Param)</div>
+                </div>
+              </div>
+
+              <!-- Related Location Secondary Block -->
+              <div class="mt-2.5 pt-2 border-t border-slate-200/60 pl-3 border-l-2 border-slate-300 flex items-center justify-between text-2xs font-mono text-slate-600">
+                <span class="">↳ Related location [0]: BoundaryApiController.java: Line 49, Col 21 (Path Variable: ownerId)</span>
+                <button type="button" class="text-brand-600 hover:underline">Copy Sub-location</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: CONTRACT COMPLIANCE & STATE SPECIFICATIONS PANEL -->
+        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-semibold text-slate-800 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              T-0708 State &amp; Capability Boundaries
+            </span>
+            <span class="font-mono text-2xs text-slate-400">Strict Data Contract</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4 leading-relaxed">
+            <div>
+              <span class="font-medium text-slate-700">Supported Actions:</span>
+              <ul class="list-disc list-inside mt-0.5 text-2xs space-y-0.5 text-slate-500">
+                <li class="">Copy scan-root-relative path (exact unmodified string)</li>
+                <li class="">Copy location in standard editor format (<code class="text-slate-700">path:line:col</code>)</li>
+                <li class="">Copy raw symbol identifier without synthetic signatures</li>
+                <li class="">Fallback to selectable text when Clipboard API is denied</li>
+              </ul>
+            </div>
+            <div>
+              <span class="font-medium text-slate-700">Explicit Non-Goals (Omitted by design):</span>
+              <ul class="list-disc list-inside mt-0.5 text-2xs space-y-0.5 text-slate-500">
+                <li class="">No fake code syntax highlighters or file tree browsers</li>
+                <li class="">No synthetic absolute machine paths (<code class="text-slate-700">file://</code> or <code class="text-slate-700">C:\...</code>)</li>
+                <li class="">No unworkable "Open in IntelliJ" or "Reveal in Explorer" buttons</li>
+                <li class="">No speculative method call chains or runtime call stacks</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM AUDIT FOOTER -->
+      <footer class="h-8 border-t border-slate-200 bg-white flex items-center justify-between px-6 text-2xs font-mono text-slate-500 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="">AnalysisReport Schema 1.2</span>
+          <span class="text-slate-300">·</span>
+          <span class="">Source &amp; Evidence Inspector</span>
+          <span class="text-slate-300">·</span>
+          <span class="">Press <kbd class="px-1 py-0.2 bg-slate-100 border border-slate-300 rounded text-slate-700">Esc</kbd> or click Back to return</span>
+        </div>
+        <div class="flex items-center gap-2 text-slate-400">
+          <span class="">SourceNavigationHost: Clipboard API Available</span>
+        </div>
+      </footer>
+    </main>
+
+    <!-- RIGHT INSPECTOR: RELATED FACTS (Deterministic Joins Only) -->
+    <aside class="w-80 border-l border-slate-200 bg-white flex flex-col flex-shrink-0 overflow-y-auto">
+      <!-- Inspector Header -->
+      <div class="h-10 border-b border-slate-200 px-4 flex items-center justify-between bg-slate-50/50 flex-shrink-0">
+        <div class="flex items-center gap-1.5 font-semibold text-xs text-slate-800 uppercase tracking-wider font-mono">
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          <span class="">Related Facts</span>
+        </div>
+
+      </div>
+
+      <!-- Inspector Body Sections -->
+      <div class="p-4 space-y-5 text-xs">
+
+        <!-- 1. OWNING CONTROLLER -->
+        <div>
+          <div class="text-2xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1.5 flex items-center justify-between">
+            <span class="">Owning Controller</span>
+
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 space-y-1">
+            <div class="font-mono font-medium text-slate-900 truncate" title="org.springframework.samples.petclinic.gateway.boundary.web.BoundaryApiController">
+              BoundaryApiController
+            </div>
+            <div class="text-2xs text-slate-500 font-mono">Kind: <span class="text-purple-700 font-medium">REST_CONTROLLER</span></div>
+            <div class="text-2xs text-slate-500 font-mono truncate">Module: spring-petclinic-api-gateway</div>
+          </div>
+        </div>
+
+        <!-- 2. SAME-CONTROLLER ENDPOINTS -->
+        <div>
+          <div class="text-2xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1.5 flex items-center justify-between">
+            <span class="">Other Endpoints in Controller</span>
+            <span class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-mono">3 routes</span>
+          </div>
+          <div class="space-y-1.5 font-mono text-2xs">
+            <div class="p-2 rounded bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 truncate">
+                <span class="px-1 rounded bg-emerald-100 text-emerald-800 font-bold">POST</span>
+                <span class="text-slate-800 truncate">/api/gateway/owners</span>
+              </div>
+              <span class="text-slate-400">L:62</span>
+            </div>
+            <div class="p-2 rounded bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 truncate">
+                <span class="px-1 rounded bg-slate-200 text-slate-800 font-bold">ANY</span>
+                <span class="text-slate-800 truncate">/api/gateway/fallback</span>
+              </div>
+              <span class="text-slate-400">L:95</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. CONTROLLER DEPENDENCY NEIGHBORS (With mandatory contract disclaimer) -->
+        <div>
+          <div class="text-2xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1 flex items-center justify-between">
+            <span class="">Controller Dependency Neighbors</span>
+            <span class="px-1.5 py-0.2 rounded bg-brand-50 text-brand-700 font-mono">2 Confirmed</span>
+          </div>
+          <p class="text-2xs text-slate-500 mb-2 leading-tight">
+            These are confirmed component relationships, not a handler call chain.
+          </p>
+
+          <div class="space-y-2 font-mono text-2xs">
+            <!-- Dependency Neighbor 1 -->
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="px-1.5 py-0.5 rounded bg-brand-50 text-brand-700 font-medium">OUTGOING INJECTION</span>
+                <span class="text-emerald-700 font-semibold">CONFIRMED</span>
+              </div>
+              <div class="font-medium text-slate-900 text-xs">CustomersServiceClient</div>
+              <div class="text-slate-500">Kind: SERVICE · Module: api-gateway</div>
+              <div class="text-slate-400 pt-1 border-t border-slate-200/60">Source: BoundaryApiController.java:28</div>
+            </div>
+
+            <!-- Dependency Neighbor 2 -->
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="px-1.5 py-0.5 rounded bg-brand-50 text-brand-700 font-medium">OUTGOING INJECTION</span>
+                <span class="text-emerald-700 font-semibold">CONFIRMED</span>
+              </div>
+              <div class="font-medium text-slate-900 text-xs">CustomerRepository</div>
+              <div class="text-slate-500">Kind: REPOSITORY · Module: api-gateway</div>
+              <div class="text-slate-400 pt-1 border-t border-slate-200/60">Source: BoundaryApiController.java:31</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. SAME-FILE COMPONENTS & ENTRY POINTS -->
+        <div>
+          <div class="text-2xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1.5">
+            Components in this Source File
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 font-mono text-2xs space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-medium text-slate-800">BoundaryApiController</span>
+              <span class="text-slate-500">REST_CONTROLLER</span>
+            </div>
+            <div class="text-slate-400 text-2xs truncate">Lines 24–78 · 1 declared component</div>
+          </div>
+        </div>
+
+        <!-- 5. FILE DIAGNOSTICS (Exact file match) -->
+        <div>
+          <div class="text-2xs font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1.5 flex items-center justify-between">
+            <span class="">File Diagnostics</span>
+            <span class="text-emerald-600 font-normal">0 issues reported</span>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 font-mono text-2xs text-slate-500">No file diagnostics were reported for this source.</div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+
+
+
+
+
+
+</body></html>

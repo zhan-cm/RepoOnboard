@@ -112,6 +112,23 @@ describe('ApiInspector', () => {
     expect(view.container.textContent).not.toContain('String list()')
     view.unmount()
   })
+
+  it('offers source detail only for a selected endpoint with a reported location', () => {
+    const model = createApiModel(report())
+    const opened = []
+    const view = mount(ApiInspector, {
+      props: {
+        model,
+        scope: createApiScope(model),
+        selection: { type: 'endpoint', id: 'get' },
+        onOpenSource: (value) => opened.push(value)
+      }
+    })
+
+    view.container.querySelector('.source-detail-trigger').click()
+    expect(opened).toEqual([{ type: 'endpoint', id: 'get' }])
+    view.unmount()
+  })
 })
 
 function mountView(model, exploration = defaultApiExploration()) {

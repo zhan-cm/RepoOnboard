@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0708 — Source Navigation 设计交接。**
+> **T-0709 — Local Web Boundary and Packaged UI Validation。**
 
-M0 至 M6 及 T-0701 至 T-0707 已经完成。API Map 现在支持按 module、HTTP method 和 path/handler/source 搜索过滤，明确显示 `ANY`、未解析 path 与 mapping conditions，并可检查 handler source 及类级/方法级 mapping Evidence。T-0708 的页面级数据契约审计与 Stitch 设计 Brief 已完成；下一步由用户生成、审阅并导入 Stitch 原型，在此之前不实现 Source Navigation。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 至 T-0708 已经完成。Architecture 与 API Inspector 现在可进入统一的 Source & Evidence Detail，展示并安全复制扫描根相对位置和 symbol，并通过精确报告连接呈现 module、Evidence 与可确认 related facts；不读取源码、不构造绝对路径，也不伪造 IDE 或调用链能力。下一步只执行 T-0709，验证 loopback 服务、安全响应头、恶意文本、离线 JAR 资源、schema 匹配和关闭释放边界。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1996,7 +1996,16 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
+```
+
+Design Handoff:
+
+```text
+[x] UI Data Contract Audit
+[x] Stitch Design Brief
+[x] User-reviewed Stitch prototype imported
+[x] Vue implementation and browser validation
 ```
 
 点击 Component / Endpoint 后展示：
@@ -2013,10 +2022,10 @@ V0.1 不要求直接集成 IDE。支持安全复制 path 和 symbol；如首次�
 Acceptance Criteria:
 
 ```text
-[ ] 位置使用扫描根相对路径和 1-based 行列
-[ ] 未知位置不显示伪造的 0 行
-[ ] Source/Diagnostic 内容以文本方式安全渲染
-[ ] Copy Path / Copy Symbol 在可用时工作，不可用时有明确回退
+[x] 位置使用扫描根相对路径和 1-based 行列
+[x] 未知位置不显示伪造的 0 行
+[x] Source/Diagnostic 内容以文本方式安全渲染
+[x] Copy Path / Copy Symbol 在可用时工作，不可用时有明确回退
 ```
 
 ---
@@ -3037,18 +3046,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0708
-User-reviewed Source Navigation Stitch prototype generation and import
+T-0709
+Local Web Boundary and Packaged UI Validation
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701 至 T-0707 已完成；T-0708 的数据契约审计与 Stitch Brief 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701 至 T-0708 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0708 Source Navigation Stitch prototype generation and import
+T-0709 Local Web Boundary and Packaged UI Validation
 ```
 
 ---
@@ -3077,7 +3086,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0707 complete; T-0708 data contract and Stitch brief complete, user design next)
+M7 Local Web UI — in progress (T-0701 through T-0708 complete; T-0709 boundary validation next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3088,6 +3097,6 @@ Release
 
 Next:
 
-> **T-0708 — Generate, review, and import the Source Navigation Stitch prototype.**
+> **T-0709 — Validate the local Web boundary and packaged UI.**
 
 ````
