@@ -123,7 +123,7 @@ Legend:
 
 > **T-0707 — API Map。**
 
-M0 至 M6 及 T-0701 至 T-0706 已经完成。Architecture Workspace 现在支持可组合筛选、搜索、一阶邻域、图规模预算和可搜索列表回退。下一步只进行 T-0707 的页面级数据契约审计与 Stitch 设计交接，在用户完成并导入设计前不实现 API Map。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 至 T-0706 已经完成。Architecture Workspace 现在支持可组合筛选、搜索、一阶邻域、图规模预算和可搜索列表回退。T-0707 的页面级数据契约审计与 Stitch 设计 Brief 已完成；下一步由用户生成、审阅并导入 Stitch 原型，在此之前不实现 API Map。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1948,7 +1948,16 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[-]
+```
+
+Design Handoff:
+
+```text
+[x] UI Data Contract Audit
+[x] Stitch Design Brief
+[ ] User-reviewed Stitch prototype imported
+[ ] Vue implementation and browser validation
 ```
 
 展示：
@@ -3020,7 +3029,7 @@ Remaining Issues:
 
 ```text
 T-0707
-API Map data contract audit and Stitch design handoff
+User-reviewed Stitch prototype generation and import
 ```
 
 本阶段：
@@ -3030,7 +3039,7 @@ API Map data contract audit and Stitch design handoff
 M0 至 M6 及 T-0701 至 T-0706 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0707 design handoff
+T-0707 Stitch prototype generation and import
 ```
 
 ---
@@ -3059,7 +3068,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0706 complete; T-0707 design handoff next)
+M7 Local Web UI — in progress (T-0701 through T-0706 complete; T-0707 data contract and Stitch brief complete, user design next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3070,6 +3079,6 @@ Release
 
 Next:
 
-> **T-0707 — API Map data contract audit and Stitch design handoff.**
+> **T-0707 — Generate, review, and import the API Map Stitch prototype.**
 
 ````

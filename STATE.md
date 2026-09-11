@@ -6,7 +6,7 @@ RepoOnboard 当前处于 **M7 — Local Web UI**，里程碑进行中。
 
 - M0 至 M6 已完成。
 - **T-0701 至 T-0706** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace 及其探索筛选能力已建立。
-- 下一任务是 **T-0707 — API Map**。按既定 UI 工作流，应先完成页面级数据契约审计和 Stitch 设计交接，等待用户完成并导入设计后再实现页面。
+- 当前任务是 **T-0707 — API Map**。页面级数据契约审计与 Stitch 设计 Brief 已完成；下一步等待用户生成、审阅并导入 Stitch 原型，在此之前不实现页面。
 - Java 21 / Maven 3.9.16 `clean verify` 当前运行 48 项前端测试和 139 项 Java 测试并全部通过；Vite production build、JAR 资源以及 Architecture Workspace 在真实 `spring-dependency-project` 报告上的宽屏、窄屏、筛选、搜索、一阶邻域、选择、Inspector 和 Evidence 已验证。
 
 ## 2. 已完成任务
@@ -131,6 +131,7 @@ RepoOnboard
 - T-0704 根据 UI Data Contract Audit 只补充产品明确需要的最小公共 facts：Maven 聚合父 ID、通用语言/框架版本及唯一 GAV 确认的内部模块目标；Stitch 中的示例状态、计数和路由没有被硬编码。
 - T-0705 未为贴合原型而扩展后端模型；Architecture 直接消费现有 Component、Dependency、Diagnostic、SourceLocation 和 Evidence。图只呈现确定事实，未确认关系以覆盖提示和计数表达，超预算范围整体停止绘制。
 - T-0706 延续同一公共报告边界；搜索只影响替代列表，筛选和邻域确定图范围，预算在组合筛选后判定。宽屏紧凑高度默认折叠列表以保留图画布，窄屏隐藏图并以完整组件列表作为主入口。
+- T-0707 数据契约审计确认 schema `1.2` 已足以实现 API Map，无需扩展后端。Endpoint 的 final path、method、conditions、handler location 与两级 mapping Evidence 可直接展示；公共报告没有 class / method 原始 path 片段、方法签名、请求响应模型、鉴权或调用链，设计不得补造。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -161,8 +162,8 @@ RepoOnboard
 
 > **T-0707 — API Map**
 
-先基于 TODO、公共报告模型和当前实现完成 T-0707 的页面级 Data Contract Audit 与 Stitch Design Brief，交给用户生成、审阅并导入设计；用户完成导入前不实现 API Map。设计与实现不得把 unresolved Endpoint、未知 path/method 或原型示例值包装成确认事实。
+T-0707 页面级 Data Contract Audit 与 Stitch Design Brief 已完成。下一步由用户据此生成、审阅并导入 Stitch 原型；导入后先审计原型是否遵守报告边界，再实现 Vue 页面。设计与实现不得把 unresolved Endpoint、未知 path/method 或原型示例值包装成确认事实。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 及 T-0701 至 T-0706 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer 和 Architecture Workspace。Architecture 使用 `reportArchitecture.js` + Cytoscape.js，只在当前模块绘制有真实 Component 源/目标的 `COMPONENT_INJECTION + CONFIRMED` 边；节点/关系 Inspector 显示源码位置与原始 Evidence，未确认关系只作为覆盖状态。组件类型、关系类型与一阶邻域可组合，搜索列表保持完整替代入口；筛选后超过 60 节点或 120 条确认边时停止绘图并显示隐藏数量，窄屏采用列表优先。下一任务是 **T-0707 — API Map**：先做 Data Contract Audit 与 Stitch Design Brief，用户设计导入前不编码页面。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M6 及 T-0701 至 T-0706 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer 和 Architecture Workspace。Architecture 使用 `reportArchitecture.js` + Cytoscape.js，只在当前模块绘制有真实 Component 源/目标的 `COMPONENT_INJECTION + CONFIRMED` 边；节点/关系 Inspector 显示源码位置与原始 Evidence，未确认关系只作为覆盖状态。组件类型、关系类型与一阶邻域可组合，搜索列表保持完整替代入口；筛选后超过 60 节点或 120 条确认边时停止绘图并显示隐藏数量，窄屏采用列表优先。当前任务是 **T-0707 — API Map**：Data Contract Audit 与 Stitch Design Brief 已完成，等待用户生成、审阅并导入原型；导入前不编码页面。Endpoint 的 final path、method、conditions、handler source 与 type / method mapping Evidence 可用，但不能补造原始两级 path、方法签名、请求响应模型、鉴权或调用链。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
