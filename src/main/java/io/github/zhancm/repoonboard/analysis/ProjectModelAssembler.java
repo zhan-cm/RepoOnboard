@@ -88,7 +88,8 @@ public final class ProjectModelAssembler {
                         input.springComponents().diagnostics(),
                         input.springConfiguration().diagnostics(),
                         input.springEndpoints().diagnostics(),
-                        input.springDependencies().diagnostics())
+                        input.springDependencies().diagnostics(),
+                        input.additionalDiagnostics())
                 .flatMap(List::stream)
                 .toList());
         modules = stabilizeModules(modules, diagnostics);

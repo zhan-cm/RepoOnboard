@@ -23,6 +23,7 @@ import { createModuleExplorerModel } from './lib/reportModules.js'
 import { createApiModel, createApiScope, defaultApiExploration } from './lib/reportEndpoints.js'
 import { createSourceDetailModel } from './lib/reportSources.js'
 import { createSourceNavigationHost } from './lib/sourceNavigationHost.js'
+import { CURRENT_REPORT_SCHEMA, reportSchemaCompatibility } from './lib/reportSchema.js'
 
 const navigationItems = Object.freeze([
   { id: 'overview', label: 'Overview', glyph: 'O', disabled: false },
@@ -146,7 +147,11 @@ onMounted(async () => {
     if (!response.ok) {
       throw new Error(`Report request failed (${response.status})`)
     }
-    report.value = await response.json()
+    const loadedReport = await response.json()
+    if (!reportSchemaCompatibility(loadedReport?.schemaVersion).compatible) {
+      throw new Error(`Unsupported report schema (${loadedReport?.schemaVersion ?? 'missing'}); this UI supports schema major ${CURRENT_REPORT_SCHEMA.split('.')[0]} and is packaged with ${CURRENT_REPORT_SCHEMA}`)
+    }
+    report.value = loadedReport
   } catch (cause) {
     error.value = cause instanceof Error ? cause.message : 'The analysis report could not be loaded.'
   }

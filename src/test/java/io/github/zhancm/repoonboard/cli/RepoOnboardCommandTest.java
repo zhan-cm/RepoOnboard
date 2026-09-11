@@ -60,6 +60,27 @@ class RepoOnboardCommandTest {
     }
 
     @Test
+    void carriesPipelineDiagnosticsAndPartialStatusIntoTheUiReport() {
+        AtomicReference<AnalysisReport> launchedReport = new AtomicReference<>();
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+
+        int exitCode = RepoOnboardCommand.execute(
+                new String[] {FixturePaths.project("spring-api-project").toString(), "--no-open"},
+                new PrintWriter(out, true),
+                new PrintWriter(err, true),
+                (report, noOpen, standardOut, standardErr) -> launchedReport.set(report));
+
+        assertEquals(3, exitCode);
+        assertEquals(io.github.zhancm.repoonboard.core.model.AnalysisStatus.PARTIAL,
+                launchedReport.get().status());
+        assertTrue(launchedReport.get().diagnostics().stream()
+                .anyMatch(diagnostic -> diagnostic.code().equals("SPRING_MVC_PATH_UNRESOLVED")));
+        assertTrue(launchedReport.get().diagnostics().stream()
+                .anyMatch(diagnostic -> diagnostic.code().equals("SPRING_MVC_CONDITION_UNRESOLVED")));
+    }
+
+    @Test
     void reportsConfirmedComponentDependencies() {
         CliResult result = execute(FixturePaths.project("spring-dependency-project").toString());
 

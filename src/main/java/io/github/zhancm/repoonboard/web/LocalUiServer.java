@@ -20,6 +20,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /** A loopback-only server exposing one immutable report and packaged UI resources. */
 final class LocalUiServer implements AutoCloseable {
     private static final String RESOURCE_ROOT = "/io/github/zhancm/repoonboard/web/ui/";
+    private static final String CONTENT_SECURITY_POLICY = String.join("; ",
+            "default-src 'none'",
+            "script-src 'self'",
+            "style-src 'self'",
+            "img-src 'self' data:",
+            "connect-src 'self'",
+            "font-src 'self'",
+            "base-uri 'none'",
+            "form-action 'none'",
+            "frame-ancestors 'none'");
 
     private final HttpServer server;
     private final ExecutorService executor;
@@ -40,19 +50,25 @@ final class LocalUiServer implements AutoCloseable {
     static LocalUiServer start(AnalysisReport report, InetSocketAddress address) throws IOException {
         Objects.requireNonNull(report, "report");
         Objects.requireNonNull(address, "address");
-        if (address.getAddress() == null || !address.getAddress().isLoopbackAddress()) {
-            throw new IllegalArgumentException("Local UI address must be resolved loopback");
+        if (address.getAddress() == null
+                || !"127.0.0.1".equals(address.getAddress().getHostAddress())) {
+            throw new IllegalArgumentException("Local UI address must be resolved 127.0.0.1");
         }
 
         byte[] reportJson = new AnalysisReportJson().serialize(report)
                 .getBytes(StandardCharsets.UTF_8);
+        Asset index = loadAsset("index.html", "text/html; charset=utf-8");
+        verifyPackagedSchema(index);
         Map<String, Asset> assets = Map.of(
-                "/", loadAsset("index.html", "text/html; charset=utf-8"),
-                "/index.html", loadAsset("index.html", "text/html; charset=utf-8"),
+                "/", index,
+                "/index.html", index,
                 "/assets/app.js", loadAsset("assets/app.js", "text/javascript; charset=utf-8"),
                 "/assets/app.css", loadAsset("assets/app.css", "text/css; charset=utf-8"));
 
         HttpServer httpServer = HttpServer.create(address, 0);
+        int port = httpServer.getAddress().getPort();
+        String expectedHost = "127.0.0.1:" + port;
+        String expectedOrigin = "http://" + expectedHost;
         ExecutorService executor = Executors.newFixedThreadPool(2, runnable -> {
             Thread thread = new Thread(runnable, "repoonboard-http");
             thread.setDaemon(false);
@@ -60,16 +76,18 @@ final class LocalUiServer implements AutoCloseable {
         });
         try {
             httpServer.setExecutor(executor);
-            httpServer.createContext("/api/report", new ExactResponseHandler(
-                    "/api/report", "application/json; charset=utf-8", reportJson));
-            httpServer.createContext("/", exchange -> {
-                Asset asset = assets.get(exchange.getRequestURI().getPath());
+            httpServer.createContext("/api/report", secured(new ExactResponseHandler(
+                    "/api/report", "application/json; charset=utf-8", reportJson),
+                    expectedHost, expectedOrigin));
+            httpServer.createContext("/", secured(exchange -> {
+                String path = canonicalRequestPath(exchange);
+                Asset asset = path == null ? null : assets.get(path);
                 if (asset == null) {
                     send(exchange, 404, "text/plain; charset=utf-8", bytes("Not found"));
                     return;
                 }
                 respondToRead(exchange, asset.contentType(), asset.body());
-            });
+            }, expectedHost, expectedOrigin));
             httpServer.start();
             return new LocalUiServer(httpServer, executor);
         } catch (RuntimeException exception) {
@@ -104,6 +122,41 @@ final class LocalUiServer implements AutoCloseable {
         }
     }
 
+    private static void verifyPackagedSchema(Asset index) throws IOException {
+        String html = new String(index.body(), StandardCharsets.UTF_8);
+        String marker = "<meta name=\"repoonboard-report-schema\" content=\""
+                + AnalysisReportJson.currentSchemaVersion() + "\"";
+        if (!html.contains(marker)) {
+            throw new IOException("Packaged UI report schema does not match "
+                    + AnalysisReportJson.currentSchemaVersion());
+        }
+    }
+
+    private static HttpHandler secured(
+            HttpHandler handler,
+            String expectedHost,
+            String expectedOrigin) {
+        return exchange -> {
+            String host = exchange.getRequestHeaders().getFirst("Host");
+            String origin = exchange.getRequestHeaders().getFirst("Origin");
+            if (!expectedHost.equalsIgnoreCase(host)
+                    || origin != null && !expectedOrigin.equals(origin)) {
+                send(exchange, 403, "text/plain; charset=utf-8", bytes("Forbidden"));
+                return;
+            }
+            handler.handle(exchange);
+        };
+    }
+
+    private static String canonicalRequestPath(HttpExchange exchange) {
+        String rawPath = exchange.getRequestURI().getRawPath();
+        String path = exchange.getRequestURI().getPath();
+        if (rawPath == null || !rawPath.equals(path) || exchange.getRequestURI().getRawQuery() != null) {
+            return null;
+        }
+        return path;
+    }
+
     private static void respondToRead(HttpExchange exchange, String contentType, byte[] body)
             throws IOException {
         String method = exchange.getRequestMethod();
@@ -120,6 +173,10 @@ final class LocalUiServer implements AutoCloseable {
         exchange.getResponseHeaders().set("Content-Type", contentType);
         exchange.getResponseHeaders().set("Cache-Control", "no-store");
         exchange.getResponseHeaders().set("X-Content-Type-Options", "nosniff");
+        exchange.getResponseHeaders().set("Content-Security-Policy", CONTENT_SECURITY_POLICY);
+        exchange.getResponseHeaders().set("Cross-Origin-Resource-Policy", "same-origin");
+        exchange.getResponseHeaders().set("Referrer-Policy", "no-referrer");
+        exchange.getResponseHeaders().set("X-Frame-Options", "DENY");
         if (exchange.getRequestMethod().equals("HEAD")) {
             exchange.sendResponseHeaders(status, -1);
             exchange.close();
@@ -157,7 +214,7 @@ final class LocalUiServer implements AutoCloseable {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            if (!exchange.getRequestURI().getPath().equals(path)) {
+            if (!path.equals(canonicalRequestPath(exchange))) {
                 send(exchange, 404, "text/plain; charset=utf-8", bytes("Not found"));
                 return;
             }

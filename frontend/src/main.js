@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { verifyPackagedSchema } from './lib/reportSchema.js'
 import './styles/tokens.css'
 import './styles/base.css'
 import './styles/shell.css'
@@ -9,4 +10,5 @@ import './styles/architecture.css'
 import './styles/api.css'
 import './styles/source.css'
 
+verifyPackagedSchema()
 createApp(App).mount('#app')

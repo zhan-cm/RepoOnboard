@@ -26,6 +26,11 @@ public final class AnalysisReportJson {
             .build();
     private static final ObjectWriter WRITER = MAPPER.writer().with(prettyPrinter());
 
+    /** Returns the schema version emitted by this build. */
+    public static String currentSchemaVersion() {
+        return ReportSchemaVersion.CURRENT.toString();
+    }
+
     private static DefaultPrettyPrinter prettyPrinter() {
         DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
         printer.indentObjectsWith(new DefaultIndenter("  ", "\n"));
