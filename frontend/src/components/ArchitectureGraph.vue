@@ -69,6 +69,10 @@ const graphStyles = [
       'line-color': '#087eb8',
       'target-arrow-color': '#087eb8'
     }
+  },
+  {
+    selector: 'node.context-muted, edge.context-muted',
+    style: { opacity: 0.24 }
   }
 ]
 
@@ -114,7 +118,6 @@ async function render() {
       },
       minZoom: 0.5,
       maxZoom: 2.25,
-      wheelSensitivity: 0.18,
       boxSelectionEnabled: false
     })
 
@@ -146,16 +149,18 @@ async function render() {
 
 function applySelection() {
   if (!graph) return
-  graph.elements().removeClass('connected').unselect()
+  graph.elements().removeClass('connected context-muted').unselect()
   if (!props.selection?.id) return
   const selected = graph.getElementById(props.selection.id)
   if (selected.empty()) return
+  graph.elements().addClass('context-muted')
+  selected.removeClass('context-muted')
   selected.select()
   if (selected.isNode()) {
-    selected.connectedEdges().addClass('connected')
-    selected.neighborhood('node').addClass('connected')
+    selected.connectedEdges().removeClass('context-muted').addClass('connected')
+    selected.neighborhood('node').removeClass('context-muted').addClass('connected')
   } else {
-    selected.connectedNodes().addClass('connected')
+    selected.connectedNodes().removeClass('context-muted').addClass('connected')
   }
 }
 
@@ -178,7 +183,15 @@ function fit() {
   graph?.fit(undefined, 46)
 }
 
-defineExpose({ fit })
+function focus(id) {
+  if (!graph || !id) return
+  const element = graph.getElementById(id)
+  if (element.empty()) return
+  graph.center(element)
+  graph.zoom({ level: Math.max(1, graph.zoom()), position: element.position() })
+}
+
+defineExpose({ fit, focus })
 </script>
 
 <template>

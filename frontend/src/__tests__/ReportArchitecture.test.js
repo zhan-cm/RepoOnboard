@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
   ARCHITECTURE_NODE_BUDGET,
+  ARCHITECTURE_RELATIONSHIP_KIND,
   createArchitectureModel,
-  createArchitectureScope
+  createArchitectureScope,
+  defaultArchitectureExploration
 } from '../lib/reportArchitecture.js'
 
 describe('createArchitectureModel', () => {
@@ -79,6 +81,85 @@ describe('createArchitectureModel', () => {
     })
 
     expect(createArchitectureScope(model, 'api').overBudget).toBe(true)
+  })
+
+  it('combines exact component kinds with a confirmed one-hop neighborhood', () => {
+    const model = createArchitectureModel(report())
+    const scope = createArchitectureScope(model, 'api', {
+      componentKinds: ['REST_CONTROLLER', 'SERVICE'],
+      relationshipKinds: [ARCHITECTURE_RELATIONSHIP_KIND],
+      selectedComponentId: 'service',
+      neighborhood: true
+    })
+
+    expect(scope.nodes.map((node) => node.id)).toEqual(['controller', 'service'])
+    expect(scope.edges.map((edge) => edge.id)).toEqual(['confirmed'])
+    expect(scope.counts).toMatchObject({
+      reportedComponents: 3,
+      components: 2,
+      filteredComponents: 1,
+      confirmedRelations: 1
+    })
+    expect(scope.exploration.neighborhood).toBe(true)
+  })
+
+  it('uses search only to narrow the list and reports kind-excluded matches', () => {
+    const model = createArchitectureModel(report())
+    const byPath = createArchitectureScope(model, 'api', {
+      ...defaultArchitectureExploration(),
+      query: 'OrderRepository.java'
+    })
+    const excluded = createArchitectureScope(model, 'api', {
+      componentKinds: ['SERVICE'],
+      relationshipKinds: [ARCHITECTURE_RELATIONSHIP_KIND],
+      query: 'OrderController'
+    })
+
+    expect(byPath.nodes).toHaveLength(3)
+    expect(byPath.listNodes.map((node) => node.id)).toEqual(['repository'])
+    expect(excluded.listNodes).toHaveLength(0)
+    expect(excluded.searchMatchExcludedByKind).toBe(true)
+  })
+
+  it('keeps components visible when the only relationship type is disabled', () => {
+    const model = createArchitectureModel(report())
+    const scope = createArchitectureScope(model, 'api', {
+      componentKinds: null,
+      relationshipKinds: []
+    })
+
+    expect(scope.nodes).toHaveLength(3)
+    expect(scope.edges).toHaveLength(0)
+    expect(scope.counts.confirmedRelations).toBe(0)
+    expect(scope.filtersActive).toBe(true)
+  })
+
+  it('applies the readability budget after component filters', () => {
+    const components = Array.from({ length: ARCHITECTURE_NODE_BUDGET + 1 }, (_, index) => ({
+      id: `component-${index}`,
+      moduleId: 'api',
+      qualifiedName: `example.Component${index}`,
+      kind: index === 0 ? 'SERVICE' : 'COMPONENT',
+      framework: 'SPRING_BOOT',
+      evidence: []
+    }))
+    const model = createArchitectureModel({
+      modules: [{ id: 'api', artifactId: 'api' }],
+      components,
+      dependencies: [],
+      diagnostics: []
+    })
+
+    const overBudget = createArchitectureScope(model, 'api')
+    const narrowed = createArchitectureScope(model, 'api', {
+      componentKinds: ['SERVICE'],
+      relationshipKinds: [ARCHITECTURE_RELATIONSHIP_KIND]
+    })
+
+    expect(overBudget.overBudget).toBe(true)
+    expect(overBudget.withheldComponents).toBe(ARCHITECTURE_NODE_BUDGET + 1)
+    expect(narrowed.overBudget).toBe(false)
+    expect(narrowed.nodes.map((node) => node.id)).toEqual(['component-0'])
   })
 })
 

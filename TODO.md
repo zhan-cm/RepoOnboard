@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0706 — Architecture Exploration & Filtering。**
+> **T-0707 — API Map。**
 
-M0 至 M6 及 T-0701 至 T-0705 已经完成。Architecture Workspace 已按数据契约与 Stitch 原型实现并通过浏览器验证；下一项是 T-0706，需先完成页面级数据契约审计与 Stitch 设计交接，再实现复杂探索和筛选。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M6 及 T-0701 至 T-0706 已经完成。Architecture Workspace 现在支持可组合筛选、搜索、一阶邻域、图规模预算和可搜索列表回退。下一步只进行 T-0707 的页面级数据契约审计与 Stitch 设计交接，在用户完成并导入设计前不实现 API Map。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -1908,7 +1908,16 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
+```
+
+Design Handoff:
+
+```text
+[x] UI Data Contract Audit
+[x] Stitch Design Brief
+[x] User-reviewed Stitch prototype imported
+[x] Vue implementation and browser validation
 ```
 
 至少支持：
@@ -1927,9 +1936,9 @@ Reset / Focus / Fit Selection
 Acceptance Criteria:
 
 ```text
-[ ] 模块、组件类型和一阶邻域筛选可组合
-[ ] 超过节点预算时显示隐藏数量并要求缩小范围
-[ ] 始终提供可搜索列表作为图的替代入口
+[x] 模块、组件类型和一阶邻域筛选可组合
+[x] 超过节点预算时显示隐藏数量并要求缩小范围
+[x] 始终提供可搜索列表作为图的替代入口
 ```
 
 ---
@@ -3010,18 +3019,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0706
-Architecture Exploration & Filtering
+T-0707
+API Map data contract audit and Stitch design handoff
 ```
 
 本阶段：
 
 > **M7 — Local Web UI**
 
-M0 至 M6 及 T-0701 至 T-0705 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M6 及 T-0701 至 T-0706 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0706
+T-0707 design handoff
 ```
 
 ---
@@ -3050,7 +3059,7 @@ M3 Java Source Analysis — complete
 M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
-M7 Local Web UI — in progress (T-0701 through T-0705 complete; T-0706 is next)
+M7 Local Web UI — in progress (T-0701 through T-0706 complete; T-0707 design handoff next)
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3061,6 +3070,6 @@ Release
 
 Next:
 
-> **T-0706 — Architecture Exploration & Filtering.**
+> **T-0707 — API Map data contract audit and Stitch design handoff.**
 
 ````

@@ -129,7 +129,7 @@ Spring Boot 构建识别使用模块声明的 `org.springframework.boot:spring-b
 
 ### 架构地图
 
-以模块为范围，在交互式图中展示经过确认的 Spring 组件注入关系。节点和连线可打开基于报告事实的 Inspector，查看源码位置和原始 Evidence；未解析或有歧义的关系保持显式状态，不会画成确定事实。超出可读性预算的范围会停止渲染，而不是展示误导性的残缺图。搜索、可组合筛选和邻域探索属于下一任务。
+以模块为范围，在交互式图中展示经过确认的 Spring 组件注入关系。节点和连线可打开基于报告事实的 Inspector，查看源码位置和原始 Evidence；未解析或有歧义的关系保持显式状态，不会画成确定事实。模块、组件类型、关系类型筛选可与所选节点的一阶邻域组合使用；可搜索组件列表始终提供替代入口，包括匹配范围超过图可读性预算时。
 
 ### API 地图
 
@@ -190,7 +190,7 @@ cd RepoOnboard
 ./mvnw clean verify
 ```
 
-当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.2` JSON 序列化现已接入 loopback 服务、响应式产品 Shell、Repository Overview、Module Explorer 与 Architecture Workspace。模块页面使用显式 Maven 聚合关系、精确坐标唯一确认的内部模块依赖、模块级统计、元数据、源码根、版本事实、诊断与证据。架构页面使用 Cytoscape.js，仅在单一模块范围内绘制确认的组件注入边，并提供缩放、平移、适配、选择、源码证据、响应式列表回退以及明确的部分/不可用状态。架构探索筛选、API 和源码导航等视图仍属于后续 M7 任务。
+当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.2` JSON 序列化现已接入 loopback 服务、响应式产品 Shell、Repository Overview、Module Explorer 与 Architecture Workspace。模块页面使用显式 Maven 聚合关系、精确坐标唯一确认的内部模块依赖、模块级统计、元数据、源码根、版本事实、诊断与证据。架构页面使用 Cytoscape.js，仅在单一模块范围内绘制确认的组件注入边，并提供可组合筛选、搜索、所选节点一阶邻域、缩放、平移、适配、选择、源码证据、响应式可搜索列表回退，以及明确的部分/不可用/超预算状态。API 和源码导航等视图仍属于后续 M7 任务。
 
 ## 项目文档
 

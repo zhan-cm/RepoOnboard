@@ -4,15 +4,159 @@
 }
 
 .architecture-workspace {
-  display: grid;
-  grid-template-rows: auto auto auto minmax(0, 1fr) 1.8rem;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto;
   container-type: inline-size;
   color: var(--color-text);
   background: var(--color-surface);
 }
+
+.architecture-exploration {
+  position: relative;
+  z-index: 8;
+  border-bottom: 1px solid var(--color-border);
+  background: #fff;
+}
+
+.architecture-exploration__filters,
+.architecture-exploration__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.55rem 1.35rem;
+}
+
+.architecture-exploration__actions {
+  border-top: 1px solid #edf0f5;
+  background: var(--color-surface-subtle);
+}
+
+.architecture-filter-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.architecture-filter-menu summary,
+.architecture-relationship-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  font-size: 0.66rem;
+  cursor: pointer;
+}
+
+.architecture-filter-menu summary::-webkit-details-marker { display: none; }
+.architecture-filter-menu summary::after { content: '▾'; color: var(--color-text-muted); }
+.architecture-filter-menu summary strong,
+.architecture-relationship-filter strong { color: var(--color-text); font-family: var(--font-mono); font-size: 0.6rem; }
+
+.architecture-filter-menu fieldset {
+  position: absolute;
+  z-index: 12;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  display: grid;
+  width: 15rem;
+  padding: 0.55rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: var(--shadow-raised);
+}
+
+.architecture-filter-menu legend {
+  padding: 0 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.62rem;
+}
+
+.architecture-filter-menu fieldset label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2rem;
+  padding: 0 0.35rem;
+  border-radius: 0.3rem;
+  color: var(--color-text-secondary);
+  font-size: 0.65rem;
+}
+
+.architecture-filter-menu fieldset label:hover { background: var(--color-surface-subtle); }
+.architecture-filter-menu fieldset strong { color: var(--color-text-muted); font-family: var(--font-mono); }
+.architecture-relationship-filter input,
+.architecture-filter-menu input { accent-color: var(--color-accent-strong); }
+
+.architecture-search {
+  min-width: 11rem;
+  flex: 1 1 18rem;
+}
+
+.architecture-search input {
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  outline: 0;
+  color: var(--color-text);
+  background: var(--color-surface-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+}
+
+.architecture-search input:focus-visible,
+.architecture-filter-menu summary:focus-visible,
+.architecture-component-tray button:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-ring);
+}
+
+.architecture-active-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  margin-right: auto;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.59rem;
+}
+
+.architecture-active-filters strong {
+  padding: 0.18rem 0.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.3rem;
+  color: var(--color-text-secondary);
+  background: #fff;
+  white-space: nowrap;
+}
+
+.architecture-scope-notice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+  padding: 0.42rem 1.35rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-surface-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+}
+
+.architecture-scope-notice strong { color: var(--color-text); }
+.architecture-scope-notice span::before { content: '·'; margin-right: 0.8rem; color: var(--color-border-strong); }
 
 .architecture-header {
   display: flex;
@@ -140,6 +284,14 @@
   opacity: 0.48;
 }
 
+.architecture-tool-button.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.architecture-deselect:disabled { cursor: not-allowed; opacity: 0.48; }
+
 .architecture-deselect {
   border-color: transparent;
   color: var(--color-text-muted);
@@ -172,13 +324,76 @@
 
 .architecture-canvas {
   position: relative;
+  flex: 1 1 auto;
   min-width: 0;
-  min-height: 0;
+  min-height: 20rem;
   overflow: hidden;
   background:
     radial-gradient(circle, #dce3ec 1px, transparent 1px) 0 0 / 20px 20px,
     #f8fafc;
 }
+
+.architecture-component-tray {
+  position: relative;
+  z-index: 6;
+  flex: 0 0 auto;
+  max-height: 12rem;
+  overflow: hidden;
+  border-top: 1px solid var(--color-border);
+  background: #fff;
+}
+
+.architecture-component-tray__header {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 2.15rem;
+  padding: 0 1rem;
+  border: 0;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  text-align: left;
+  cursor: pointer;
+}
+
+.architecture-component-tray__header strong { color: var(--color-text); font-size: 0.7rem; }
+.architecture-component-tray__header span { color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.6rem; }
+.architecture-component-tray__header span:last-child { justify-self: end; color: var(--color-accent); }
+.architecture-component-tray__body { max-height: 9.8rem; overflow-y: auto; }
+
+.architecture-component-list { margin: 0; padding: 0; list-style: none; }
+.architecture-component-list li + li { border-top: 1px solid #edf0f5; }
+.architecture-component-list button {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.9fr) minmax(12rem, 1.35fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.35rem 1rem;
+  border: 0;
+  border-left: 2px solid transparent;
+  color: var(--color-text-secondary);
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.architecture-component-list button:hover { background: var(--color-surface-subtle); }
+.architecture-component-list button.active { border-left-color: var(--color-accent); background: var(--color-accent-soft); }
+.architecture-component-list__identity { display: flex; align-items: center; gap: 0.45rem; min-width: 0; }
+.architecture-component-list__identity strong { overflow: hidden; color: var(--color-text); font-size: 0.66rem; text-overflow: ellipsis; white-space: nowrap; }
+.architecture-component-list__identity small { padding: 0.16rem 0.3rem; border: 1px solid var(--color-border); border-radius: 0.25rem; color: var(--color-text-muted); font-size: 0.55rem; white-space: nowrap; }
+.architecture-component-list code { overflow: hidden; color: var(--color-text-muted); font-size: 0.58rem; text-overflow: ellipsis; white-space: nowrap; }
+.architecture-component-list__relations { color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.58rem; white-space: nowrap; }
+.architecture-list-dot { width: 0.45rem; height: 0.45rem; flex: 0 0 auto; border-radius: 50%; background: var(--color-border-strong); }
+.architecture-list-dot--controller { background: #8b5cf6; }
+.architecture-list-dot--service { background: #0284c7; }
+.architecture-list-dot--repository { background: #16a36a; }
+.architecture-list-dot--configuration { background: #d18a16; }
+.architecture-list-empty { margin: 0; padding: 1rem; color: var(--color-text-muted); font-size: 0.68rem; text-align: center; }
 
 .architecture-canvas > .state-panel {
   width: min(40rem, calc(100% - 3rem));
@@ -189,7 +404,7 @@
 .architecture-graph {
   width: 100%;
   height: 100%;
-  min-height: 28rem;
+  min-height: 20rem;
 }
 
 .architecture-graph-controls {
@@ -427,7 +642,9 @@
     justify-content: flex-start;
   }
 
-  .architecture-toolbar {
+  .architecture-toolbar,
+  .architecture-exploration__filters,
+  .architecture-exploration__actions {
     flex-wrap: wrap;
   }
 
@@ -446,7 +663,9 @@
     justify-content: flex-start;
   }
 
-  .architecture-toolbar {
+  .architecture-toolbar,
+  .architecture-exploration__filters,
+  .architecture-exploration__actions {
     flex-wrap: wrap;
   }
 
@@ -462,22 +681,27 @@
 
 @media (max-width: 57rem) {
   .architecture-graph-frame { display: none; }
-  .architecture-mobile-list {
-    display: grid;
-    gap: 0.4rem;
-    padding: 1rem;
-    overflow-y: auto;
-  }
-  .architecture-mobile-list button.active { border-color: var(--color-accent); background: var(--color-accent-soft); }
-  .architecture-canvas { overflow-y: auto; background: var(--color-surface-subtle); }
+  .architecture-canvas { min-height: 0; flex: 0 0 auto; overflow-y: auto; background: var(--color-surface-subtle); }
   .architecture-no-edges { position: static; margin: 0.8rem; transform: none; }
+  .architecture-component-tray { max-height: none; flex: 1 1 auto; }
+  .architecture-component-tray__body { max-height: none; }
+  .architecture-component-list button { grid-template-columns: minmax(0, 1fr) auto; }
+  .architecture-component-list code { grid-column: 1 / -1; }
 }
 
 @media (max-width: 47.5rem) {
   .architecture-workspace { min-height: 48rem; overflow: visible; }
-  .architecture-header, .architecture-toolbar { padding-inline: 1rem; }
+  .architecture-header, .architecture-toolbar,
+  .architecture-exploration__filters, .architecture-exploration__actions,
+  .architecture-scope-notice { padding-inline: 1rem; }
   .architecture-scope { align-items: flex-start; width: 100%; flex-direction: column; }
   .architecture-scope select { width: 100%; }
+  .architecture-filter-menu, .architecture-relationship-filter, .architecture-search { width: 100%; }
+  .architecture-filter-menu summary, .architecture-relationship-filter { width: 100%; }
+  .architecture-filter-menu fieldset { width: 100%; }
+  .architecture-active-filters { width: 100%; overflow-x: auto; }
+  .architecture-component-tray__header { grid-template-columns: auto auto 1fr; }
+  .architecture-component-tray__header span:last-child { display: none; }
   .architecture-statusbar span:nth-child(2) { display: none; }
 }
 
