@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.github.zhancm.repoonboard.core.model.AnalysisReport;
 import io.github.zhancm.repoonboard.serialization.AnalysisReportJson;
+import io.github.zhancm.repoonboard.serialization.StartHereJson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -57,6 +58,8 @@ final class LocalUiServer implements AutoCloseable {
 
         byte[] reportJson = new AnalysisReportJson().serialize(report)
                 .getBytes(StandardCharsets.UTF_8);
+        byte[] startHereJson = new StartHereJson().serialize(report)
+                .getBytes(StandardCharsets.UTF_8);
         Asset index = loadAsset("index.html", "text/html; charset=utf-8");
         verifyPackagedSchema(index);
         Map<String, Asset> assets = Map.of(
@@ -78,6 +81,9 @@ final class LocalUiServer implements AutoCloseable {
             httpServer.setExecutor(executor);
             httpServer.createContext("/api/report", secured(new ExactResponseHandler(
                     "/api/report", "application/json; charset=utf-8", reportJson),
+                    expectedHost, expectedOrigin));
+            httpServer.createContext("/api/start-here", secured(new ExactResponseHandler(
+                    "/api/start-here", "application/json; charset=utf-8", startHereJson),
                     expectedHost, expectedOrigin));
             httpServer.createContext("/", secured(exchange -> {
                 String path = canonicalRequestPath(exchange);

@@ -218,6 +218,39 @@ describe('App', () => {
     expect(view.container.querySelector('.api-inspector__route')).not.toBeNull()
     view.unmount()
   })
+
+  it('loads Start Here independently and follows exact exploration targets', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url) => ({
+      ok: true,
+      json: async () => url === '/api/start-here' ? startHereGuide() : startHereReport()
+    })))
+
+    const view = mount(App)
+    await flushUi()
+    const startButton = [...view.container.querySelectorAll('.nav-item')]
+      .find((button) => button.textContent.includes('Start Here'))
+    expect(startButton.disabled).toBe(false)
+    startButton.click()
+    await flushUi()
+    await flushUi()
+
+    expect(view.container.querySelector('.start-here')).not.toBeNull()
+    expect(view.container.querySelector('.start-here-inspector')).not.toBeNull()
+    expect(view.container.textContent).toContain('Exposes 1 HTTP endpoint')
+
+    view.container.querySelector('.start-here-targets--endpoints button').click()
+    await flushUi()
+    expect(view.container.querySelector('.api-inspector__route')).not.toBeNull()
+    expect(view.container.querySelector('.nav-item--active').textContent).toContain('APIs')
+
+    startButton.click()
+    await flushUi()
+    view.container.querySelector('.start-here-targets:not(.start-here-targets--endpoints) button').click()
+    await flushUi()
+    expect(view.container.querySelector('.architecture-inspector__body')).not.toBeNull()
+    expect(view.container.querySelector('.nav-item--active').textContent).toContain('Architecture')
+    view.unmount()
+  })
 })
 
 function sourceReport() {
@@ -244,5 +277,47 @@ function sourceReport() {
       }]
     }],
     entryPoints: [], dependencies: [], diagnostics: []
+  }
+}
+
+function startHereReport() {
+  const path = 'src/main/java/example/OrderController.java'
+  return {
+    schemaVersion: '1.2', status: 'SUCCESS',
+    project: { id: 'project:orders', name: 'orders', buildSystem: 'MAVEN' },
+    summary: { moduleCount: 1, componentCount: 1, endpointCount: 1 },
+    modules: [{ id: 'orders', artifactId: 'orders', baseDirectory: '.', pomFileId: 'pom.xml' }],
+    sourceFiles: [{ id: path, moduleId: 'orders', path, language: 'JAVA', location: { sourceFileId: path } }],
+    components: [{
+      id: 'controller', moduleId: 'orders', qualifiedName: 'example.OrderController',
+      kind: 'REST_CONTROLLER', framework: 'SPRING_BOOT',
+      location: { sourceFileId: path, startLine: 5 }, evidence: []
+    }],
+    endpoints: [{
+      id: 'get-orders', moduleId: 'orders', componentId: 'controller', httpMethod: 'GET',
+      path: '/api/orders', unresolvedPath: false, handlerMethod: 'list', framework: 'SPRING_BOOT',
+      conditions: { params: [], headers: [], consumes: [], produces: [], unresolved: false },
+      location: { sourceFileId: path, startLine: 12 }, evidence: []
+    }],
+    entryPoints: [], dependencies: [], diagnostics: []
+  }
+}
+
+function startHereGuide() {
+  const path = 'src/main/java/example/OrderController.java'
+  return {
+    schemaVersion: '1.0', reportSchemaVersion: '1.2', projectId: 'project:orders',
+    analysisStatus: 'SUCCESS', coverageLimited: false, coverageLimitationCodes: [], coverageNotice: null,
+    defaultLimit: 10, totalItemCount: 1, expandable: false, hiddenItemCount: 0,
+    items: [{
+      sourceFileId: path, moduleId: 'orders', reasons: [{
+        kind: 'HTTP_ENDPOINT_EXPOSURE', message: 'Exposes 1 HTTP endpoint', factCount: 1,
+        dependencyDistance: null, supportingEntityIds: ['controller', 'get-orders'],
+        evidence: [{
+          type: 'SPRING_MVC_METHOD_MAPPING', ruleId: 'spring.mvc.GET',
+          location: { sourceFileId: path, startLine: 12 }, relatedLocations: []
+        }]
+      }]
+    }]
   }
 }

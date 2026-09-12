@@ -14,6 +14,8 @@ import SidebarNav from './components/SidebarNav.vue'
 import StatePanel from './components/StatePanel.vue'
 import SourceDetailView from './components/SourceDetailView.vue'
 import SourceRelatedInspector from './components/SourceRelatedInspector.vue'
+import StartHereInspector from './components/StartHereInspector.vue'
+import StartHereView from './components/StartHereView.vue'
 import {
   createArchitectureModel,
   createArchitectureScope,
@@ -22,6 +24,7 @@ import {
 import { createModuleExplorerModel } from './lib/reportModules.js'
 import { createApiModel, createApiScope, defaultApiExploration } from './lib/reportEndpoints.js'
 import { createSourceDetailModel } from './lib/reportSources.js'
+import { createStartHereModel } from './lib/reportStartHere.js'
 import { createSourceNavigationHost } from './lib/sourceNavigationHost.js'
 import { CURRENT_REPORT_SCHEMA, reportSchemaCompatibility } from './lib/reportSchema.js'
 
@@ -30,7 +33,7 @@ const navigationItems = Object.freeze([
   { id: 'modules', label: 'Modules', glyph: 'M', disabled: false },
   { id: 'architecture', label: 'Architecture', glyph: 'A', active: false, disabled: false },
   { id: 'apis', label: 'APIs', glyph: '↗', active: false, disabled: false },
-  { id: 'start-here', label: 'Start Here', glyph: 'S', active: false, disabled: true }
+  { id: 'start-here', label: 'Start Here', glyph: 'S', active: false, disabled: false }
 ])
 
 const report = ref(null)
@@ -43,6 +46,11 @@ const architectureExploration = ref(defaultArchitectureExploration())
 const apiSelection = ref(null)
 const apiExploration = ref(defaultApiExploration())
 const sourceSelection = ref(null)
+const startHereModel = ref(null)
+const startHereError = ref('')
+const startHereLoading = ref(false)
+const startHereExpanded = ref(false)
+const selectedStartHereSourceFileId = ref('')
 const sourceNavigationHost = createSourceNavigationHost()
 const navigation = computed(() => navigationItems.map((item) => ({
   ...item,
@@ -67,7 +75,9 @@ const apiScope = computed(() => apiModel.value
 const sourceModel = computed(() => report.value && sourceSelection.value
   ? createSourceDetailModel(report.value, sourceSelection.value)
   : null)
-const workbench = computed(() => ['modules', 'architecture', 'apis'].includes(activePage.value))
+const workbench = computed(() => ['modules', 'architecture', 'apis', 'start-here'].includes(activePage.value))
+const selectedStartHereItem = computed(() => startHereModel.value?.items.find(
+  (item) => item.sourceFileId === selectedStartHereSourceFileId.value) ?? null)
 
 const repositoryName = computed(() => {
   if (!report.value) return 'Preparing workspace'
@@ -130,6 +140,7 @@ function selectArchitectureModule(moduleId) {
 function selectPage(pageId) {
   sourceSelection.value = null
   activePage.value = pageId
+  if (pageId === 'start-here') void loadStartHere()
 }
 
 function openSource(selection) {
@@ -137,6 +148,55 @@ function openSource(selection) {
     ...selection,
     originPage: activePage.value
   }
+}
+
+async function loadStartHere(force = false) {
+  if (!report.value || startHereLoading.value || startHereModel.value && !force) return
+  startHereLoading.value = true
+  startHereError.value = ''
+  try {
+    const response = await fetch('/api/start-here', {
+      headers: { Accept: 'application/json' }
+    })
+    if (!response.ok) {
+      throw new Error(`Reading guide request failed (${response.status})`)
+    }
+    startHereModel.value = createStartHereModel(report.value, await response.json())
+    if (!startHereModel.value.items.some(
+      (item) => item.sourceFileId === selectedStartHereSourceFileId.value)) {
+      selectedStartHereSourceFileId.value = startHereModel.value.items[0]?.sourceFileId ?? ''
+    }
+  } catch (cause) {
+    startHereModel.value = null
+    selectedStartHereSourceFileId.value = ''
+    startHereError.value = cause instanceof Error
+      ? cause.message
+      : 'The Start Here reading guide could not be loaded.'
+  } finally {
+    startHereLoading.value = false
+  }
+}
+
+function exploreStartHereComponent(componentId) {
+  const component = report.value?.components?.find((item) => item.id === componentId)
+  if (!component) return
+  sourceSelection.value = null
+  selectedArchitectureModuleId.value = component.moduleId ?? architectureModel.value?.defaultModuleId ?? ''
+  architectureExploration.value = defaultArchitectureExploration()
+  architectureSelection.value = { type: 'component', id: component.id }
+  activePage.value = 'architecture'
+}
+
+function exploreStartHereEndpoint(endpointId) {
+  const endpoint = report.value?.endpoints?.find((item) => item.id === endpointId)
+  if (!endpoint) return
+  sourceSelection.value = null
+  apiExploration.value = {
+    ...defaultApiExploration(),
+    moduleId: endpoint.moduleId ?? 'all'
+  }
+  apiSelection.value = { type: 'endpoint', id: endpoint.id }
+  activePage.value = 'apis'
 }
 
 onMounted(async () => {
@@ -171,7 +231,8 @@ onMounted(async () => {
           <span>{{ moduleModel?.modules.length ?? '—' }} modules</span>
           <span v-if="activePage === 'modules'">{{ report?.summary?.sourceFileCount ?? report?.sourceFiles?.length ?? '—' }} source files</span>
           <span v-else-if="activePage === 'architecture'">{{ architectureModel?.counts.components ?? '—' }} components</span>
-          <span v-else>{{ apiModel?.counts.endpoints ?? '—' }} endpoints</span>
+          <span v-else-if="activePage === 'apis'">{{ apiModel?.counts.endpoints ?? '—' }} endpoints</span>
+          <span v-else>{{ startHereModel?.totalItemCount ?? '—' }} recommended files</span>
           <span v-if="activePage === 'architecture'">{{ architectureModel?.counts.confirmedRelations ?? '—' }} confirmed relations</span>
           <span class="workbench-status" :class="`workbench-status--${statusTone}`">{{ analysisStatus || 'UNKNOWN' }}</span>
         </div>
@@ -243,6 +304,38 @@ onMounted(async () => {
       />
     </template>
 
+    <template v-else-if="activePage === 'start-here'">
+      <StatePanel v-if="error" variant="error" heading="Report unavailable" :message="error" />
+      <StatePanel
+        v-else-if="!report"
+        variant="loading"
+        heading="Loading analysis report"
+        message="Connecting to the local RepoOnboard service…"
+      />
+      <StatePanel
+        v-else-if="startHereError"
+        variant="error"
+        heading="Reading guide unavailable"
+        :message="startHereError"
+      >
+        <template #actions><button type="button" @click="loadStartHere(true)">Retry reading guide</button></template>
+      </StatePanel>
+      <StatePanel
+        v-else-if="startHereLoading || !startHereModel"
+        variant="loading"
+        heading="Loading Start Here"
+        message="Generating the source-backed reading path from this report snapshot…"
+      />
+      <StartHereView
+        v-else
+        :model="startHereModel"
+        :expanded="startHereExpanded"
+        :selected-source-file-id="selectedStartHereSourceFileId"
+        @select="selectedStartHereSourceFileId = $event"
+        @update-expanded="startHereExpanded = $event"
+      />
+    </template>
+
     <PageLayout
       v-else
       eyebrow="Repository overview"
@@ -294,6 +387,25 @@ onMounted(async () => {
         @open-source="openSource"
       />
       <SourceRelatedInspector v-else-if="sourceSelection && sourceModel" :model="sourceModel" />
+      <StartHereInspector
+        v-else-if="activePage === 'start-here' && startHereModel"
+        :model="startHereModel"
+        :item="selectedStartHereItem"
+        @explore-component="exploreStartHereComponent"
+        @explore-endpoint="exploreStartHereEndpoint"
+      />
+      <InspectorPanel
+        v-else-if="activePage === 'start-here'"
+        title="Reading guide"
+        description="Start Here is loaded independently so the other report views remain available if its projection cannot be read."
+      >
+        <StatePanel
+          :variant="startHereError ? 'error' : 'loading'"
+          compact
+          :heading="startHereError ? 'Guide unavailable' : 'Preparing guide'"
+          :message="startHereError || 'Source-backed recommendations will appear here when the projection is ready.'"
+        />
+      </InspectorPanel>
       <InspectorPanel
         v-else
         title="About this overview"

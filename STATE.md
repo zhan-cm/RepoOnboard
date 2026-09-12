@@ -2,13 +2,13 @@
 
 ## 1. 当前阶段
 
-RepoOnboard 已完成 **M7 — Local Web UI**，当前处于 **M8 — Start Here**。
+RepoOnboard 已完成 **M8 — Start Here**，下一阶段是 **M9 — Regression & Real Repository Validation**。
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
-- **T-0801 至 T-0803** 已完成，确定性重要度信号、文件级推荐阅读路径和来源可回溯的解释已经建立，M8 正在进行。
-- 当前任务是 **T-0804 — Start Here UI**。页面级数据契约审计与 Stitch Design Brief 已完成；下一步等待用户生成、审阅并导入 Stitch 原型，在此之前不实现页面。
-- Java 21 / Maven 3.9.16 `clean verify` 当前运行 74 项前端测试和 156 项 Java 测试并全部通过，并在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 loopback 服务的安全响应头、外部 Origin 拒绝、1280×800 / 1024×640 四个主要页面布局和干净浏览器控制台均已验证。
+- **T-0801 至 T-0804** 已完成，确定性重要度信号、文件级推荐阅读路径、来源可回溯解释、只读 projection 和正式 Start Here 页面已经建立，M8 已关闭。
+- 当前下一任务是 **T-0901 — Audit Minimal Spring Regression Fixture**。
+- Java 21 / Maven 3.9.16 `clean verify` 当前运行 81 项前端测试和 157 项 Java 测试并全部通过，并在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 `start-here-project` loopback 会话的 1280×720 / 500×800 布局、组件/API 精确跳转及干净浏览器控制台已经验证。
 
 ## 2. 已完成任务
 
@@ -151,7 +151,7 @@ RepoOnboard
 - T-0708 数据契约审计确认 schema `1.2` 足以实现 Component / Endpoint 的 Source / Evidence Detail，无需增加源码读取路由或后端模型。V0.1 Source Navigation 只展示并复制扫描根相对 path、真实 1-based 位置、可选 symbol、module、Evidence 与可确认 related facts；它不是文件树、源码编辑器或 IDE 集成。Related Components 只允许 exact ID / source path joins 和两端可确认的 Dependency，Endpoint 上下文必须说明组件关系不等于 handler 调用链。
 - T-0708 实现保留 Stitch 的轻量详情页和右侧 Related Facts 结构，同时排除示例仓库数据、运行状态、源码预览、绝对路径、Git 信息、Open / IDE / file 动作和 handler 调用链推断。Clipboard 通过最小宿主边界调用；失败或不可用时明确反馈，文本始终可手动选择。
 - T-0709 将本地 Web 安全假设转换为可执行边界：Host / Origin、规范路由、CSP、缓存、CORS 缺省、内容注入、并发读取、JAR 资源闭包、schema 和关闭释放均有自动化证据。Cytoscape 容器定位也在真实浏览器 warning 暴露后修正并加入回归检查。
-- T-0804 数据契约审计确认 T-0801 至 T-0803 的 Java 模型已经具备完整推荐顺序、原因、Evidence、计数和覆盖说明，但 `/api/report` 尚未暴露这份派生结果。后续实现应从同一不可变报告快照生成独立、版本化、固定只读的 `/api/start-here` projection；公共报告 schema `1.2` 保持不变，Vue 不重复实现启发式。推荐文件以路径为主身份，各原因分别展示 Evidence location；只有 supporting entity ID 与公共报告精确连接时才提供 Component / Endpoint 跨页面导航。
+- T-0804 从同一不可变报告快照生成独立、版本化、固定只读的 `/api/start-here` projection；公共报告 schema `1.2` 保持不变，Vue 不重复实现启发式。正式页面展示稳定文件顺序、全部原因、模块与 Source Evidence，支持默认/完整列表、PARTIAL/空结果说明，并只在 supporting entity ID 与公共报告精确连接时提供 Component / Endpoint 跨页面导航。实现保留 Stitch 的编号路径与 Inspector 信息层级，同时移除远程 CDN、示例运行状态、硬编码仓库值和不可证实动作。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -159,7 +159,7 @@ RepoOnboard
 
 - **Mapper 未实现**：T-0404 的 MyBatis / MyBatis-Plus Mapper 专用识别仍为可选延后项。
 - **分析范围有限**：不支持 Java/Maven/Spring Boot 以外的生态；Maven 不联网、不执行插件/生命周期、不计算传递依赖；Java/Spring 采用保守静态分析，不覆盖运行时代理、反射和动态注册。
-- **后续业务视图尚未实现**：Start Here 尚未实现；Source Navigation 已作为 Architecture / API 的跨页面辅助表面交付，不是独立一级导航。
+- **Source Navigation 边界**：Source Navigation 已作为 Architecture / API 的跨页面辅助表面交付，不是独立一级导航，也不读取源码正文或提供 IDE 动作。
 - **图规模受限**：筛选后的范围超过 60 个组件或 120 条确认关系时，页面明确显示匹配与隐藏数量并停止绘图；用户可继续通过完整搜索列表选择组件，或用组件类型与所选组件一阶邻域缩小范围。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **Windows Wrapper 启动缺陷**：当前 `mvnw.cmd` 在本机 `.m2` 目录不是链接时会读取空的 `Target[0]` 并提前失败；本轮使用 Wrapper 已下载且校验过的 Maven 3.9.16 完成全量验证，启动脚本本身仍需单独修复。
@@ -169,8 +169,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M8**：T-0804，完成 Start Here UI；T-0801 至 T-0803 已完成。
-- **M9**：T-0901 至 T-0907，完成综合 fixture、真实仓库和 onboarding 价值验证。
+- **M9**：T-0901 至 T-0907，完成综合 fixture、真实仓库和 onboarding 价值验证；当前从 T-0901 开始。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
 - **V0.2 候选**：Desktop Application 技术试验与打包。
 
@@ -178,10 +177,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-0804 — Start Here UI**
+> **T-0901 — Audit Minimal Spring Regression Fixture**
 
-页面级 Data Contract Audit 与 Stitch Design Brief 已完成。下一步由用户据此生成、审阅并导入 Stitch 原型；导入后先审计设计中的示例值、原因、Evidence、状态和导航动作，再实现只读 `/api/start-here` projection 与 Vue 页面。设计不得加入前端重算排名、AI 业务摘要、阅读进度、源码正文、虚假 Open / IDE 动作、Settings 或语言切换。
+审计早期 analyzer 任务建立的最小 Spring fixture，确保 Controller、Service、Repository、API 的预期输出覆盖位置、Evidence 和稳定 ID，且 regression suite 不执行 fixture 应用或访问网络。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M7 和 T-0801 至 T-0803 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map，以及从 Component / Endpoint 进入的 Source & Evidence Detail；Start Here 后端已有稳定重要度信号、默认 10 项且可展开的文件级阅读路径，以及携带报告实体、Source Evidence、准确计数和 PARTIAL 覆盖说明的结构化解释。当前任务是 **T-0804 — Start Here UI**：Data Contract Audit 与 Stitch Design Brief 已完成，等待用户生成、审阅并导入原型；导入前不编码页面。后续使用同一不可变报告快照生成独立只读 `/api/start-here` projection，保持报告 schema `1.2` 和 Java 单一启发式来源。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。Start Here 通过同一不可变报告快照生成独立只读 `/api/start-here` projection，保持 Java 单一启发式来源，展示默认 10 项且可展开的文件级路径、全部解释、Source Evidence、准确计数、PARTIAL / 空状态和精确跨页面导航。当前下一任务是 **T-0901 — Audit Minimal Spring Regression Fixture**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。

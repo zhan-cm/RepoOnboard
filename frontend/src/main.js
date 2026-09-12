@@ -9,6 +9,7 @@ import './styles/modules.css'
 import './styles/architecture.css'
 import './styles/api.css'
 import './styles/source.css'
+import './styles/start-here.css'
 
 verifyPackagedSchema()
 createApp(App).mount('#app')

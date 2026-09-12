@@ -100,7 +100,7 @@ Architecture Constraints ✓
 Technical Decisions      ✓
 Project Scaffold         ✓
 Core Analysis            ✓
-Web UI                   ◐
+Web UI                   ✓
 Real-world Validation    ○
 Public Release           ○
 ```
@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0804 — Start Here UI。**
+> **T-0901 — Audit Minimal Spring Regression Fixture。**
 
-M0 至 M7、T-0801 至 T-0803 已经完成。T-0804 页面级数据契约审计与 Stitch Design Brief 已完成；审计确认推荐结果尚未进入前端 transport，后续实现应从同一不可变 `AnalysisReport` 生成独立只读 `/api/start-here` projection，不在 Vue 中重复启发式，也不修改公共报告 schema `1.2`。下一步等待用户生成、审阅并导入 Stitch 原型，在此之前不编码页面。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8 已经完成。T-0804 已将确定性阅读路径作为独立只读 `/api/start-here` projection 接入 Vue，并完成真实浏览器验证；公共报告 schema 保持 `1.2`，启发式仍只有 Java 单一实现。下一步进入 M9，从 T-0901 的最小 Spring regression fixture 审计开始。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2071,7 +2071,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 Boundary:
@@ -2081,10 +2081,10 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] 推荐顺序由确定规则产生且相同输入稳定
-[ ] 每个推荐项包含可核对理由和 Source Evidence
-[ ] 按文件去重并限制默认展示数量
-[ ] PARTIAL 分析明确提示推荐依据不完整
+[x] 推荐顺序由确定规则产生且相同输入稳定
+[x] 每个推荐项包含可核对理由和 Source Evidence
+[x] 按文件去重并限制默认展示数量
+[x] PARTIAL 分析明确提示推荐依据不完整
 ```
 
 ---
@@ -2203,16 +2203,22 @@ Acceptance Criteria:
 Status:
 
 ```text
-[-]
+[x]
 ```
+
+Completed: 2026-09-12
+
+Deliverable: 从同一不可变 `AnalysisReport` 生成版本化 `Start Here` JSON projection，并通过固定只读 `/api/start-here` route 提供给 Vue。页面保留 Stitch 的编号阅读路径与 Inspector 结构，展示稳定顺序、全部原因、模块、Source Location / Evidence、默认与完整列表切换、PARTIAL / 空结果提示，以及通过精确实体 ID 进入 Architecture Component 或 API Endpoint 详情；不在前端重算启发式，也不修改公共报告 schema `1.2`。
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 通过，共运行 81 项前端测试和 157 项 Java 测试，生产 JAR 的离线 UI 校验通过。真实 `start-here-project` loopback 会话在 1280×720 与 500×800 viewport 完成布局、推荐顺序、Evidence、组件/API 精确跳转和控制台检查；页面无横向溢出，窄屏 Inspector 顺序堆叠，浏览器无 warning / error。
 
 Design Handoff:
 
 ```text
 [x] 页面级 UI Data Contract Audit
 [x] Stitch Design Brief
-[ ] 用户生成、审阅并导入 Stitch 原型
-[ ] Vue / loopback projection 实现与浏览器验证
+[x] 用户生成、审阅并导入 Stitch 原型
+[x] Vue / loopback projection 实现与浏览器验证
 ```
 
 在 Web UI 中形成完整：
@@ -2224,9 +2230,9 @@ Design Handoff:
 Acceptance Criteria:
 
 ```text
-[ ] 阅读顺序、原因、模块和 Source Location 可浏览
-[ ] 可从推荐项进入相关 API/组件详情
-[ ] 空结果和 PARTIAL 结果有明确说明
+[x] 阅读顺序、原因、模块和 Source Location 可浏览
+[x] 可从推荐项进入相关 API/组件详情
+[x] 空结果和 PARTIAL 结果有明确说明
 ```
 
 ---
@@ -3079,18 +3085,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0804
-Generate, review, and import the Start Here Stitch prototype
+T-0901
+Audit the minimal Spring regression fixture
 ```
 
 本阶段：
 
-> **M8 — Start Here**
+> **M9 — Regression & Real Repository Validation**
 
-M0 至 M7、T-0801 至 T-0803 已完成；T-0804 页面级数据契约审计与 Stitch Design Brief 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0804 Generate, review, and import the Start Here Stitch prototype
+T-0901 Audit Minimal Spring Regression Fixture
 ```
 
 ---
@@ -3120,7 +3126,7 @@ M4 Spring Boot Analysis — complete
 M5 API & Dependency Analysis — complete
 M6 Report Assembly & Serialization — complete
 M7 Local Web UI — complete
-M8 Start Here — in progress (T-0801 to T-0803 complete; T-0804 design handoff complete, Stitch prototype next)
+M8 Start Here — complete
 
 Validation
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3131,6 +3137,6 @@ Release
 
 Next:
 
-> **T-0804 — Generate, review, and import the Start Here Stitch prototype.**
+> **T-0901 — Audit Minimal Spring Regression Fixture.**
 
 ````
