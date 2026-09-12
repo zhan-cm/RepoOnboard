@@ -19,6 +19,7 @@
   --color-danger: #b23b4c;
   --color-danger-soft: #fcedef;
   --shadow-raised: 0 12px 30px rgb(31 45 68 / 9%);
+  color: var(--color-text);
   grid-template-rows: 3.25rem minmax(0, 1fr);
   background: var(--color-canvas);
 }
@@ -46,6 +47,11 @@
   grid-column: 2;
   grid-row: 2;
   background: var(--color-canvas);
+}
+
+.app-shell--workbench > .inspector {
+  color: var(--color-text);
+  background: var(--color-surface);
 }
 
 .app-shell--workbench > .module-inspector {

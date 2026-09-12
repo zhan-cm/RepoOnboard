@@ -176,8 +176,7 @@
 }
 
 .start-here-kind,
-.start-here-module,
-.start-here-more {
+.start-here-module {
   display: inline-flex;
   min-height: 1.5rem;
   align-items: center;
@@ -210,6 +209,22 @@
   color: var(--color-success);
   border-color: rgb(134 239 172 / 28%);
   background: var(--color-success-soft);
+}
+
+.start-here-item__reasons {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: var(--border-thin) solid var(--color-border);
+}
+
+.start-here-item__reason-label {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .start-here-item__reason {

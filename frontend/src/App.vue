@@ -75,7 +75,7 @@ const apiScope = computed(() => apiModel.value
 const sourceModel = computed(() => report.value && sourceSelection.value
   ? createSourceDetailModel(report.value, sourceSelection.value)
   : null)
-const workbench = computed(() => ['modules', 'architecture', 'apis', 'start-here'].includes(activePage.value))
+const workbench = computed(() => ['overview', 'modules', 'architecture', 'apis', 'start-here'].includes(activePage.value))
 const selectedStartHereItem = computed(() => startHereModel.value?.items.find(
   (item) => item.sourceFileId === selectedStartHereSourceFileId.value) ?? null)
 
@@ -229,7 +229,7 @@ onMounted(async () => {
         <div><span>Repository</span><strong>{{ repositoryName }}</strong></div>
         <div class="workbench-topbar__summary">
           <span>{{ moduleModel?.modules.length ?? '—' }} modules</span>
-          <span v-if="activePage === 'modules'">{{ report?.summary?.sourceFileCount ?? report?.sourceFiles?.length ?? '—' }} source files</span>
+          <span v-if="activePage === 'overview' || activePage === 'modules'">{{ report?.summary?.sourceFileCount ?? report?.sourceFiles?.length ?? '—' }} source files</span>
           <span v-else-if="activePage === 'architecture'">{{ architectureModel?.counts.components ?? '—' }} components</span>
           <span v-else-if="activePage === 'apis'">{{ apiModel?.counts.endpoints ?? '—' }} endpoints</span>
           <span v-else>{{ startHereModel?.totalItemCount ?? '—' }} recommended files</span>
