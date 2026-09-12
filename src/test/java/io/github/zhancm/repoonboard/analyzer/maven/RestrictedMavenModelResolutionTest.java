@@ -45,6 +45,35 @@ class RestrictedMavenModelResolutionTest {
     }
 
     @Test
+    void ignoresBlankPropertiesButUsesThemDuringInterpolation(
+            @TempDir Path temporaryDirectory) throws IOException {
+        Path project = Files.createDirectory(temporaryDirectory.resolve("project"));
+        Path localRepository = Files.createDirectory(temporaryDirectory.resolve("repository"));
+        writePom(project, """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>example</groupId>
+                  <artifactId>blank-property-project</artifactId>
+                  <version>1</version>
+                  <properties>
+                    <profile.flag/>
+                    <spring.profiles.active>dev${profile.flag}</spring.profiles.active>
+                  </properties>
+                </project>
+                """);
+
+        MavenProjectMetadata metadata = reader.read(project, options(localRepository));
+
+        assertFalse(metadata.properties().containsKey("profile.flag"));
+        assertResolved(
+                metadata.properties().get("spring.profiles.active"),
+                "dev${profile.flag}",
+                "dev");
+        assertFalse(hasDiagnostic(metadata, "MAVEN_PROPERTY_UNRESOLVED"));
+        assertEquals(AnalysisStatus.SUCCESS, metadata.status());
+    }
+
+    @Test
     void resolvesRelativeParentInsideScanRoot(@TempDir Path temporaryDirectory) throws IOException {
         Path project = Files.createDirectory(temporaryDirectory.resolve("project"));
         Path parent = Files.createDirectory(project.resolve("parent"));

@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0905 — Medium Real Repository Validation。**
+> **T-0906 — Large Repository Trial。**
 
-M0 至 M8、T-0901 至 T-0904 已经完成。固定 commit 的 Spring Petclinic 小型真实仓库验证已人工核对 Project、Component、Endpoint 与 Dependency 事实，并记录 `PARTIAL` 诊断、误报/漏报、耗时、峰值内存及 UI 可读性；未识别的 Spring Data Repository 和连带 unresolved 注入边已作为已知限制保留。下一步执行 T-0905 的中型真实仓库验证。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8、T-0901 至 T-0905 已经完成。固定 commit 的 JHipster Sample Application 中型真实仓库验证已核对 30 个报告组件、24 个 Endpoint、7 条确认依赖、19 条诊断、性能和筛选后的图可读性；合法空 Maven 属性导致的整次分析崩溃已修复并加入回归，wildcard import 造成的保守漏报已记录。下一步执行 T-0906 的大型仓库试验。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2256,8 +2256,8 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] 最小、多模块和复杂 fixture regression suite 全部通过
-[ ] 小型和中型真实仓库有人工核对的组件/API/依赖样本
+[x] 最小、多模块和复杂 fixture regression suite 全部通过
+[x] 小型和中型真实仓库有人工核对的组件/API/依赖样本
 [ ] 大型试验记录解析、内存、耗时和图可读性限制
 [ ] Onboarding value 有可复现任务与观察结果
 [ ] 发现的问题已修复、标为 blocker 或记录为已知限制
@@ -2386,8 +2386,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-12
+
+Deliverable: [JHipster Sample Application Validation](docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 通过，共运行 81 项前端测试和 163 项 Java 测试，生产 JAR 的离线 UI 校验通过。固定 `jhipster/jhipster-sample-app` commit `e06e87abe0be8a3a194381ce651164a734811b3f`，在 Windows、空本地 Maven 模型仓库下完成离线验证。30 个报告组件、24 个 Endpoint 和 7 条确认依赖均无误报；3 个 wildcard-import Controller 连带 13 个 Endpoint 和 7 条确认依赖为明确诊断的保守漏报。修复合法空 Maven 属性导致的整次分析崩溃并增加回归。冷启动至 UI ready 为 9.761 秒，峰值工作集 181.53 MiB；30 节点默认图较密，按类型和一阶邻域筛选后可读，隐藏与未解析数量持续可见，浏览器控制台无 warning/error。
 
 重点验证：
 
@@ -2401,9 +2407,9 @@ Failure tolerance
 Acceptance Criteria:
 
 ```text
-[ ] 仓库 URL、commit 和环境固定
-[ ] 图筛选后仍可读，隐藏/未解析数量可见
-[ ] 关键误报必须修复或成为发布 blocker
+[x] 仓库 URL、commit 和环境固定
+[x] 图筛选后仍可读，隐藏/未解析数量可见
+[x] 关键误报必须修复或成为发布 blocker
 ```
 
 ---
@@ -3092,18 +3098,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0905
-Validate a medium real Spring Boot repository
+T-0906
+Run a large repository trial
 ```
 
 本阶段：
 
 > **M9 — Regression & Real Repository Validation**
 
-M0 至 M8、T-0901 至 T-0904 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8、T-0901 至 T-0905 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0905 Medium Real Repository Validation
+T-0906 Large Repository Trial
 ```
 
 ---
@@ -3136,7 +3142,7 @@ M7 Local Web UI — complete
 M8 Start Here — complete
 
 Validation
-░░░░░░░░░░░░░░░░░░░░   0%
+██████████████░░░░░░   70%
 
 Release
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3144,6 +3150,6 @@ Release
 
 Next:
 
-> **T-0905 — Medium Real Repository Validation.**
+> **T-0906 — Large Repository Trial.**
 
 ````

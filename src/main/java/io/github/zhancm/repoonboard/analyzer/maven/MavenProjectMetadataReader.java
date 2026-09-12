@@ -286,7 +286,9 @@ public final class MavenProjectMetadataReader {
                 }
                 raw = original == null ? null : new RawProperty(original, declared, sourceId);
             }
-            Optional<String> rawValue = raw == null ? Optional.empty() : Optional.of(raw.value());
+            Optional<String> rawValue = raw == null
+                    ? Optional.empty()
+                    : optionalText(raw.value());
             Optional<String> resolvedValue = optionalText(
                     effective == null ? null : effective.getProperties().getProperty(name));
             if (resolvedValue.isEmpty() && rawValue.isPresent()) {
