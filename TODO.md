@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0901 — Audit Minimal Spring Regression Fixture。**
+> **T-0902 — Audit Multi-module Regression Fixture。**
 
-M0 至 M8 已经完成。T-0804 已将确定性阅读路径作为独立只读 `/api/start-here` projection 接入 Vue，并完成真实浏览器验证；公共报告 schema 保持 `1.2`，启发式仍只有 Java 单一实现。下一步进入 M9，从 T-0901 的最小 Spring regression fixture 审计开始。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8 及 T-0901 已经完成。最小 Spring regression fixture 现已通过真实源码覆盖 Controller、Service、Repository、API 和基础确认依赖链，并固定公共报告中的位置、Evidence 与稳定 ID；测试只调用离线静态分析器，不构建或执行 fixture。下一步执行 T-0902 的多模块 regression fixture 审计。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2246,7 +2246,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -2270,7 +2270,7 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 审计在早期 analyzer 任务中建立的最小 Spring fixture，确保至少包含：
@@ -2285,9 +2285,9 @@ API
 Acceptance Criteria:
 
 ```text
-[ ] 预期输出覆盖位置、Evidence 和稳定 ID
-[ ] regression suite 不执行 fixture 应用或访问网络
-[ ] 所有支持行为由自动化断言验证
+[x] 预期输出覆盖位置、Evidence 和稳定 ID
+[x] regression suite 不执行 fixture 应用或访问网络
+[x] 所有支持行为由自动化断言验证
 ```
 
 ---
@@ -2832,6 +2832,7 @@ V0.1 核心价值被验证
 ```text
 V0.2
 Desktop Application technical spike and Windows-first packaging
+Settings 中提供 English / 中文界面切换；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文
 
 V0.2+
 Improve Java / Spring analysis based on V0.1 validation
@@ -3085,18 +3086,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0901
-Audit the minimal Spring regression fixture
+T-0902
+Audit the multi-module regression fixture
 ```
 
 本阶段：
 
 > **M9 — Regression & Real Repository Validation**
 
-M0 至 M8 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8 及 T-0901 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0901 Audit Minimal Spring Regression Fixture
+T-0902 Audit Multi-module Regression Fixture
 ```
 
 ---
@@ -3137,6 +3138,6 @@ Release
 
 Next:
 
-> **T-0901 — Audit Minimal Spring Regression Fixture.**
+> **T-0902 — Audit Multi-module Regression Fixture.**
 
 ````

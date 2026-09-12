@@ -60,7 +60,7 @@ class SpringComponentAnalyzerTest {
                 controller.location().sourceFileId());
         assertTrue(controller.location().startLine().isPresent());
         assertEquals("SPRING_COMPONENT_ANNOTATION", controller.evidence().getFirst().type());
-        assertEquals(5, controller.evidence().getFirst().location().startLine().orElseThrow());
+        assertEquals(8, controller.evidence().getFirst().location().startLine().orElseThrow());
     }
 
     @Test
