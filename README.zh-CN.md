@@ -6,9 +6,9 @@
 
 RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手工具**，帮助开发者在修改陌生项目之前，先建立清晰、可靠的整体认知。
 
-> **状态：早期开发 / 本地 Web UI 已完成**
+> **状态：早期开发 / 发布准备中**
 >
-> Maven、Java、Spring、API、组件依赖、稳定报告和可解释阅读路径分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式产品 Shell 现在已包含基于报告事实的 Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here 与共用的 Source & Evidence Detail；后续仍需完成回归验证与发布准备，首个版本尚未发布。
+> Maven、Java、Spring、API、组件依赖、稳定报告和可解释阅读路径分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。fixture、真实仓库、规模边界与首次接触验证结果均已记录；后续仍需完成发布准备，首个版本尚未发布。首次接触验证只观察到部分价值，尚未证明相对手工阅读有可量化的提速。
 
 ## 为什么需要 RepoOnboard？
 
@@ -168,8 +168,8 @@ M5  API 与依赖分析                  ✓
 M6  报告组装与序列化             ✓
 M7  本地 Web UI                         ✓
 M8  Start Here                         ✓
-M9  回归测试与真实仓库验证
-M10 发布准备
+M9  回归测试与真实仓库验证           ✓
+M10 发布准备                         ◐
 ```
 
 详细任务和验收标准维护在 [TODO.md](./TODO.md) 中。

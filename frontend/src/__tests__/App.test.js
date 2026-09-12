@@ -74,6 +74,8 @@ describe('App', () => {
     expect(view.container.textContent).toContain('sample.Application')
     expect(view.container.textContent).toContain('Coverage is limited')
     expect(view.container.querySelector('.nav-item--active').textContent).toContain('Overview')
+    expect(view.container.querySelector('.app-shell--workbench')).not.toBeNull()
+    expect(view.container.querySelector('.workbench-topbar').textContent).toContain('2 source files')
 
     const modulesButton = [...view.container.querySelectorAll('.nav-item')]
       .find((button) => button.textContent.includes('Modules'))

@@ -21,6 +21,8 @@ describe('StartHereView', () => {
 
     expect(view.container.textContent).toContain('Start Here')
     expect(view.container.textContent).toContain('OrderController.java')
+    expect(view.container.textContent).toContain('Why this file?')
+    expect(view.container.textContent).toContain('Exposes 1 HTTP endpoint')
     expect(view.container.textContent).not.toContain('pom.xml')
     expect(view.container.textContent).toContain('Show 1 more recommended file')
     view.container.querySelector('.start-here-item').click()

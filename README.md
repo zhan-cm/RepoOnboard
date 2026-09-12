@@ -6,9 +6,9 @@
 
 RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
 
-> **Status: Early Development / Local Web UI Complete**
+> **Status: Early Development / Release Preparation**
 >
-> Maven, Java, Spring, API, component-dependency, stable report, and explainable reading-path analysis are available. The CLI serves each report to a packaged Vue application over loopback-only endpoints. The responsive product Shell now includes a report-backed Repository Overview, Module Explorer, Architecture Workspace, API Map, Start Here, and shared Source & Evidence Detail; regression validation and release preparation remain, and the first release is not available yet.
+> Maven, Java, Spring, API, component-dependency, stable report, and explainable reading-path analysis are available. The CLI serves each report to a packaged Vue application over loopback-only endpoints. Fixture, real-repository, scale, and first-contact onboarding findings are recorded; release preparation remains, and the first release is not available yet. The first-contact study showed partial value but did not establish a measured speed-up over manual source reading.
 
 ## Why RepoOnboard?
 
@@ -168,8 +168,8 @@ M5  API & Dependency Analysis             ✓
 M6  Report Assembly & Serialization          ✓
 M7  Local Web UI                           ✓
 M8  Start Here                             ✓
-M9  Regression & Real Repository Validation
-M10 Release Preparation
+M9  Regression & Real Repository Validation ✓
+M10 Release Preparation                   ◐
 ```
 
 Detailed tasks and acceptance criteria are maintained in [TODO.md](./TODO.md).

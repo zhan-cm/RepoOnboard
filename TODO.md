@@ -101,8 +101,8 @@ Technical Decisions      ✓
 Project Scaffold         ✓
 Core Analysis            ✓
 Web UI                   ✓
-Real-world Validation    ◐
-Public Release           ○
+Real-world Validation    ✓
+Public Release           ◐
 ```
 
 Legend:
@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0907 — Onboarding Value Validation。**
+> **T-1001 — Installation Experience。**
 
-M0 至 M8、T-0901 至 T-0906 已经完成。固定 ThingsBoard `v4.3.1.5` commit 的大型仓库试验完成 59 个 active module、3,834 个 main Java file 的分析，记录了 25.498 秒冷启动、648.23 MiB 进程峰值，以及离线 Maven/Spring 语义覆盖、诊断噪声、重复模块名、API 全量列表和图可读性边界；本结果不承诺完整支持。下一步只执行 T-0907 的 onboarding value 验证。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 已经完成。T-0907 使用固定 realworld commit 和 5 项首次接触任务记录了 5–10 分钟总耗时与混合结果；API 与 Start Here 阅读入口有部分可观察价值，Overview 主题和推荐原因可发现性已修复，但没有手工阅读对照，因此不声称已经证明整体提速。下一步只执行 T-1001 的安装体验工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2246,7 +2246,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+● COMPLETE
 ```
 
 Boundary:
@@ -2259,8 +2259,8 @@ Exit Criteria:
 [x] 最小、多模块和复杂 fixture regression suite 全部通过
 [x] 小型和中型真实仓库有人工核对的组件/API/依赖样本
 [x] 大型试验记录解析、内存、耗时和图可读性限制
-[ ] Onboarding value 有可复现任务与观察结果
-[ ] 发现的问题已修复、标为 blocker 或记录为已知限制
+[x] Onboarding value 有可复现任务与观察结果
+[x] 发现的问题已修复、标为 blocker 或记录为已知限制
 ```
 
 ---
@@ -2454,8 +2454,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-12
+
+Deliverable: [Onboarding Value Validation](docs/validation/T-0907-ONBOARDING-VALUE.md)
+
+Validation: 使用固定的 `joyheros/realworld` commit `2d944dbce5e89c6efdf59026f9b38ba014e73288` 和 5 项任务进行首次接触验证。参与者报告总耗时约 5–10 分钟：API 任务最快，Start Here 可找到前三个推荐文件，但未发现推荐原因；入口、模块和未解析依赖任务仍令人困惑。本任务统一了 Overview 的浅色主题，并将 `Why this file?` 与全部原因直接放入推荐卡片。由于未记录逐项精确答案/耗时，也没有手工阅读对照组，结论是 Start Here 有部分可观察价值，但尚不能声称已证明整体上手更快。
 
 这是 V0.1 非常关键的产品验证。
 
@@ -2476,9 +2482,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] 使用固定任务和首次接触者场景
-[ ] 记录完成时间、正确性和主观理解反馈
-[ ] 明确 Start Here 是否带来可观察价值
+[x] 使用固定任务和首次接触者场景
+[x] 记录完成时间、正确性和主观理解反馈
+[x] 明确 Start Here 是否带来可观察价值
 ```
 
 ---
@@ -3104,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0907
-Validate onboarding value
+T-1001
+Improve installation experience
 ```
 
 本阶段：
 
-> **M9 — Regression & Real Repository Validation**
+> **M10 — Release Preparation**
 
-M0 至 M8、T-0901 至 T-0906 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M9 已完成；可选 T-0404 继续按非阻塞规则延后。T-0907 记录了混合的首次上手结果，修复 Overview 主题与 Start Here 原因可发现性，但不声称已证明相对手工阅读的速度优势。接下来只执行：
 
 ```text
-T-0907 Onboarding Value Validation
+T-1001 Installation Experience
 ```
 
 ---
@@ -3148,7 +3154,7 @@ M7 Local Web UI — complete
 M8 Start Here — complete
 
 Validation
-█████████████████░░░   85%
+████████████████████  100%
 
 Release
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3156,6 +3162,6 @@ Release
 
 Next:
 
-> **T-0907 — Onboarding Value Validation.**
+> **T-1001 — Installation Experience.**
 
 ````

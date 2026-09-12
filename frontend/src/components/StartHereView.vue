@@ -65,14 +65,18 @@ function step(index) {
                 {{ item.primaryReason.kindLabel }}
               </span>
               <span class="start-here-module">{{ item.moduleLabel }}</span>
-              <span v-if="item.additionalReasonCount" class="start-here-more">+{{ item.additionalReasonCount }} more {{ item.additionalReasonCount === 1 ? 'reason' : 'reasons' }}</span>
             </span>
             <code>{{ item.sourceFileId }}</code>
-            <span class="start-here-item__reason">{{ item.primaryReason.message }}</span>
+            <span class="start-here-item__reasons">
+              <span class="start-here-item__reason-label">Why this file?</span>
+              <span v-for="reason in item.reasons" :key="reason.kind" class="start-here-item__reason">
+                {{ reason.message }}
+              </span>
+            </span>
           </span>
           <span class="start-here-item__inspect">
             {{ item.reasons.length }} {{ item.reasons.length === 1 ? 'reason' : 'reasons' }}
-            <small>{{ selectedSourceFileId === item.sourceFileId ? 'Viewing details' : 'Inspect →' }}</small>
+            <small>{{ selectedSourceFileId === item.sourceFileId ? 'Evidence selected' : 'View evidence →' }}</small>
           </span>
         </button>
       </li>
