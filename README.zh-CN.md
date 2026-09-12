@@ -65,6 +65,53 @@ Spring Boot 分析
 本地交互式代码库地图
 ```
 
+## 安装与运行
+
+RepoOnboard V0.1 尚未正式发布。当前发布候选请从本仓库源码构建可执行 JAR。实际运行要求 Java 21 或更高版本；从源码构建还需要 Node.js `^20.19.0` 或 `>=22.12.0`。Maven 无需另行安装，仓库已提供 Wrapper。
+
+Windows：
+
+```powershell
+git clone https://github.com/zhan-cm/RepoOnboard.git
+cd RepoOnboard
+.\mvnw.cmd clean verify
+.\repoonboard.cmd C:\path\to\spring-project
+```
+
+macOS 或 Linux：
+
+```bash
+git clone https://github.com/zhan-cm/RepoOnboard.git
+cd RepoOnboard
+./mvnw clean verify
+chmod +x repoonboard
+./repoonboard /path/to/spring-project
+```
+
+构建会生成 `target/repoonboard.jar` 与 `target/repoonboard.jar.sha256`。可执行 JAR 已包含 Java 运行依赖和完整离线 Web UI。发布目录中，启动脚本使用同目录的 `repoonboard.jar`；源码仓库中则自动回退到 `target/repoonboard.jar`。只有需要显式指定其他 JAR 时才设置 `REPOONBOARD_JAR`。
+
+运行下载的产物前应核对校验和。Windows PowerShell：
+
+```powershell
+$expectedHash = (Get-Content .\target\repoonboard.jar.sha256).Split()[0]
+$actualHash = (Get-FileHash .\target\repoonboard.jar -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) { throw "RepoOnboard checksum mismatch" }
+```
+
+Linux：
+
+```bash
+(cd target && sha256sum -c repoonboard.jar.sha256)
+```
+
+macOS：
+
+```bash
+(cd target && shasum -a 256 -c repoonboard.jar.sha256)
+```
+
+Windows 使用 `repoonboard.cmd --help`，POSIX 系统使用 `./repoonboard --help` 查看全部选项。未来 GitHub Release 会直接提供 JAR、校验和与两种启动脚本；使用这些发布文件不需要 Node.js 或 Maven。
+
 ## 预期使用体验
 
 当前命令行使用方式为：
@@ -186,6 +233,7 @@ Windows：
 git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 .\mvnw.cmd clean verify
+.\repoonboard.cmd --help
 ```
 
 macOS 或 Linux：
@@ -194,7 +242,10 @@ macOS 或 Linux：
 git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 ./mvnw clean verify
+./repoonboard --help
 ```
+
+`verify` 还会用空 Maven 缓存从打包后的可执行 JAR 启动固定 Spring fixture，确认本地报告路由可用，并写出 SHA-256 校验和；它不会构建或执行被分析的 fixture 应用。
 
 当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.2` JSON 序列化现已接入 loopback 服务、响应式产品 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map 与共用的 Source & Evidence Detail。模块页面使用显式 Maven 聚合关系、精确坐标唯一确认的内部模块依赖、模块级统计、元数据、源码根、版本事实、诊断与证据。架构页面使用 Cytoscape.js，仅在单一模块范围内绘制确认的组件注入边，并提供可组合筛选、搜索、所选节点一阶邻域、缩放、平移、适配、选择、源码证据、响应式可搜索列表回退，以及明确的部分/不可用/超预算状态。API 页面提供模块/method/文本组合筛选、明确的未解析状态、handler 源码位置和两级 mapping Evidence。组件与 Endpoint Inspector 现在可以进入共用、由报告驱动的来源详情，并提供安全复制反馈和精确相关事实。
 

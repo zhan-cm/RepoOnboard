@@ -84,7 +84,7 @@ Implementation
 
 Current Phase:
 
-> **Phase 7 — Local Web UI**
+> **M10 — Release Preparation**
 
 Current Product Version:
 
@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1001 — Installation Experience。**
+> **T-1002 — Error Messages。**
 
-M0 至 M9 已经完成。T-0907 使用固定 realworld commit 和 5 项首次接触任务记录了 5–10 分钟总耗时与混合结果；API 与 Start Here 阅读入口有部分可观察价值，Overview 主题和推荐原因可发现性已修复，但没有手工阅读对照，因此不声称已经证明整体提速。下一步只执行 T-1001 的安装体验工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 已经完成。T-1001 已交付包含前端与运行依赖的单一可执行 JAR、Windows/POSIX 启动脚本、SHA-256 产物和中英文安装说明；`verify` 会从打包 JAR 用空 Maven 缓存离线分析固定 fixture。下一步只执行 T-1002 的错误体验工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2498,7 +2498,7 @@ Goal:
 Status:
 
 ```text
-○ NOT STARTED
+◐ IN PROGRESS
 ```
 
 Boundary:
@@ -2521,7 +2521,7 @@ Exit Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 确保：
@@ -2543,9 +2543,9 @@ repoonboard .
 Acceptance Criteria:
 
 ```text
-[ ] 可执行 JAR 包含前端资源并可离线分析 fixture
-[ ] Windows 和 POSIX 启动脚本验证通过
-[ ] Java 21 要求、校验和和安装步骤明确
+[x] 可执行 JAR 包含前端资源并可离线分析 fixture
+[x] Windows 和 POSIX 启动脚本验证通过
+[x] Java 21 要求、校验和和安装步骤明确
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1001
-Improve installation experience
+T-1002
+Improve error messages
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 已完成；可选 T-0404 继续按非阻塞规则延后。T-0907 记录了混合的首次上手结果，修复 Overview 主题与 Start Here 原因可发现性，但不声称已证明相对手工阅读的速度优势。接下来只执行：
+M0 至 M9 和 T-1001 已完成；可选 T-0404 继续按非阻塞规则延后。可执行 JAR、双平台启动脚本、离线 fixture 安装验证、SHA-256 和中英文安装说明已建立。接下来只执行：
 
 ```text
-T-1001 Installation Experience
+T-1002 Error Messages
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-░░░░░░░░░░░░░░░░░░░░   0%
+██░░░░░░░░░░░░░░░░░░  12%
 ```
 
 Next:
 
-> **T-1001 — Installation Experience.**
+> **T-1002 — Error Messages.**
 
 ````

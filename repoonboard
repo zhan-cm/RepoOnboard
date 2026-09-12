@@ -1,0 +1,41 @@
+#!/bin/sh
+set -eu
+
+case $0 in
+  */*) SCRIPT_LOCATION=${0%/*} ;;
+  *) SCRIPT_LOCATION=. ;;
+esac
+SCRIPT_DIR=$(CDPATH= cd -- "$SCRIPT_LOCATION" && pwd)
+REPOONBOARD_JAVA=${JAVA_HOME:+"$JAVA_HOME/bin/java"}
+REPOONBOARD_JAVA=${REPOONBOARD_JAVA:-java}
+
+if ! "$REPOONBOARD_JAVA" -version >/dev/null 2>&1; then
+  echo "RepoOnboard requires Java 21 or newer. Install a JDK and set JAVA_HOME or add java to PATH." >&2
+  exit 1
+fi
+
+REPOONBOARD_JAVA_VERSION=$("$REPOONBOARD_JAVA" -version 2>&1 | sed -n '1s/.*"\([^"]*\)".*/\1/p')
+REPOONBOARD_JAVA_MAJOR=${REPOONBOARD_JAVA_VERSION%%.*}
+case "$REPOONBOARD_JAVA_MAJOR" in
+  ''|*[!0-9]*)
+    echo "RepoOnboard could not determine the Java version. Java 21 or newer is required." >&2
+    exit 1
+    ;;
+esac
+if [ "$REPOONBOARD_JAVA_MAJOR" -lt 21 ]; then
+  echo "RepoOnboard requires Java 21 or newer; found Java $REPOONBOARD_JAVA_VERSION." >&2
+  exit 1
+fi
+
+if [ -n "${REPOONBOARD_JAR:-}" ]; then
+  REPOONBOARD_JAR_PATH=$REPOONBOARD_JAR
+elif [ -f "$SCRIPT_DIR/repoonboard.jar" ]; then
+  REPOONBOARD_JAR_PATH=$SCRIPT_DIR/repoonboard.jar
+elif [ -f "$SCRIPT_DIR/target/repoonboard.jar" ]; then
+  REPOONBOARD_JAR_PATH=$SCRIPT_DIR/target/repoonboard.jar
+else
+  echo "RepoOnboard JAR not found. Keep repoonboard.jar beside this script or run ./mvnw clean verify." >&2
+  exit 1
+fi
+
+exec "$REPOONBOARD_JAVA" -jar "$REPOONBOARD_JAR_PATH" "$@"

@@ -65,6 +65,53 @@ Unified Project Model
 Local Interactive Codebase Map
 ```
 
+## Install and run
+
+RepoOnboard V0.1 has not been published yet. For the current release candidate, build the executable JAR from this source checkout. Runtime use requires Java 21 or newer; the source build additionally requires Node.js `^20.19.0` or `>=22.12.0`. Maven itself is supplied by the checked-in Wrapper.
+
+Windows:
+
+```powershell
+git clone https://github.com/zhan-cm/RepoOnboard.git
+cd RepoOnboard
+.\mvnw.cmd clean verify
+.\repoonboard.cmd C:\path\to\spring-project
+```
+
+macOS or Linux:
+
+```bash
+git clone https://github.com/zhan-cm/RepoOnboard.git
+cd RepoOnboard
+./mvnw clean verify
+chmod +x repoonboard
+./repoonboard /path/to/spring-project
+```
+
+The build produces `target/repoonboard.jar` and `target/repoonboard.jar.sha256`. The executable JAR includes its Java dependencies and the complete offline Web UI. The launchers use `repoonboard.jar` beside the script in a release layout, or `target/repoonboard.jar` in a source checkout; set `REPOONBOARD_JAR` only when an explicit alternate JAR is needed.
+
+Verify the JAR before running a downloaded artifact. On Windows PowerShell:
+
+```powershell
+$expectedHash = (Get-Content .\target\repoonboard.jar.sha256).Split()[0]
+$actualHash = (Get-FileHash .\target\repoonboard.jar -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) { throw "RepoOnboard checksum mismatch" }
+```
+
+On Linux:
+
+```bash
+(cd target && sha256sum -c repoonboard.jar.sha256)
+```
+
+On macOS:
+
+```bash
+(cd target && shasum -a 256 -c repoonboard.jar.sha256)
+```
+
+Run `repoonboard.cmd --help` on Windows or `./repoonboard --help` on POSIX systems to list available options. A future GitHub release will provide the JAR, checksum, and both launchers directly; no Node.js or Maven installation will be needed for those release files.
+
 ## Intended Experience
 
 The current command-line experience is:
@@ -186,6 +233,7 @@ Windows:
 git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 .\mvnw.cmd clean verify
+.\repoonboard.cmd --help
 ```
 
 macOS or Linux:
@@ -194,7 +242,10 @@ macOS or Linux:
 git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 ./mvnw clean verify
+./repoonboard --help
 ```
+
+`verify` also starts the packaged executable JAR against a controlled Spring fixture with an empty Maven cache, confirms that the local report route is available, and writes the SHA-256 checksum. It does not build or execute the analyzed fixture application.
 
 The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.2` JSON serialization feed the loopback service, packaged responsive product Shell, Repository Overview, Module Explorer, Architecture Workspace, API Map, and shared Source & Evidence Detail. The module view uses explicit Maven aggregation relationships, confirmed exact-coordinate internal module dependencies, module-scoped counts, metadata, source roots, version facts, diagnostics, and evidence. The architecture view uses Cytoscape.js to render only confirmed component-injection edges within one module at a time, with composable filters, search, selected-node 1-hop exploration, zoom, pan, fit, selection, source evidence, responsive searchable-list fallback, and explicit partial/unavailable/over-budget states. The API view provides composable module/method/text filtering, explicit unresolved states, handler source locations, and both levels of mapping evidence. Component and endpoint inspectors now open a shared, report-backed source detail surface with safe copy feedback and exact related facts.
 
