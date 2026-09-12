@@ -8,7 +8,7 @@ RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手
 
 > **状态：早期开发 / 本地 Web UI 已完成**
 >
-> Maven、Java、Spring、API、组件依赖和稳定报告分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式产品 Shell 现在已包含基于报告事实的 Repository Overview、Module Explorer、Architecture Workspace、API Map 与共用的 Source & Evidence Detail；其余产品页面仍在开发中，首个版本尚未发布。
+> Maven、Java、Spring、API、组件依赖、稳定报告和可解释阅读路径分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。响应式产品 Shell 现在已包含基于报告事实的 Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here 与共用的 Source & Evidence Detail；后续仍需完成回归验证与发布准备，首个版本尚未发布。
 
 ## 为什么需要 RepoOnboard？
 
@@ -76,7 +76,7 @@ repoonboard .
 
 分析完成后，RepoOnboard 会在系统分配的 `127.0.0.1` 端口启动只读本地 UI，并打开默认浏览器。使用 `--no-open` 可改为手动打开；在按 Ctrl+C 停止进程前，终端输出的地址会保持可用。
 
-服务只接受精确 loopback Host 与同源浏览器请求，仅通过固定 `GET` / `HEAD` 路由提供随包 UI 和当前报告；非规范路径、外部 Origin、写请求和任意文件访问都会被拒绝。全部响应带有限制性 Content Security Policy、`no-store` 及相关浏览器安全头。生产构建还会直接验证 JavaScript / CSS 已进入 JAR、不依赖运行时 CDN，并与 Java 应用声明相同的报告 schema。
+服务只接受精确 loopback Host 与同源浏览器请求，仅通过固定 `GET` / `HEAD` 路由提供随包 UI、当前报告和 Start Here projection；非规范路径、外部 Origin、写请求和任意文件访问都会被拒绝。全部响应带有限制性 Content Security Policy、`no-store` 及相关浏览器安全头。生产构建还会直接验证 JavaScript / CSS 已进入 JAR、不依赖运行时 CDN，并与 Java 应用声明相同的报告 schema。
 
 ```bash
 repoonboard . --no-open
@@ -143,7 +143,7 @@ Spring Boot 构建识别使用模块声明的 `org.springframework.boot:spring-b
 
 ### Start Here
 
-根据构建文件、应用入口、配置、公开 API 和已确认依赖，提供可解释的推荐阅读顺序。
+根据构建文件、应用入口、配置、公开 API 和已确认依赖，提供可解释且确定性的推荐阅读顺序。每个推荐项展示所属模块、全部原因和 Source Evidence；只有精确连接的组件与 Endpoint 才能进入现有 Architecture 或 API Inspector，PARTIAL 覆盖与空结果保持明确。排序规则只在 Java 中执行，通过独立、版本化、只读的 projection 交给前端，不修改公共报告 schema。
 
 ## 设计原则
 
@@ -167,7 +167,7 @@ M4  Spring Boot 分析                 ✓
 M5  API 与依赖分析                  ✓
 M6  报告组装与序列化             ✓
 M7  本地 Web UI                         ✓
-M8  Start Here
+M8  Start Here                         ✓
 M9  回归测试与真实仓库验证
 M10 发布准备
 ```

@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 class LocalUiServerTest {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -67,6 +69,15 @@ class LocalUiServerTest {
                     .contains("connect-src 'self'"));
             assertFalse(response.headers().map().containsKey("access-control-allow-origin"));
             assertEquals(report, new AnalysisReportJson().deserialize(response.body()));
+
+            HttpResponse<String> startHere = get(server.uri().resolve("api/start-here"));
+            assertEquals(200, startHere.statusCode());
+            var guide = JsonMapper.builder().build().readValue(
+                    startHere.body(), JsonNode.class);
+            assertEquals(report.project().id(), guide.get("projectId").textValue());
+            assertEquals(0, guide.get("totalItemCount").intValue());
+            assertEquals("no-store",
+                    startHere.headers().firstValue("Cache-Control").orElseThrow());
         }
     }
 
@@ -75,6 +86,7 @@ class LocalUiServerTest {
         try (LocalUiServer server = LocalUiServer.start(report())) {
             assertEquals(404, get(server.uri().resolve("pom.xml")).statusCode());
             assertEquals(404, get(server.uri().resolve("api/report/extra")).statusCode());
+            assertEquals(404, get(server.uri().resolve("api/start-here/extra")).statusCode());
 
             HttpRequest head = HttpRequest.newBuilder(server.uri().resolve("api/report"))
                     .method("HEAD", HttpRequest.BodyPublishers.noBody())
@@ -90,6 +102,13 @@ class LocalUiServerTest {
             HttpResponse<String> response = client.send(post, HttpResponse.BodyHandlers.ofString());
             assertEquals(405, response.statusCode());
             assertEquals("GET, HEAD", response.headers().firstValue("Allow").orElseThrow());
+
+            HttpRequest startHerePost = HttpRequest.newBuilder(
+                            server.uri().resolve("api/start-here"))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .build();
+            assertEquals(405, client.send(startHerePost, HttpResponse.BodyHandlers.ofString())
+                    .statusCode());
         }
     }
 
@@ -105,6 +124,9 @@ class LocalUiServerTest {
                     + "Host: " + validHost + "\r\nConnection: close\r\n\r\n")
                     .startsWith("HTTP/1.1 404"));
             assertTrue(rawRequest(server.port(), "GET /api/report?file=pom.xml HTTP/1.1\r\n"
+                    + "Host: " + validHost + "\r\nConnection: close\r\n\r\n")
+                    .startsWith("HTTP/1.1 404"));
+            assertTrue(rawRequest(server.port(), "GET /api/start-here?file=pom.xml HTTP/1.1\r\n"
                     + "Host: " + validHost + "\r\nConnection: close\r\n\r\n")
                     .startsWith("HTTP/1.1 404"));
             assertTrue(rawRequest(server.port(), "GET / HTTP/1.1\r\n"
