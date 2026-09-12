@@ -10,8 +10,9 @@ RepoOnboard 已完成 **M8 — Start Here**，当前处于 **M9 — Regression &
 - **T-0901** 已完成；最小 Spring fixture 的 Controller、Service、Repository、API、基础确认依赖链、位置、Evidence 和稳定 ID 已纳入端到端回归。
 - **T-0902** 已完成；多模块 fixture 已覆盖 inheritance / aggregation 分离、模块源码归属、声明依赖控制的跨模块类型可见性、稳定内部模块边，以及缺失外部 parent/BOM 的 `PARTIAL` 路径。
 - **T-0903** 已完成；复杂 Spring fixture 已覆盖多 Controller、Configuration、多路径与条件 mapping、Service-to-Service 链和循环，以及多构造器、接口多实现和 unsupported/ambiguous 场景的非猜测结果；UI 报告与 Start Here projection 固定来自同一报告快照。
-- 当前下一任务是 **T-0904 — Small Real Repository Validation**。
-- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 162 项 Java 测试并全部通过；T-0901 至 T-0903 回归均使用空的本地 Maven 仓库且不构建或执行 fixture。`clean verify` 会在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 `start-here-project` loopback 会话的 1280×720 / 500×800 布局、组件/API 精确跳转及干净浏览器控制台已经验证。
+- **T-0904** 已完成；固定 Spring Petclinic commit 的小型真实仓库验证已核对项目、组件、全部 17 个 Endpoint 和 6 个构造器依赖，并记录 3 个 Spring Data Repository 与连带 6 条确认依赖漏报、10 条可解释诊断、9.302 秒冷启动及 130.14 MiB 峰值工作集。
+- 当前下一任务是 **T-0905 — Medium Real Repository Validation**。
+- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 162 项 Java 测试并全部通过；T-0901 至 T-0904 均使用空的本地 Maven 仓库且不构建或执行 fixture/目标应用。`clean verify` 会在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。Spring Petclinic 的 1280×720 Overview、Modules、Architecture、APIs、Start Here 和干净浏览器控制台已经验证。
 
 ## 2. 已完成任务
 
@@ -70,6 +71,7 @@ RepoOnboard 已完成 **M8 — Start Here**，当前处于 **M9 — Regression &
 - **T-0901**：审计 `spring-analysis-project` 最小 Spring fixture，为真实源码增加单一 `GET /users/{id}` 与 Controller → Service → Repository 构造器注入链；新增端到端回归，固定公共报告中的项目、模块、组件、Endpoint 和依赖稳定 ID，以及 1-based SourceLocation、原始 Evidence 和规则 ID。回归使用空本地仓库直接调用静态分析器，重复结果一致，fixture 不生成构建产物且文件集合保持不变。
 - **T-0902**：审计 `multi-module-project`，补充 `api/code/java` 与 `library/src/main/java` 的最小源码，使 `api` 通过精确 Maven 依赖解析 `LibraryType`；端到端回归分别固定 Maven parent 与 aggregation、模块/源码稳定 ID、source root 归属、跨模块可见性和确认内部模块边。新增 `multi-module-partial-project`，确认空本地仓库下缺失外部 parent 与 BOM 时两个聚合子模块及 raw facts 仍保留，报告返回带文件和行号的 `PARTIAL` 诊断。
 - **T-0903**：新增 `spring-complex-project` 组合 fixture 和端到端回归，固定 13 个组件、12 个 Endpoint、确认的 Controller → Service / Service → Service / Service → Repository 关系及双向 Service 循环。多构造器歧义、PaymentPort 多实现、unsupported setter 注入、本地同名 mapping 注解、未解析 path/condition 均保留诊断或不确定状态且不生成猜测边；公共报告和 Start Here JSON 重复序列化一致、项目/schema/status 对齐，推荐路径只引用同一报告中的确认实体。
+- **T-0904**：固定 `spring-projects/spring-petclinic` commit `818c4136ea971c21674525f9053de0d9c7ad8cfe`，在空本地 Maven 模型仓库下完成真实仓库离线验证。项目检测、10 个直接标注组件及全部 17 个 Endpoint 与源码一致；3 个无直接注解的 Spring Data Repository 和连带 6 条确认注入边记录为漏报，分析仍保留 6 条 unresolved 事实和解释性诊断，不生成猜测边。完整记录见 `docs/validation/T-0904-SPRING-PETCLINIC.md`。
 
 ## 3. 当前实现能力
 
@@ -164,6 +166,7 @@ RepoOnboard
 - T-0901 将早期分散的 Spring 组件与 API fixture 覆盖收束为一个最小端到端报告回归；不再依赖手工构造 Endpoint 来证明最小 fixture 的公共输出，并明确验证离线、非执行式测试边界。
 - T-0902 将原本只有 POM 的多模块 fixture 扩展为可验证源码归属和跨模块类型可见性的回归基线，并把缺失外部 parent/BOM 的容错场景隔离到独立 companion fixture；成功与 `PARTIAL` 语义不再混合。
 - T-0903 将此前分散在 injection、dependency、MVC 和 Start Here 单元 fixture 中的复杂模式组合为同一端到端报告回归；确认关系、循环和条件 Endpoint 可进入公共输出，不确定关系只影响覆盖状态，不会进入 Architecture 确认边或 Start Here 排名。
+- T-0904 首次用固定真实仓库量化 V0.1 的准确性和成本：Spring Petclinic 的直接注解与 Endpoint 结果准确，离线外部 parent 和 Spring Data 接口限制均通过 `PARTIAL`/unresolved 明示；冷启动与本地 UI ready 用时 9.302 秒，峰值工作集 130.14 MiB。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -173,6 +176,8 @@ RepoOnboard
 - **分析范围有限**：不支持 Java/Maven/Spring Boot 以外的生态；Maven 不联网、不执行插件/生命周期、不计算传递依赖；Java/Spring 采用保守静态分析，不覆盖运行时代理、反射和动态注册。
 - **Source Navigation 边界**：Source Navigation 已作为 Architecture / API 的跨页面辅助表面交付，不是独立一级导航，也不读取源码正文或提供 IDE 动作。
 - **图规模受限**：筛选后的范围超过 60 个组件或 120 条确认关系时，页面明确显示匹配与隐藏数量并停止绘图；用户可继续通过完整搜索列表选择组件，或用组件类型与所选组件一阶邻域缩小范围。
+- **Spring Data Repository 识别缺口**：当前组件规则不把仅继承 Spring Data repository 基类且无直接 `@Repository` 的接口识别为 Repository；Spring Petclinic 因此漏报 3 个组件，6 条真实构造器注入边只保留为 unresolved。
+- **真实仓库 UI 密度**：Spring Petclinic 的 10 个无确认边组件在 Architecture Fit view 中可完整显示，但标签偏小；API 表格在 1280 px 宽屏下需横向滚动才能查看完整 source 列。两项均不阻塞 T-0904，需在 T-0905 继续验证。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **Windows Wrapper 启动缺陷**：当前 `mvnw.cmd` 在本机 `.m2` 目录不是链接时会读取空的 `Target[0]` 并提前失败；本轮使用 Wrapper 已下载且校验过的 Maven 3.9.16 完成全量验证，启动脚本本身仍需单独修复。
 - **前端包体警告**：单一生产 JavaScript 产物约 602 kB（gzip 约 190 kB），Vite 会提示超过 500 kB；T-0709 已确认离线 JAR 可正确加载，是否拆包应在真实仓库性能数据表明必要时再决定。
@@ -181,7 +186,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M9**：T-0904 至 T-0907，继续完成真实仓库和 onboarding 价值验证；T-0901 至 T-0903 已完成。
+- **M9**：T-0905 至 T-0907，继续完成中型/大型真实仓库和 onboarding 价值验证；T-0901 至 T-0904 已完成。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
 - **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。该候选不进入当前 M9。
 
@@ -189,10 +194,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-0904 — Small Real Repository Validation**
+> **T-0905 — Medium Real Repository Validation**
 
-选择并固定一个许可合适的小型真实 Spring Boot Maven 仓库与 commit，人工核对 Component / Endpoint / Dependency 样本，并记录误报、漏报、诊断、耗时和峰值内存。
+选择并固定一个许可合适的中型真实 Spring Boot Maven 仓库与 commit，重点验证噪声、性能、图可读性和失败容忍度；关键误报必须修复或成为发布 blocker。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8、T-0901 至 T-0903 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。最小 Spring fixture 已固定 Controller → Service → Repository、单一 API、位置、Evidence 与稳定 ID；多模块 fixture 已固定 inheritance / aggregation、源码归属、跨模块可见性、内部模块边和缺失外部 parent/BOM 的 `PARTIAL` 语义；复杂 Spring fixture 已固定多 Controller、Configuration、复杂 mapping、Service 循环和不确定关系的保守处理，并验证 UI / Start Here 同源快照。所有回归均使用空本地仓库且不构建或执行目标应用。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence；当前 M9 不实现。下一任务是 **T-0904 — Small Real Repository Validation**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8、T-0901 至 T-0904 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。最小、多模块和复杂 Spring fixture 回归已经固定；Spring Petclinic 真实仓库验证进一步确认直接注解和全部 Endpoint 准确，同时暴露 3 个 Spring Data Repository 及 6 条确认依赖漏报，以及 Architecture/API 的两项非阻塞密度问题。所有回归和真实仓库验证均使用空本地仓库且不构建或执行目标应用。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence；当前 M9 不实现。下一任务是 **T-0905 — Medium Real Repository Validation**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
