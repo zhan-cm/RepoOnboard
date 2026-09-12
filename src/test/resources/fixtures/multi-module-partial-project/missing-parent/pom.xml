@@ -1,0 +1,10 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>missing.external</groupId>
+    <artifactId>base</artifactId>
+    <version>1</version>
+    <relativePath/>
+  </parent>
+  <artifactId>missing-parent</artifactId>
+</project>

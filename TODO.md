@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0902 — Audit Multi-module Regression Fixture。**
+> **T-0903 — Audit Complex Spring Regression Fixture。**
 
-M0 至 M8 及 T-0901 已经完成。最小 Spring regression fixture 现已通过真实源码覆盖 Controller、Service、Repository、API 和基础确认依赖链，并固定公共报告中的位置、Evidence 与稳定 ID；测试只调用离线静态分析器，不构建或执行 fixture。下一步执行 T-0902 的多模块 regression fixture 审计。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8、T-0901 和 T-0902 已经完成。多模块 regression fixture 现已明确区分 Maven inheritance 与 aggregation，覆盖自定义/default source root 的模块归属、声明依赖控制的跨模块类型可见性、稳定内部模块边，以及缺失外部 parent/BOM 时保留子模块的 `PARTIAL` 路径。下一步执行 T-0903 的复杂 Spring regression fixture 审计。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2297,7 +2297,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 用于验证：
@@ -2311,9 +2311,9 @@ Cross-module dependency
 Acceptance Criteria:
 
 ```text
-[ ] parent 与 aggregator 关系分别验证
-[ ] 模块可见性、源码归属和跨模块边有明确期望
-[ ] 缺失外部 parent/BOM 的 PARTIAL 路径被覆盖
+[x] parent 与 aggregator 关系分别验证
+[x] 模块可见性、源码归属和跨模块边有明确期望
+[x] 缺失外部 parent/BOM 的 PARTIAL 路径被覆盖
 ```
 
 ---
@@ -3086,18 +3086,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0902
-Audit the multi-module regression fixture
+T-0903
+Audit the complex Spring regression fixture
 ```
 
 本阶段：
 
 > **M9 — Regression & Real Repository Validation**
 
-M0 至 M8 及 T-0901 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8、T-0901 和 T-0902 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0902 Audit Multi-module Regression Fixture
+T-0903 Audit Complex Spring Regression Fixture
 ```
 
 ---
@@ -3138,6 +3138,6 @@ Release
 
 Next:
 
-> **T-0902 — Audit Multi-module Regression Fixture.**
+> **T-0903 — Audit Complex Spring Regression Fixture.**
 
 ````

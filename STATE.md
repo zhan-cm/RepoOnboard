@@ -8,8 +8,9 @@ RepoOnboard 已完成 **M8 — Start Here**，当前处于 **M9 — Regression &
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
 - **T-0801 至 T-0804** 已完成，确定性重要度信号、文件级推荐阅读路径、来源可回溯解释、只读 projection 和正式 Start Here 页面已经建立，M8 已关闭。
 - **T-0901** 已完成；最小 Spring fixture 的 Controller、Service、Repository、API、基础确认依赖链、位置、Evidence 和稳定 ID 已纳入端到端回归。
-- 当前下一任务是 **T-0902 — Audit Multi-module Regression Fixture**。
-- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 158 项 Java 测试并全部通过；T-0901 回归使用空的本地 Maven 仓库且不构建或执行 fixture。此前 `clean verify` 已在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 `start-here-project` loopback 会话的 1280×720 / 500×800 布局、组件/API 精确跳转及干净浏览器控制台已经验证。
+- **T-0902** 已完成；多模块 fixture 已覆盖 inheritance / aggregation 分离、模块源码归属、声明依赖控制的跨模块类型可见性、稳定内部模块边，以及缺失外部 parent/BOM 的 `PARTIAL` 路径。
+- 当前下一任务是 **T-0903 — Audit Complex Spring Regression Fixture**。
+- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 160 项 Java 测试并全部通过；T-0901 / T-0902 回归均使用空的本地 Maven 仓库且不构建或执行 fixture。`clean verify` 会在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。真实 `start-here-project` loopback 会话的 1280×720 / 500×800 布局、组件/API 精确跳转及干净浏览器控制台已经验证。
 
 ## 2. 已完成任务
 
@@ -66,6 +67,7 @@ RepoOnboard 已完成 **M8 — Start Here**，当前处于 **M9 — Regression &
 ### M9 — Regression & Real Repository Validation
 
 - **T-0901**：审计 `spring-analysis-project` 最小 Spring fixture，为真实源码增加单一 `GET /users/{id}` 与 Controller → Service → Repository 构造器注入链；新增端到端回归，固定公共报告中的项目、模块、组件、Endpoint 和依赖稳定 ID，以及 1-based SourceLocation、原始 Evidence 和规则 ID。回归使用空本地仓库直接调用静态分析器，重复结果一致，fixture 不生成构建产物且文件集合保持不变。
+- **T-0902**：审计 `multi-module-project`，补充 `api/code/java` 与 `library/src/main/java` 的最小源码，使 `api` 通过精确 Maven 依赖解析 `LibraryType`；端到端回归分别固定 Maven parent 与 aggregation、模块/源码稳定 ID、source root 归属、跨模块可见性和确认内部模块边。新增 `multi-module-partial-project`，确认空本地仓库下缺失外部 parent 与 BOM 时两个聚合子模块及 raw facts 仍保留，报告返回带文件和行号的 `PARTIAL` 诊断。
 
 ## 3. 当前实现能力
 
@@ -158,6 +160,7 @@ RepoOnboard
 - T-0709 将本地 Web 安全假设转换为可执行边界：Host / Origin、规范路由、CSP、缓存、CORS 缺省、内容注入、并发读取、JAR 资源闭包、schema 和关闭释放均有自动化证据。Cytoscape 容器定位也在真实浏览器 warning 暴露后修正并加入回归检查。
 - T-0804 从同一不可变报告快照生成独立、版本化、固定只读的 `/api/start-here` projection；公共报告 schema `1.2` 保持不变，Vue 不重复实现启发式。正式页面展示稳定文件顺序、全部原因、模块与 Source Evidence，支持默认/完整列表、PARTIAL/空结果说明，并只在 supporting entity ID 与公共报告精确连接时提供 Component / Endpoint 跨页面导航。实现保留 Stitch 的编号路径与 Inspector 信息层级，同时移除远程 CDN、示例运行状态、硬编码仓库值和不可证实动作。
 - T-0901 将早期分散的 Spring 组件与 API fixture 覆盖收束为一个最小端到端报告回归；不再依赖手工构造 Endpoint 来证明最小 fixture 的公共输出，并明确验证离线、非执行式测试边界。
+- T-0902 将原本只有 POM 的多模块 fixture 扩展为可验证源码归属和跨模块类型可见性的回归基线，并把缺失外部 parent/BOM 的容错场景隔离到独立 companion fixture；成功与 `PARTIAL` 语义不再混合。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -175,7 +178,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M9**：T-0902 至 T-0907，继续完成多模块/复杂 fixture、真实仓库和 onboarding 价值验证；T-0901 已完成。
+- **M9**：T-0903 至 T-0907，继续完成复杂 fixture、真实仓库和 onboarding 价值验证；T-0901 与 T-0902 已完成。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
 - **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。该候选不进入当前 M9。
 
@@ -183,10 +186,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-0902 — Audit Multi-module Regression Fixture**
+> **T-0903 — Audit Complex Spring Regression Fixture**
 
-审计多模块 regression fixture，明确验证 Maven parent 与 aggregator、模块可见性、源码归属、跨模块边，以及缺失外部 parent/BOM 的 PARTIAL 路径。
+审计复杂 Spring regression fixture，覆盖多 Controller、Service-to-Service、Configuration、多 API 路径、多构造器、接口多实现、条件映射、循环关系，以及 UI / Start Here 共用同一稳定报告快照。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8 及 T-0901 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。最小 Spring fixture 已固定真实 Controller、Service、Repository、单一 API、基础确认依赖链、位置、Evidence 与稳定 ID，并以空本地仓库直接运行静态分析回归，不构建或执行目标应用。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence；当前 M9 不实现。下一任务是 **T-0902 — Audit Multi-module Regression Fixture**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8、T-0901 和 T-0902 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。最小 Spring fixture 已固定真实 Controller、Service、Repository、单一 API、基础确认依赖链、位置、Evidence 与稳定 ID；多模块 fixture 已固定 inheritance / aggregation、源码归属、声明依赖控制的类型可见性、内部模块边和缺失外部 parent/BOM 的 `PARTIAL` 语义。相关回归均使用空本地仓库且不构建或执行目标应用。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence；当前 M9 不实现。下一任务是 **T-0903 — Audit Complex Spring Regression Fixture**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
