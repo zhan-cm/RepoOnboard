@@ -101,7 +101,7 @@ Technical Decisions      ✓
 Project Scaffold         ✓
 Core Analysis            ✓
 Web UI                   ✓
-Real-world Validation    ○
+Real-world Validation    ◐
 Public Release           ○
 ```
 
@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0906 — Large Repository Trial。**
+> **T-0907 — Onboarding Value Validation。**
 
-M0 至 M8、T-0901 至 T-0905 已经完成。固定 commit 的 JHipster Sample Application 中型真实仓库验证已核对 30 个报告组件、24 个 Endpoint、7 条确认依赖、19 条诊断、性能和筛选后的图可读性；合法空 Maven 属性导致的整次分析崩溃已修复并加入回归，wildcard import 造成的保守漏报已记录。下一步执行 T-0906 的大型仓库试验。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8、T-0901 至 T-0906 已经完成。固定 ThingsBoard `v4.3.1.5` commit 的大型仓库试验完成 59 个 active module、3,834 个 main Java file 的分析，记录了 25.498 秒冷启动、648.23 MiB 进程峰值，以及离线 Maven/Spring 语义覆盖、诊断噪声、重复模块名、API 全量列表和图可读性边界；本结果不承诺完整支持。下一步只执行 T-0907 的 onboarding value 验证。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2258,7 +2258,7 @@ Exit Criteria:
 ```text
 [x] 最小、多模块和复杂 fixture regression suite 全部通过
 [x] 小型和中型真实仓库有人工核对的组件/API/依赖样本
-[ ] 大型试验记录解析、内存、耗时和图可读性限制
+[x] 大型试验记录解析、内存、耗时和图可读性限制
 [ ] Onboarding value 有可复现任务与观察结果
 [ ] 发现的问题已修复、标为 blocker 或记录为已知限制
 ```
@@ -2419,8 +2419,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-12
+
+Deliverable: [ThingsBoard Large Repository Trial](docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
+
+Validation: Java 21 / Maven 3.9.16 `clean verify` 通过，共运行 81 项前端测试和 163 项 Java 测试，生产 JAR 的离线 UI 校验通过。固定 ThingsBoard `v4.3.1.5` commit `2cd31ac359214f94b945546830da503ddf80070f`，在 Windows、空本地 Maven 模型仓库及 4 GiB heap ceiling 下完成 59 个 active module、3,834 个 main Java file 的静态分析。冷启动至 UI ready 为 25.498 秒，完整浏览器核验后的进程峰值工作集为 648.23 MiB；无 Java parse failure、OOM 或 server crash。记录了离线 Maven/Spring 语义覆盖、1,719 条诊断的可用性、重复模块名、581-row API 列表及图预算内仍可能形成 hairball 的实际上限，不承诺完整支持该仓库或同规模项目。
 
 目标不是保证大型项目完美支持。
 
@@ -2436,9 +2442,9 @@ Memory problems
 Acceptance Criteria:
 
 ```text
-[ ] 记录文件/模块规模、耗时和峰值内存
-[ ] 记录 parser、model 和 graph usability 的实际上限
-[ ] 不为试验仓库承诺完整支持
+[x] 记录文件/模块规模、耗时和峰值内存
+[x] 记录 parser、model 和 graph usability 的实际上限
+[x] 不为试验仓库承诺完整支持
 ```
 
 ---
@@ -3098,18 +3104,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0906
-Run a large repository trial
+T-0907
+Validate onboarding value
 ```
 
 本阶段：
 
 > **M9 — Regression & Real Repository Validation**
 
-M0 至 M8、T-0901 至 T-0905 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8、T-0901 至 T-0906 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0906 Large Repository Trial
+T-0907 Onboarding Value Validation
 ```
 
 ---
@@ -3142,7 +3148,7 @@ M7 Local Web UI — complete
 M8 Start Here — complete
 
 Validation
-██████████████░░░░░░   70%
+█████████████████░░░   85%
 
 Release
 ░░░░░░░░░░░░░░░░░░░░   0%
@@ -3150,6 +3156,6 @@ Release
 
 Next:
 
-> **T-0906 — Large Repository Trial.**
+> **T-0907 — Onboarding Value Validation.**
 
 ````

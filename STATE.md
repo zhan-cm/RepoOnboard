@@ -12,8 +12,9 @@ RepoOnboard 已完成 **M8 — Start Here**，当前处于 **M9 — Regression &
 - **T-0903** 已完成；复杂 Spring fixture 已覆盖多 Controller、Configuration、多路径与条件 mapping、Service-to-Service 链和循环，以及多构造器、接口多实现和 unsupported/ambiguous 场景的非猜测结果；UI 报告与 Start Here projection 固定来自同一报告快照。
 - **T-0904** 已完成；固定 Spring Petclinic commit 的小型真实仓库验证已核对项目、组件、全部 17 个 Endpoint 和 6 个构造器依赖，并记录 3 个 Spring Data Repository 与连带 6 条确认依赖漏报、10 条可解释诊断、9.302 秒冷启动及 130.14 MiB 峰值工作集。
 - **T-0905** 已完成；固定 JHipster Sample Application commit 的中型真实仓库验证已核对 30 个报告组件、24 个 Endpoint、7 条确认依赖和 19 条诊断，修复合法空 Maven 属性造成的整次分析崩溃，并记录 wildcard import 连带漏报、9.761 秒冷启动、181.53 MiB 峰值工作集和筛选后的图可读性。
-- 当前下一任务是 **T-0906 — Large Repository Trial**。
-- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 163 项 Java 测试并全部通过；T-0901 至 T-0905 均使用空的本地 Maven 仓库且不构建或执行 fixture/目标应用。`clean verify` 会在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。JHipster Sample Application 的 1280×720 Overview、Architecture、Start Here、筛选/一阶邻域和干净浏览器控制台已经验证。
+- **T-0906** 已完成；固定 ThingsBoard `v4.3.1.5` commit 的大型仓库试验完成 59 个 active module、3,834 个 main Java file 的分析，无 parse failure、OOM 或 server crash；记录 25.498 秒冷启动、648.23 MiB 进程峰值，以及离线模型、Spring 语义、诊断规模和图/API UI 的实际上限，不承诺完整支持。
+- 当前下一任务是 **T-0907 — Onboarding Value Validation**。
+- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 163 项 Java 测试并全部通过；T-0901 至 T-0906 均使用空的本地 Maven 仓库且不构建或执行 fixture/目标应用。`clean verify` 会在 verify 阶段直接检查生产 JAR 内的离线 UI 资源与 schema 契约。ThingsBoard 的 1280×720 Overview、Architecture、API Map、Start Here、筛选/一阶邻域和干净浏览器控制台已经验证。
 
 ## 2. 已完成任务
 
@@ -74,6 +75,7 @@ RepoOnboard 已完成 **M8 — Start Here**，当前处于 **M9 — Regression &
 - **T-0903**：新增 `spring-complex-project` 组合 fixture 和端到端回归，固定 13 个组件、12 个 Endpoint、确认的 Controller → Service / Service → Service / Service → Repository 关系及双向 Service 循环。多构造器歧义、PaymentPort 多实现、unsupported setter 注入、本地同名 mapping 注解、未解析 path/condition 均保留诊断或不确定状态且不生成猜测边；公共报告和 Start Here JSON 重复序列化一致、项目/schema/status 对齐，推荐路径只引用同一报告中的确认实体。
 - **T-0904**：固定 `spring-projects/spring-petclinic` commit `818c4136ea971c21674525f9053de0d9c7ad8cfe`，在空本地 Maven 模型仓库下完成真实仓库离线验证。项目检测、10 个直接标注组件及全部 17 个 Endpoint 与源码一致；3 个无直接注解的 Spring Data Repository 和连带 6 条确认注入边记录为漏报，分析仍保留 6 条 unresolved 事实和解释性诊断，不生成猜测边。完整记录见 `docs/validation/T-0904-SPRING-PETCLINIC.md`。
 - **T-0905**：固定 `jhipster/jhipster-sample-app` commit `e06e87abe0be8a3a194381ce651164a734811b3f`，在空本地 Maven 模型仓库下完成中型真实仓库离线验证。30 个报告组件、24 个 Endpoint 和 7 条确认依赖均为真实事实，9 个外部注入目标保持 unresolved；修复空 Maven 属性导致的分析崩溃。3 个 wildcard-import Controller 及连带 13 个 Endpoint、7 条确认依赖记录为漏报。Architecture 按类型筛选和一阶邻域后可读，隐藏/未解析计数保持可见。完整记录见 `docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md`。
+- **T-0906**：固定 `thingsboard/thingsboard` release `v4.3.1.5` commit `2cd31ac359214f94b945546830da503ddf80070f`，在空本地 Maven 模型仓库下完成大型真实仓库边界试验。59 个 active module、3,834 个 main Java file 和 581 个 Endpoint 成功进入报告；无 Java parse failure、OOM 或 server crash。记录 25.498 秒冷启动、648.23 MiB 进程峰值、1,719 条诊断，以及 Maven/Spring 语义覆盖、重复模块名、API 全量列表和图预算内仍可能不可读的限制。完整记录见 `docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md`。
 
 ## 3. 当前实现能力
 
@@ -170,6 +172,7 @@ RepoOnboard
 - T-0903 将此前分散在 injection、dependency、MVC 和 Start Here 单元 fixture 中的复杂模式组合为同一端到端报告回归；确认关系、循环和条件 Endpoint 可进入公共输出，不确定关系只影响覆盖状态，不会进入 Architecture 确认边或 Start Here 排名。
 - T-0904 首次用固定真实仓库量化 V0.1 的准确性和成本：Spring Petclinic 的直接注解与 Endpoint 结果准确，离线外部 parent 和 Spring Data 接口限制均通过 `PARTIAL`/unresolved 明示；冷启动与本地 UI ready 用时 9.302 秒，峰值工作集 130.14 MiB。
 - T-0905 用中型 JHipster 仓库验证失败容忍度、诊断噪声、性能和图筛选。Maven 属性读取现在把空值视为未提供的报告 metadata，同时仍允许空值参与其他属性插值，避免合法 POM 使分析整体失败；冷启动与本地 UI ready 用时 9.761 秒，峰值工作集 181.53 MiB。
+- T-0906 用大型 ThingsBoard 仓库量化当前边界：3,834 个 main Java file 均完成解析，但离线 Maven model 和 Spring 语义解析产生 1,719 条诊断；冷启动与本地 UI ready 用时 25.498 秒，浏览器核验后进程峰值工作集 648.23 MiB。最大模块被图预算安全暂停，但 52 节点/77 关系的预算内图仍可能形成 hairball，说明数值门槛不能保证语义可读性。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -182,6 +185,7 @@ RepoOnboard
 - **Spring Data Repository 识别缺口**：当前组件规则不把仅继承 Spring Data repository 基类且无直接 `@Repository` 的接口识别为 Repository；Spring Petclinic 因此漏报 3 个组件，6 条真实构造器注入边只保留为 unresolved。
 - **Wildcard import 组件漏报**：当前注解解析器在同一文件存在多个 wildcard import 时保守判为 ambiguous，即使只有一个 wildcard 包能提供已知 Spring 注解。JHipster Sample Application 因此漏报 3 个直接 `@RestController`、13 个 Endpoint 和 7 条项目内确认依赖；每个文件均有明确诊断，不生成误报。
 - **真实仓库 UI 密度**：中型 JHipster 仓库的 30 节点 Architecture 默认图较密且外侧标签可能裁切；按组件类型筛选会持续显示 hidden/unresolved 计数，选中组件后一阶邻域可生成清晰的小图。API 宽表的 source 列在 1280 px 下仍可能需要横向滚动。当前均不阻塞发布，但应写入 V0.1 使用说明。
+- **大型仓库边界**：ThingsBoard 试验在 3,834 个 main Java file 上完成但进程峰值达到 648.23 MiB，并产生 1,719 条诊断；当前诊断视图不适合大规模逐项 triage。重复 Maven leaf module 名在选择器中没有路径区分，581 个 API row 一次性渲染；52 节点/77 关系的预算内图仍可能不可读。V0.1 不承诺完整支持同规模仓库。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **Windows Wrapper 启动缺陷**：当前 `mvnw.cmd` 在本机 `.m2` 目录不是链接时会读取空的 `Target[0]` 并提前失败；本轮使用 Wrapper 已下载且校验过的 Maven 3.9.16 完成全量验证，启动脚本本身仍需单独修复。
 - **前端包体警告**：单一生产 JavaScript 产物约 602 kB（gzip 约 190 kB），Vite 会提示超过 500 kB；T-0709 已确认离线 JAR 可正确加载，是否拆包应在真实仓库性能数据表明必要时再决定。
@@ -190,7 +194,7 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M9**：T-0906 至 T-0907，继续完成大型真实仓库和 onboarding 价值验证；T-0901 至 T-0905 已完成。
+- **M9**：T-0907，完成 onboarding 价值验证；T-0901 至 T-0906 已完成。
 - **M10**：T-1001 至 T-1008，完成安装、错误体验、发布文档、演示、License、GitHub 清理和 V0.1 发布。
 - **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。该候选不进入当前 M9。
 
@@ -198,10 +202,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-0906 — Large Repository Trial**
+> **T-0907 — Onboarding Value Validation**
 
-选择并固定一个大型真实 Spring Boot Maven 仓库与 commit，记录文件/模块规模、耗时、峰值内存、parser/model 限制和 graph usability 的实际上限；本任务是边界试验，不承诺完整支持。
+设计可复现的陌生仓库理解任务，观察 RepoOnboard 是否帮助第一次接触仓库的人更快定位入口、核心模块、关键 API 和依赖路径，并记录困惑点与人工反馈。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8、T-0901 至 T-0905 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。小型 Spring Petclinic 和中型 JHipster Sample Application 均已固定 commit 并人工核对；后者修复了空 Maven 属性导致的分析崩溃，同时量化了 wildcard import 漏报和 30 节点默认图密度，类型/一阶邻域筛选后 hidden/unresolved 数量仍清晰可见。所有回归和真实仓库验证均使用空本地仓库且不构建或执行目标应用。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence；当前 M9 不实现。下一任务是 **T-0906 — Large Repository Trial**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M8、T-0901 至 T-0906 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有响应式 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。小型 Spring Petclinic、中型 JHipster Sample Application 和大型 ThingsBoard 均已固定 commit 验证；ThingsBoard 的 59 个 active module、3,834 个 main Java file 成功完成分析，但 25.498 秒冷启动、648.23 MiB 进程峰值、1,719 条诊断和大型 UI 密度只证明当前边界，不代表完整支持。所有回归和真实仓库验证均使用空本地仓库且不构建或执行目标应用。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence；当前 M9 不实现。下一任务是 **T-0907 — Onboarding Value Validation**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
