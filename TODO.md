@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0903 — Audit Complex Spring Regression Fixture。**
+> **T-0904 — Small Real Repository Validation。**
 
-M0 至 M8、T-0901 和 T-0902 已经完成。多模块 regression fixture 现已明确区分 Maven inheritance 与 aggregation，覆盖自定义/default source root 的模块归属、声明依赖控制的跨模块类型可见性、稳定内部模块边，以及缺失外部 parent/BOM 时保留子模块的 `PARTIAL` 路径。下一步执行 T-0903 的复杂 Spring regression fixture 审计。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8、T-0901 至 T-0903 已经完成。复杂 Spring regression fixture 现已覆盖多 Controller、Configuration、多路径与条件 mapping、确认的 Service-to-Service 链和循环，并明确保留多构造器、接口多实现、unsupported 注入及未解析 mapping 的非猜测结果；UI 报告与 Start Here projection 使用同一稳定 `AnalysisReport` 快照。下一步执行 T-0904 的小型真实仓库验证。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2323,7 +2323,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 加入：
@@ -2338,9 +2338,9 @@ Multiple API paths
 Acceptance Criteria:
 
 ```text
-[ ] 多构造器、接口多实现、条件映射和循环关系被覆盖
-[ ] unsupported/ambiguous 情况不产生猜测结果
-[ ] UI 和 Start Here 使用同一稳定报告快照
+[x] 多构造器、接口多实现、条件映射和循环关系被覆盖
+[x] unsupported/ambiguous 情况不产生猜测结果
+[x] UI 和 Start Here 使用同一稳定报告快照
 ```
 
 ---
@@ -3086,18 +3086,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0903
-Audit the complex Spring regression fixture
+T-0904
+Validate a small real Spring Boot repository
 ```
 
 本阶段：
 
 > **M9 — Regression & Real Repository Validation**
 
-M0 至 M8、T-0901 和 T-0902 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8、T-0901 至 T-0903 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0903 Audit Complex Spring Regression Fixture
+T-0904 Small Real Repository Validation
 ```
 
 ---
@@ -3138,6 +3138,6 @@ Release
 
 Next:
 
-> **T-0903 — Audit Complex Spring Regression Fixture.**
+> **T-0904 — Small Real Repository Validation.**
 
 ````
