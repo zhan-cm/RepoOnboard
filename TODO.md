@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-0904 — Small Real Repository Validation。**
+> **T-0905 — Medium Real Repository Validation。**
 
-M0 至 M8、T-0901 至 T-0903 已经完成。复杂 Spring regression fixture 现已覆盖多 Controller、Configuration、多路径与条件 mapping、确认的 Service-to-Service 链和循环，并明确保留多构造器、接口多实现、unsupported 注入及未解析 mapping 的非猜测结果；UI 报告与 Start Here projection 使用同一稳定 `AnalysisReport` 快照。下一步执行 T-0904 的小型真实仓库验证。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M8、T-0901 至 T-0904 已经完成。固定 commit 的 Spring Petclinic 小型真实仓库验证已人工核对 Project、Component、Endpoint 与 Dependency 事实，并记录 `PARTIAL` 诊断、误报/漏报、耗时、峰值内存及 UI 可读性；未识别的 Spring Data Repository 和连带 unresolved 注入边已作为已知限制保留。下一步执行 T-0905 的中型真实仓库验证。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2350,8 +2350,14 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-12
+
+Deliverable: [Spring Petclinic Validation](docs/validation/T-0904-SPRING-PETCLINIC.md)
+
+Validation: 固定 Spring Petclinic commit `818c4136ea971c21674525f9053de0d9c7ad8cfe`，在空本地 Maven 模型仓库下完成离线分析和 1280×720 UI 人工核对；直接标注组件及全部 17 个 Endpoint 未发现误报，3 个 Spring Data Repository 与连带 6 条确认注入边记录为已知漏报，冷启动至 UI ready 为 9.302 秒，峰值工作集 130.14 MiB。
 
 选择真实开源 Spring Boot 项目。
 
@@ -2368,9 +2374,9 @@ UI readability
 Acceptance Criteria:
 
 ```text
-[ ] 仓库 URL 与 commit 固定
-[ ] 人工核对一组 Component / Endpoint / Dependency 事实
-[ ] 记录误报、漏报、诊断、耗时和峰值内存
+[x] 仓库 URL 与 commit 固定
+[x] 人工核对一组 Component / Endpoint / Dependency 事实
+[x] 记录误报、漏报、诊断、耗时和峰值内存
 ```
 
 ---
@@ -3086,18 +3092,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-0904
-Validate a small real Spring Boot repository
+T-0905
+Validate a medium real Spring Boot repository
 ```
 
 本阶段：
 
 > **M9 — Regression & Real Repository Validation**
 
-M0 至 M8、T-0901 至 T-0903 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
+M0 至 M8、T-0901 至 T-0904 已完成；可选 T-0404 继续按非阻塞规则延后。接下来只执行：
 
 ```text
-T-0904 Small Real Repository Validation
+T-0905 Medium Real Repository Validation
 ```
 
 ---
@@ -3138,6 +3144,6 @@ Release
 
 Next:
 
-> **T-0904 — Small Real Repository Validation.**
+> **T-0905 — Medium Real Repository Validation.**
 
 ````
