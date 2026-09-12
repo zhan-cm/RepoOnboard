@@ -1,0 +1,17 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fixture</groupId>
+  <artifactId>missing-bom</artifactId>
+  <version>1</version>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>missing.external</groupId>
+        <artifactId>platform</artifactId>
+        <version>1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
