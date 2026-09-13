@@ -8,7 +8,7 @@ RepoOnboard 是一个本地优先的代码库理解与开发者上手工具。�
 
 > **状态：发布前（`0.1.0-SNAPSHOT`）**
 >
-> 当前实现处于发布准备阶段，尚无可下载的 V0.1 Release 或 release tag，请使用下方源码构建步骤。源码目前公开可见，但尚未选择 License，因此不能在法律意义上称为开源，也不能默认获得复用授权。
+> 当前实现处于发布准备阶段，尚无可下载的 V0.1 Release 或 release tag，请使用下方源码构建步骤。RepoOnboard 采用 Apache License 2.0；打包的第三方组件仍分别遵循各自 License。
 
 ## 演示
 
@@ -200,7 +200,7 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 
 ## 路线图
 
-M0–M9 以及发布准备中的打包、错误体验、README、固定公开 Demo 目标和演示媒体已完成。M10 仍包括 License、GitHub 展示清理、原生跨平台 smoke check 和正式 V0.1 Release。任务级事实以 [TODO.md](./TODO.md) 为准。
+M0–M9 以及发布准备中的打包、错误体验、README、固定公开 Demo 目标、演示媒体和 License 已完成。M10 仍包括 GitHub 展示清理、原生跨平台 smoke check 和正式 V0.1 Release。任务级事实以 [TODO.md](./TODO.md) 为准。
 
 V0.1 继续采用 Web-first，发布物将是可执行 JAR 与 Windows/POSIX 启动脚本。原生桌面容器、安装器、自带 Java Runtime 和选择性的 English/中文产品界面切换属于 V0.2 候选，不进入 V0.1。界面切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
 
@@ -208,11 +208,13 @@ V0.1 继续采用 Web-first，发布物将是可执行 JAR 与 Windows/POSIX 启
 
 RepoOnboard 仍处于发布前开发阶段。提出变更前请阅读 [PROJECT.md](./PROJECT.md)、[DECISIONS.md](./DECISIONS.md)、[TODO.md](./TODO.md) 和 [AGENTS.md](./AGENTS.md)。变更应聚焦已接受任务，补充最窄且充分的测试，保留源码 Evidence，并且不得在没有明确范围决策时扩大 V0.1 技术生态。
 
-由于仓库尚无 License，外部贡献和复用条款还未确定。贡献指南与 License 属于发布准备工作；在此之前，请先通过 GitHub issue 讨论提案，再提交代码。
+除非另有明确说明，有意提交并纳入 RepoOnboard 的贡献按照 Apache License 2.0 第 5 节接受。项目仍处于预发布阶段，请先通过 GitHub issue 讨论提案，再提交代码。
 
 ## License
 
-项目尚未选择 License。源码公开可见不等于获得复制、修改或再分发授权；V0.1 发布前必须完成 License 选择。
+RepoOnboard 采用 [Apache License 2.0](./LICENSE)，Copyright 2026 zhan-cm。该 License 在满足其条件的前提下授予使用、修改和再分发等权限，并包含明确的专利许可；软件不附带担保。
+
+可执行 JAR 与生产 Web UI 包含采用 Apache-2.0、EPL-2.0、MIT、BSD-2-Clause、BSD-3-Clause 和 ISC 的第三方组件。已核对的组件版本、署名、License 选择、源码位置和随包许可文本见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
 
 ## 项目理念
 

@@ -11,6 +11,14 @@
     <name>RepoOnboard</name>
     <description>Local-first codebase comprehension and developer onboarding.</description>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <jackson.version>3.1.4</jackson.version>
         <javaparser.version>3.28.2</javaparser.version>
@@ -67,6 +75,16 @@
             <resource>
                 <directory>${project.build.directory}/generated-resources/frontend</directory>
                 <targetPath>io/github/zhancm/repoonboard/web/ui</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <targetPath>META-INF/repoonboard</targetPath>
+                <includes>
+                    <include>LICENSE</include>
+                    <include>NOTICE</include>
+                    <include>THIRD_PARTY_NOTICES.md</include>
+                    <include>third-party-licenses/**</include>
+                </includes>
             </resource>
         </resources>
         <pluginManagement>

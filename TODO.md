@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1006 — License。**
+> **T-1007 — GitHub Repository Cleanup。**
 
-M0 至 M9 以及 T-1001 至 T-1005 已经完成。14.4 秒 Demo GIF 使用当前打包候选和固定 JHipster 输入，展示扫描、Overview、Architecture、API 与 Start Here，并全程保留 `PARTIAL` / 限制提示；录制输入、哈希和真实性边界已记录。下一步只执行 T-1006 的 License 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 以及 T-1001 至 T-1006 已经完成。项目采用 Apache License 2.0，运行时依赖和前端生产资产的 License、attribution 与源码入口已审计并随发行 JAR 打包。下一步只执行 T-1007 的 GitHub 仓库清理。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2509,7 +2509,7 @@ Exit Criteria:
 
 ```text
 [ ] Windows/macOS/Linux 的 JAR 与启动脚本 smoke checks 通过
-[ ] README、安装、用法、支持范围和已知限制准确
+[x] README、安装、用法、支持范围和已知限制准确
 [ ] License、依赖许可、校验和和仓库清理完成
 [ ] Demo 与发布 checklist 可由陌生用户复现
 ```
@@ -2675,7 +2675,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 确定开源 License。
@@ -2685,9 +2685,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] 根 License 文件存在
-[ ] 分发依赖和前端资产许可已核对
-[ ] README 中的许可说明准确
+[x] 根 License 文件存在
+[x] 分发依赖和前端资产许可已核对
+[x] README 中的许可说明准确
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1006
-Select and document the project license
+T-1007
+Clean the public GitHub repository surface
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 和 T-1001 至 T-1005 已完成；可选 T-0404 继续按非阻塞规则延后。README 已嵌入固定输入、真实打包候选生成的 14.4 秒 Demo GIF，并公开录制哈希、场景和 `PARTIAL` 边界。接下来只执行：
+M0 至 M9 和 T-1001 至 T-1006 已完成；可选 T-0404 继续按非阻塞规则延后。项目和发行包的 Apache-2.0 License、第三方依赖清单、EPL/MIT/BSD/ISC 文本及中英文复用/贡献说明已经闭环。接下来只执行：
 
 ```text
-T-1006 License
+T-1007 GitHub Repository Cleanup
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-█████████████░░░░░░░  63%
+███████████████░░░░░  75%
 ```
 
 Next:
 
-> **T-1006 — License.**
+> **T-1007 — GitHub Repository Cleanup.**
 
 ````

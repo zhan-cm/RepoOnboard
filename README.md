@@ -8,7 +8,7 @@ RepoOnboard is a local-first codebase comprehension and developer onboarding too
 
 > **Status: pre-release (`0.1.0-SNAPSHOT`)**
 >
-> The implementation is in release preparation. There is no downloadable V0.1 release or release tag yet; use the source-build instructions below. The source is public, but a license has not been selected, so it should not yet be described as open source or assumed to grant reuse rights.
+> The implementation is in release preparation. There is no downloadable V0.1 release or release tag yet; use the source-build instructions below. RepoOnboard is licensed under the Apache License 2.0; bundled third-party components remain under their respective licenses.
 
 ## Demo
 
@@ -200,7 +200,7 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 
 ## Roadmap
 
-M0–M9 plus release preparation for packaging, error messages, README, the fixed public demo target, and demo media are complete. M10 still includes a license, GitHub presentation cleanup, native cross-platform smoke checks, and the actual V0.1 release. See [TODO.md](./TODO.md) for the task-level source of truth.
+M0–M9 plus release preparation for packaging, error messages, README, the fixed public demo target, demo media, and licensing are complete. M10 still includes GitHub presentation cleanup, native cross-platform smoke checks, and the actual V0.1 release. See [TODO.md](./TODO.md) for the task-level source of truth.
 
 V0.1 remains Web-first and will ship as an executable JAR plus Windows/POSIX launchers. A native desktop container, installer, bundled Java runtime, and selective English/中文 product-interface switch are V0.2 candidates, not V0.1 work. The language switch would translate product navigation, explanations, states, empty results, and errors while preserving code identifiers, paths, class names, APIs, framework terms, and original Evidence.
 
@@ -208,11 +208,13 @@ V0.1 remains Web-first and will ship as an executable JAR plus Windows/POSIX lau
 
 RepoOnboard is still in pre-release development. Before proposing a change, read [PROJECT.md](./PROJECT.md), [DECISIONS.md](./DECISIONS.md), [TODO.md](./TODO.md), and [AGENTS.md](./AGENTS.md). Keep changes focused on an accepted task, add the narrowest sufficient test, preserve source evidence, and do not expand the V0.1 ecosystem without an explicit scope decision.
 
-Because the repository does not yet have a license, external contribution and reuse terms are not finalized. A contribution guide and license are release-preparation work; until then, use a GitHub issue to discuss a proposed contribution before submitting code.
+Unless explicitly stated otherwise, contributions intentionally submitted for inclusion in RepoOnboard are accepted under the Apache License 2.0, consistent with section 5 of that license. Use a GitHub issue to discuss a proposed contribution before submitting code while the project remains pre-release.
 
 ## License
 
-No license has been selected yet. Public source availability alone does not grant permission to copy, modify, or redistribute the project. License selection is required before V0.1 is released.
+RepoOnboard is licensed under the [Apache License 2.0](./LICENSE), Copyright 2026 zhan-cm. The license grants permissions subject to its stated conditions and includes an express patent license; it does not provide a warranty.
+
+The executable JAR and production Web UI include components under Apache-2.0, EPL-2.0, MIT, BSD-2-Clause, BSD-3-Clause, and ISC terms. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for the audited component versions, attributions, license choices, source references, and included license texts.
 
 ## Project philosophy
 

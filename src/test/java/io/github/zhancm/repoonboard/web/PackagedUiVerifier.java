@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 public final class PackagedUiVerifier {
     private static final String MAIN_CLASS = "io.github.zhancm.repoonboard.cli.RepoOnboardCommand";
     private static final String ROOT = "io/github/zhancm/repoonboard/web/ui/";
+    private static final String DISTRIBUTION_ROOT = "META-INF/repoonboard/";
     private static final Pattern RESOURCE_REFERENCE = Pattern.compile(
             "(?:src|href)=\"([^\"]+)\"");
 
@@ -52,6 +53,28 @@ public final class PackagedUiVerifier {
                     "Packaged JAR does not declare the RepoOnboard CLI entry point");
             require(jar.getJarEntry("picocli/CommandLine.class") != null,
                     "Packaged JAR does not contain runtime dependencies");
+
+            String license = read(jar, DISTRIBUTION_ROOT + "LICENSE");
+            String notice = read(jar, DISTRIBUTION_ROOT + "NOTICE");
+            String thirdPartyNotices = read(jar, DISTRIBUTION_ROOT + "THIRD_PARTY_NOTICES.md");
+            require(license.contains("Apache License")
+                            && license.contains("Copyright 2026 zhan-cm"),
+                    "Packaged JAR does not contain the RepoOnboard Apache-2.0 license");
+            require(notice.contains("Copyright 2026 zhan-cm"),
+                    "Packaged JAR does not contain the RepoOnboard notice");
+            require(thirdPartyNotices.contains("org.eclipse.sisu:org.eclipse.sisu.inject")
+                            && thirdPartyNotices.contains("cytoscape")
+                            && thirdPartyNotices.contains("distributed here under Apache-2.0"),
+                    "Packaged JAR does not contain the audited third-party inventory");
+            require(read(jar, DISTRIBUTION_ROOT + "third-party-licenses/EPL-2.0.txt")
+                            .contains("Eclipse Public License - v 2.0"),
+                    "Packaged JAR does not contain the EPL-2.0 text");
+            for (String name : new String[] {
+                    "MIT.txt", "BSD-2-Clause.txt", "BSD-3-Clause.txt", "ISC.txt"
+            }) {
+                require(!read(jar, DISTRIBUTION_ROOT + "third-party-licenses/" + name).isBlank(),
+                        "Packaged JAR contains an empty third-party license: " + name);
+            }
 
             String index = read(jar, ROOT + "index.html");
             String script = read(jar, ROOT + "assets/app.js");
@@ -180,7 +203,7 @@ public final class PackagedUiVerifier {
     private static String read(JarFile jar, String name) throws IOException {
         JarEntry entry = jar.getJarEntry(name);
         if (entry == null) {
-            throw new IOException("Packaged UI resource is missing: " + name);
+            throw new IOException("Packaged resource is missing: " + name);
         }
         try (var input = jar.getInputStream(entry)) {
             return new String(input.readAllBytes(), StandardCharsets.UTF_8);
