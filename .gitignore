@@ -5,11 +5,26 @@ target/
 # IDE compiler output
 out/
 
+# Local editor and IDE metadata
+.idea/
+.vscode/
+*.iml
+*.swp
+*~
+
 # Frontend dependencies
 frontend/node_modules/
 
 # RepoOnboard local analysis output
 .repoonboard/
+
+# Local environment and temporary files
+.env
+.env.*
+!.env.example
+*.tmp
+*.bak
+frontend/coverage/
 
 # Local logs and operating-system metadata
 *.log

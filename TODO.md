@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1007 — GitHub Repository Cleanup。**
+> **T-1008 — V0.1 Release。**
 
-M0 至 M9 以及 T-1001 至 T-1006 已经完成。项目采用 Apache License 2.0，运行时依赖和前端生产资产的 License、attribution 与源码入口已审计并随发行 JAR 打包。下一步只执行 T-1007 的 GitHub 仓库清理。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 以及 T-1001 至 T-1007 已经完成。公开仓库不再跟踪 IDE 状态文件；泄露的 Apifox token 已撤销，相关 `.idea/` 内容和 `RepoOnboard.iml` 已从可达 `master` 历史清除，本机路径与高置信凭据扫描通过，发布所需文件完整。下一步只执行 T-1008 的 V0.1 Release。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2510,7 +2510,7 @@ Exit Criteria:
 ```text
 [ ] Windows/macOS/Linux 的 JAR 与启动脚本 smoke checks 通过
 [x] README、安装、用法、支持范围和已知限制准确
-[ ] License、依赖许可、校验和和仓库清理完成
+[x] License、依赖许可、校验和和仓库清理完成
 [ ] Demo 与发布 checklist 可由陌生用户复现
 ```
 
@@ -2697,7 +2697,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 确保：
@@ -2713,9 +2713,9 @@ Clean commit history where appropriate
 Acceptance Criteria:
 
 ```text
-[ ] Secret、本地绝对路径和临时产物检查通过
-[ ] 发布文件、Wrapper、前端锁文件和许可文件完整
-[ ] git status 仅包含预期发布变更
+[x] Secret、本地绝对路径和临时产物检查通过
+[x] 发布文件、Wrapper、前端锁文件和许可文件完整
+[x] git status 仅包含预期发布变更
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1007
-Clean the public GitHub repository surface
+T-1008
+Create the V0.1 release
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 和 T-1001 至 T-1006 已完成；可选 T-0404 继续按非阻塞规则延后。项目和发行包的 Apache-2.0 License、第三方依赖清单、EPL/MIT/BSD/ISC 文本及中英文复用/贡献说明已经闭环。接下来只执行：
+M0 至 M9 和 T-1001 至 T-1007 已完成；可选 T-0404 继续按非阻塞规则延后。IDE 元数据已从当前树和可达历史移除，泄露的 Apifox token 已撤销；本机路径、凭据、临时/生成物、Markdown 链接和发布文件完整性检查均已通过。接下来只执行：
 
 ```text
-T-1007 GitHub Repository Cleanup
+T-1008 V0.1 Release
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-███████████████░░░░░  75%
+██████████████████░░  88%
 ```
 
 Next:
 
-> **T-1007 — GitHub Repository Cleanup.**
+> **T-1008 — V0.1 Release.**
 
 ````

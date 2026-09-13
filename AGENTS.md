@@ -1,14 +1,3 @@
-可以，下面这版我专门按 **Codex 仓库级执行说明** 来设计，和你现有的 `PROJECT.md / DECISIONS.md / TODO.md / README.md` 配套。
-
-直接复制到：
-
-```text
-E:\Projects\RepoOnboard\AGENTS.md
-```
-
-即可。
-
-````markdown
 # RepoOnboard — Agent Instructions
 
 > Repository-level instructions for Codex and other coding agents.
@@ -1281,50 +1270,3 @@ Always prefer:
 > **Current requirements before hypothetical future requirements.**
 
 > **One task completed well before several tasks partially completed.**
-
-````
-
-这版 `AGENTS.md` 的重点不是继续描述 RepoOnboard 功能，而是**规定 Codex 如何参与这个项目**。
-
-所以现在你的根目录基本就成型了：
-
-```text
-RepoOnboard/
-│
-├── AGENTS.md
-│   └── AI / Codex 怎么工作
-│
-├── PROJECT.md
-│   └── 产品是什么、为什么做
-│
-├── DECISIONS.md
-│   └── 技术上决定怎么做
-│
-├── TODO.md
-│   └── 当前具体做什么
-│
-├── README.md
-│   └── GitHub 用户看到什么
-│
-├── .gitignore
-└── .gitattributes
-````
-
-以后你给 Codex 的任务就可以非常短，例如：
-
-```text
-Read AGENTS.md and the referenced project documents.
-
-Work on T-0001 only.
-
-Do not begin implementation beyond the current task.
-```
-
-或者等进入编码期以后：
-
-```text
-Implement T-0201 according to TODO.md.
-
-Follow AGENTS.md and all accepted ADRs.
-Run the relevant tests when finished.
-```

@@ -20,7 +20,8 @@ RepoOnboard 已完成 **M9 — Regression & Real Repository Validation**，当�
 - **T-1004** 已完成；V0.1 公开 Demo 固定为 Apache License 2.0 的 `jhipster/jhipster-sample-app` commit `e06e87abe0be8a3a194381ce651164a734811b3f`。演示指南记录可复现 checkout、1 module / 81 source file / 30 component / 24 endpoint / 7 confirmed edge / 24 Start Here item 的真实 `PARTIAL` 快照，以及 Overview、Architecture、API、Start Here 四页面路径；分析前后第三方 checkout 均无源码变更。
 - **T-1005** 已完成；README 已嵌入 960 × 600、5 帧、14.4 秒的 Demo GIF，使用固定 JHipster commit 和 SHA-256 已记录的当前打包候选，依次展示真实扫描摘要、Overview、Architecture、API 与 Start Here。`PARTIAL`、coverage warning、unresolved 计数及确定性 Evidence 均保留，媒体文档明确压缩时长不代表扫描耗时。
 - **T-1006** 已完成；RepoOnboard 采用 Apache License 2.0，根目录 License/NOTICE、中英文复用与贡献说明、Maven 运行时依赖和前端生产资产审计均已补齐。Apache-2.0、EPL-2.0、MIT、BSD-2-Clause、BSD-3-Clause 和 ISC 信息以固定路径随可执行 JAR 分发并由 verify 校验。
-- 当前下一任务是 **T-1007 — GitHub Repository Cleanup**。
+- **T-1007** 已完成；`.idea/` 与 `RepoOnboard.iml` 不再跟踪并已从可达 `master` 历史清除，`AGENTS.md` 的模板包装和真实本机路径已移除，忽略规则覆盖 IDE、环境和临时产物。已暴露的 Apifox token 由用户在服务端撤销；当前树和重写后的历史通过高置信凭据扫描，发布文件与 Markdown 本地链接完整。
+- 当前下一任务是 **T-1008 — V0.1 Release**。
 - Java 21 / Maven 3.9.16 当前运行 82 项前端测试和 169 项 Java 测试并全部通过；T-0901 至 T-0907 均不构建或执行 fixture/目标应用。`clean verify` 会从最终可执行 JAR 启动独立进程，用空 Maven 缓存离线分析固定 fixture，读取本地报告路由，校验分发许可文件并生成 SHA-256；它仍不构建或执行被分析项目。
 
 ## 2. 已完成任务
@@ -190,6 +191,7 @@ RepoOnboard
 - T-1004 选定固定 JHipster Sample Application commit 作为公开 Demo 输入，并将许可证校验值、确定性获取方式、空 Maven cache 的预期 `PARTIAL` 报告及四页面讲解路径固化到文档。实测报告和 Start Here API 均返回 HTTP 200；分析只读取第三方 checkout，未修改、构建或运行目标应用。
 - T-1005 从当前 `target/repoonboard.jar` 和 T-1004 固定输入捕获本地 UI，将扫描摘要与四个主要页面压缩为 14.4 秒循环 GIF。Architecture 聚焦 `UserService` 的两条确认边，API 选中 `POST /api/bank-accounts`，Start Here 显示推荐原因与 Evidence；所有页面保留 `PARTIAL`，录制记录固定源码/JAR/GIF 哈希并声明不是性能基准。
 - T-1006 为项目确立 Apache License 2.0，并用 Maven runtime tree 与前端 production lockfile 核对实际分发闭包。JavaParser 明确选择其 Apache-2.0 选项，Eclipse Sisu 的 EPL-2.0 源码入口及 EPL/MIT/BSD/ISC 文本均随 JAR 提供；构建测试同时守护根文件、README 说明和包内固定路径。
+- T-1007 识别并处理了被误提交的 IDE/插件状态：Apifox token 先在服务端撤销，再从全部可达 `master` 历史清除；其余 `.idea/`、`.iml` 和 AGENTS 模板包装同步清理。发布文件、Wrapper、前端 lockfile、许可文件、Markdown 链接、仓库对象和当前工作树均完成核验；Stitch 设计资产、验证记录和 Demo GIF 属于有意保留的产品证据，不按生成物误删。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -207,7 +209,7 @@ RepoOnboard
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **原生平台发布检查尚未完成**：Windows 启动脚本与 Git Bash 下的 POSIX 启动脚本已实际执行；M10 出口仍要求在原生 macOS/Linux 环境完成 release smoke checks。
 - **前端包体警告**：单一生产 JavaScript 产物约 602 kB（gzip 约 190 kB），Vite 会提示超过 500 kB；T-0709 已确认离线 JAR 可正确加载，是否拆包应在真实仓库性能数据表明必要时再决定。
-- **发布尚未就绪**：当前仍为 `0.1.0-SNAPSHOT`；GitHub 展示清理、原生跨平台 smoke checks 和正式 V0.1 Release 尚未完成。
+- **发布尚未就绪**：当前仍为 `0.1.0-SNAPSHOT`；原生跨平台 smoke checks 和正式 V0.1 Release 尚未完成。
 
 ## 8. 未完成任务
 
@@ -219,10 +221,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-1007 — GitHub Repository Cleanup**
+> **T-1008 — V0.1 Release**
 
-检查 secrets、本地路径、临时文件、不必要生成物和公开仓库展示面，只处理 T-1007 定义的仓库清理范围。
+按发布 checklist 完成原生平台 smoke checks、最终版本与构建验证，并创建正式 GitHub V0.1 Release。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M9 与 T-1001 至 T-1006 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有统一浅色 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。项目采用 Apache License 2.0；Maven runtime 与前端 production 依赖清单及 EPL/MIT/BSD/ISC 文本随 JAR 分发。发布构建生成带运行依赖和离线 UI 的 `target/repoonboard.jar`、SHA-256，并由 Windows/POSIX 启动脚本提供 Java 21 门禁；verify 会从 JAR 离线分析 fixture 并校验许可资源。CLI 退出码为成功 0、失败 1、参数错误 2、部分成功 3，终端与 UI 消费相同的报告 Diagnostic。公开 Demo 固定到 Apache License 2.0 的 JHipster Sample Application commit，并公开可复现的 `PARTIAL` 结果与四页面路径；README 已嵌入 14.4 秒演示 GIF，录制记录固定打包输入与媒体哈希且不声称扫描耗时。尚无正式 Release。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence。下一任务是 **T-1007 — GitHub Repository Cleanup**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M9 与 T-1001 至 T-1007 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有统一浅色 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。项目采用 Apache License 2.0；Maven runtime 与前端 production 依赖清单及 EPL/MIT/BSD/ISC 文本随 JAR 分发。发布构建生成带运行依赖和离线 UI 的 `target/repoonboard.jar`、SHA-256，并由 Windows/POSIX 启动脚本提供 Java 21 门禁；verify 会从 JAR 离线分析 fixture 并校验许可资源。CLI 退出码为成功 0、失败 1、参数错误 2、部分成功 3，终端与 UI 消费相同的报告 Diagnostic。公开 Demo 固定到 Apache License 2.0 的 JHipster Sample Application commit，并公开可复现的 `PARTIAL` 结果与四页面路径；README 已嵌入 14.4 秒演示 GIF，录制记录固定打包输入与媒体哈希且不声称扫描耗时。IDE 元数据和泄露凭据已从可达历史清除，用户已撤销对应 Apifox token；尚无正式 Release。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence。下一任务是 **T-1008 — V0.1 Release**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
