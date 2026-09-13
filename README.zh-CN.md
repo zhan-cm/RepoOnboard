@@ -2,80 +2,62 @@
 
 [English](./README.md) | **简体中文**
 
-> 将陌生代码仓库转化为可交互的代码库地图。
+> 将陌生的 Java、Maven、Spring Boot 仓库转化为可追溯的本地代码库地图。
 
-RepoOnboard 是一个开源、本地优先的**代码库理解与开发者上手工具**，帮助开发者在修改陌生项目之前，先建立清晰、可靠的整体认知。
+RepoOnboard 是一个本地优先的代码库理解与开发者上手工具。它通过静态分析仓库、保留重要结论背后的源码证据，并在你开始修改代码前把结果呈现在只读 Web UI 中。
 
-> **状态：早期开发 / 发布准备中**
+> **状态：发布前（`0.1.0-SNAPSHOT`）**
 >
-> Maven、Java、Spring、API、组件依赖、稳定报告和可解释阅读路径分析已经可用。CLI 会通过只绑定 loopback 的本地端点，把每次分析报告提供给随包发布的 Vue 应用。fixture、真实仓库、规模边界与首次接触验证结果均已记录；后续仍需完成发布准备，首个版本尚未发布。首次接触验证只观察到部分价值，尚未证明相对手工阅读有可量化的提速。
+> 当前实现处于发布准备阶段，尚无可下载的 V0.1 Release 或 release tag，请使用下方源码构建步骤。源码目前公开可见，但尚未选择 License，因此不能在法律意义上称为开源，也不能默认获得复用授权。
 
-## 为什么需要 RepoOnboard？
+## 演示
 
-理解一个陌生代码库，通常需要反复手动回答同一组问题：
+仓库内提供了一个[小型确定性 Spring fixture](./src/test/resources/fixtures/spring-analysis-project)，可用于体验当前打包应用。它展示单一 Maven 模块、确认的 `Controller → Service → Repository` 依赖链、`GET /users/{id}`、源码 Evidence 和可解释的 Start Here 阅读路径。它刻意保持为测试 fixture，不是后续发布准备任务将提供的独立公开演示仓库。
 
-- 这个项目是做什么的？
-- 应用从哪里启动？
-- 哪些模块和组件最重要？
-- 项目暴露了哪些 HTTP API？
-- Controller、Service 和 Repository 之间是什么关系？
-- 应该从哪些文件开始阅读？
+先[从源码构建](#从源码安装)，然后运行：
 
-RepoOnboard 希望把这些探索过程整理成结构化、可追溯的项目地图。
+Windows PowerShell：
 
-## V0.1 范围
-
-首个版本有意聚焦于一个技术生态：
-
-| 领域 | V0.1 目标 |
-| --- | --- |
-| 语言 | Java |
-| 构建系统 | Maven |
-| 框架 | Spring Boot |
-| 运行环境 | Java 21 或更高版本 |
-| 界面 | 本地只读 Web UI |
-
-多语言支持是长期方向，不是 V0.1 的功能要求。
-
-## V0.1 计划能力
-
-- 检测 Maven 项目及模块。
-- 提取项目元数据和 Maven 依赖。
-- 发现 Spring Boot 应用入口。
-- 识别 Controller、Service、Repository、Component 和常见 Mapper 模式。
-- 提取 Spring MVC HTTP 接口。
-- 构建经过确认的组件依赖关系。
-- 为重要分析结果保留源码位置和证据。
-- 在本地展示概览、架构、API 地图和 Start Here 页面。
-- 为代码库生成可解释的推荐阅读路径。
-
-计划中的分析流程为：
-
-```text
-代码仓库
-    ↓
-Maven 分析
-    ↓
-Java 源码分析
-    ↓
-Spring Boot 分析
-    ↓
-统一项目模型
-    ↓
-本地交互式代码库地图
+```powershell
+.\repoonboard.cmd .\src\test\resources\fixtures\spring-analysis-project --no-open
 ```
 
-## 安装与运行
+macOS 或 Linux：
 
-RepoOnboard V0.1 尚未正式发布。当前发布候选请从本仓库源码构建可执行 JAR。实际运行要求 Java 21 或更高版本；从源码构建还需要 Node.js `^20.19.0` 或 `>=22.12.0`。Maven 无需另行安装，仓库已提供 Wrapper。
+```bash
+./repoonboard ./src/test/resources/fixtures/spring-analysis-project --no-open
+```
 
-Windows：
+打开终端打印的 `http://127.0.0.1:<port>/` 地址，使用 Ctrl+C 停止进程。此演示使用当前源码构建生成的 `target/repoonboard.jar`，不会指向尚不存在的发布压缩包。
+
+## 从源码安装
+
+### 环境要求
+
+| 环境 | 仅运行 | 从源码构建 |
+| --- | --- | --- |
+| Java | Java 21 或更高版本 | JDK 21 或更高版本 |
+| Node.js | 不需要 | `^20.19.0` 或 `>=22.12.0` |
+| Maven | 不需要 | 不需单独安装；Wrapper 提供 Maven 3.9.16 |
+| Git | 不需要 | 下方命令需要 |
+
+干净环境首次构建需要联网克隆仓库，并由 Wrapper 下载 Maven、锁定的 Java 依赖和前端构建依赖。RepoOnboard 不会构建或执行被分析仓库，核心仓库分析也不会从远端下载目标项目的 POM 或构件。
+
+先检查所需工具：
+
+```text
+java -version
+node --version
+git --version
+```
+
+Windows PowerShell：
 
 ```powershell
 git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 .\mvnw.cmd clean verify
-.\repoonboard.cmd C:\path\to\spring-project
+.\repoonboard.cmd --help
 ```
 
 macOS 或 Linux：
@@ -85,12 +67,21 @@ git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 ./mvnw clean verify
 chmod +x repoonboard
-./repoonboard /path/to/spring-project
+./repoonboard --help
 ```
 
-构建会生成 `target/repoonboard.jar` 与 `target/repoonboard.jar.sha256`。可执行 JAR 已包含 Java 运行依赖和完整离线 Web UI。发布目录中，启动脚本使用同目录的 `repoonboard.jar`；源码仓库中则自动回退到 `target/repoonboard.jar`。只有需要显式指定其他 JAR 时才设置 `REPOONBOARD_JAR`。
+验证后的构建会生成：
 
-运行下载的产物前应核对校验和。Windows PowerShell：
+```text
+target/repoonboard.jar
+target/repoonboard.jar.sha256
+```
+
+可执行 JAR 包含 Java 运行依赖和完整离线 Web UI。未来发布目录中的启动脚本会使用同目录的 `repoonboard.jar`；源码 checkout 中会使用 `target/repoonboard.jar`。只有需要显式选择其他 JAR 时才设置 `REPOONBOARD_JAR`。
+
+运行复制或下载的 JAR 前应校验 SHA-256。
+
+Windows PowerShell：
 
 ```powershell
 $expectedHash = (Get-Content .\target\repoonboard.jar.sha256).Split()[0]
@@ -110,168 +101,110 @@ macOS：
 (cd target && shasum -a 256 -c repoonboard.jar.sha256)
 ```
 
-Windows 使用 `repoonboard.cmd --help`，POSIX 系统使用 `./repoonboard --help` 查看全部选项。未来 GitHub Release 会直接提供 JAR、校验和与两种启动脚本；使用这些发布文件不需要 Node.js 或 Maven。
+## 使用方式
 
-## 预期使用体验
-
-当前命令行使用方式为：
-
-```bash
-cd unfamiliar-project
-repoonboard .
+```text
+repoonboard [OPTIONS] PATH
 ```
 
-分析完成后，RepoOnboard 会在系统分配的 `127.0.0.1` 端口启动只读本地 UI，并打开默认浏览器。使用 `--no-open` 可改为手动打开；在按 Ctrl+C 停止进程前，终端输出的地址会保持可用。
+`PATH` 必须是受支持的 Maven Spring Boot 仓库根目录，并包含根 `pom.xml`。
 
-服务只接受精确 loopback Host 与同源浏览器请求，仅通过固定 `GET` / `HEAD` 路由提供随包 UI、当前报告和 Start Here projection；非规范路径、外部 Origin、写请求和任意文件访问都会被拒绝。全部响应带有限制性 Content Security Policy、`no-store` 及相关浏览器安全头。生产构建还会直接验证 JavaScript / CSS 已进入 JAR、不依赖运行时 CDN，并与 Java 应用声明相同的报告 schema。
+| 选项 | 含义 |
+| --- | --- |
+| `--no-open` | 启动本地 UI，但不自动打开默认浏览器。 |
+| `--profile ID[,ID...]` | 激活明确指定的 Maven profile ID；该选项可重复。 |
+| `--local-repository PATH` | 从指定本地 Maven 缓存读取允许的外部 parent/BOM POM；默认 `~/.m2/repository`。 |
+| `-h`、`--help` | 显示命令帮助。 |
+| `-V`、`--version` | 显示 RepoOnboard 版本。 |
+
+示例：
 
 ```bash
+repoonboard /path/to/project
 repoonboard . --no-open
+repoonboard . --profile dev,local --local-repository /path/to/local/maven/repository
 ```
 
-该命令会检测根目录的 `pom.xml`，显示解析后的坐标，并在启动 UI 前输出模块层级、源码目录、发现的 Java 源码根/文件和依赖。每条依赖保留 groupId、artifactId、version、scope、原始/解析值与字段来源位置。支持可用 parent 或导入 BOM 提供的版本和 scope；缺失版本保留未知状态并产生诊断。仅包含声明、继承及激活 profile 的依赖，不下载构件或计算传递依赖图。未使用的 dependencyManagement 条目不会列为项目依赖。
+分析完成后，RepoOnboard 会在系统分配的 `127.0.0.1` 端口启动只读 UI。进程与 UI 保持可用，直到按下 Ctrl+C。服务只接受精确 loopback Host 和同源浏览器请求，仅暴露固定只读路由，不提供任意文件访问。
 
-模块聚合与 parent 继承分别记录，支持嵌套模块与激活 profile 中的模块。模块路径与 `build.sourceDirectory` 必须解析在扫描根内；源码目录可尚未存在。模块缺失、损坏、越界、重复或循环时生成诊断，并继续处理其他模块。默认 Java 源码目录为各模块下的 `src/main/java`；自定义目录保留声明值和解析值，供后续源码分析使用。
+### 退出码与部分分析
 
-Maven 模型解析完全离线。相对 parent 必须位于扫描根内；外部 parent 和导入的 BOM 可从本地 Maven 仓库读取。缺少模型时保留可用事实并返回 `PARTIAL`。导入 BOM 的属性不会被项目继承。
+| 退出码 | 含义 |
+| ---: | --- |
+| `0` | 分析成功完成。 |
+| `1` | 分析失败，或项目不受支持。 |
+| `2` | 命令参数无效。 |
+| `3` | 部分成功；已确认 facts 被保留，但覆盖不完整。 |
 
-```bash
-repoonboard . --profile dev --local-repository /path/to/local/maven/repository
-```
+缺少本地 parent/BOM、无效 Java 文件、未解析类型或不支持的模式可能产生 `PARTIAL`。在依赖统计结果前，应查看 warning code、module、仓库相对 source location 和建议操作。CLI 与 UI 使用相同的报告 severity、code、stage、message、module 和 source facts。
 
-`--profile` 支持重复指定或逗号分隔的 ID。只采用显式选中与 `activeByDefault` profile，不使用宿主 OS/JDK/文件/属性隐式激活或 Maven settings。默认缓存为 `~/.m2/repository`。分析不执行 Maven 插件、扩展、生命周期，也不下载远程 POM。
+没有根 `pom.xml` 的目录，或 Maven model 完整但没有识别到 Spring Boot 构建证据的项目，在 V0.1 中不受支持并返回 `1`。如果 Maven 数据不完整导致无法确认 Spring Boot，RepoOnboard 会保守返回 `3`，不会把“支持”或“失败”冒充为已确认事实。
 
-所有 POM 来源均拒绝 DTD/外部实体及逃逸允许根目录的路径。默认限制为单份 POM 1 MiB、64 个不同 POM 来源、XML 嵌套深度 128。外部来源证据使用 `local-repository/` 标识，不暴露缓存绝对路径。
+## 当前功能
 
-CLI 退出码保持稳定：`0` 成功、`1` 分析失败或项目不受支持、`2` 参数错误、`3` 部分成功。没有根 `pom.xml` 的目录，或 Maven model 完整但没有识别到 Spring Boot 构建证据的项目，在 V0.1 中属于不受支持，返回 `1`。如果缺少允许范围内的本地 parent/BOM 导致无法确认 Spring Boot，RepoOnboard 会保守返回 `3`。无效 Java 文件同样产生 `PARTIAL`；已确认 facts 会保留，同时报告受影响源码和 warning。
+- **Repository Overview**——项目身份、已报告技术版本、模块、源码根、组件/API 统计、应用入口和覆盖状态。
+- **Module Explorer**——Maven 聚合层级、元数据、源码根、精确坐标确认的内部模块依赖、组件、诊断和 Evidence。
+- **Architecture Workspace**——按模块展示确认的 Spring 组件注入关系，支持筛选、搜索、一阶邻域聚焦、图/列表回退、源码 Evidence 和 unresolved 计数。
+- **API Map**——Spring MVC method/path/handler facts、模块/method/文本筛选、mapping conditions、未解析状态，以及方法级和类级 Evidence。
+- **Source & Evidence Detail**——仓库相对路径、真实 1-based 位置、symbol、module、Evidence 和精确连接的相关 facts；不会展示源码正文或假装打开 IDE。
+- **Start Here**——依据构建文件、应用入口、配置、公开 API 和确认依赖生成确定性文件阅读顺序，并直接展示推荐原因。
+- **容错报告**——稳定报告 ID 和 schema `1.2`、明确的 `SUCCESS`/`PARTIAL`/`FAILED`、可操作 Diagnostic，以及局部失败后的确认 facts 保留。
 
-CLI 与 UI 使用同一组报告 Diagnostic：severity、code、stage、message、module 和 source location。CLI 在标准错误中给出可操作摘要，Overview 展示相同诊断身份与仓库相对源码位置。意外内部错误和本地 UI 启动错误使用稳定 code，不回显原始异常消息或配置值。
+所有生产 UI 资源均随 JAR 提供，运行时不使用 CDN。RepoOnboard V0.1 不使用 LLM、不上传仓库内容、不运行目标应用、不执行 Maven lifecycle/plugin/extension，也不修改被分析源码。
 
-RepoOnboard 将分析代码仓库，并生成类似以下的信息：
+## 支持范围
 
-```text
-项目：demo-shop
-构建：Maven
-Java：21
-框架：Spring Boot 3.x
+| 领域 | V0.1 支持 |
+| --- | --- |
+| 目标语言 | Java 源码；已用 Java 8/11/17/21 语法 fixture 验证 |
+| 构建系统 | Maven；包括单/多模块、显式与 `activeByDefault` profile、相对 parent、本地缓存 parent/BOM POM |
+| 框架 | Spring Boot 构建信号、常见 stereotype/configuration/application 注解、构造器/字段注入 facts、Spring MVC mapping |
+| RepoOnboard 运行时 | Java 21 或更高版本 |
+| 界面 | 本地只读 Web UI |
+| 报告 | UTF-8 JSON schema `1.2`；读取端继续兼容 `1.0` 和 `1.1` |
 
-模块：4
-Controller：18
-Service：27
-Repository：12
-HTTP 接口：83
-```
+Maven model 解析受到有意限制：相对 parent 必须位于扫描根内；外部 parent/BOM POM 只能来自所选本地仓库。RepoOnboard 不使用 Maven settings，不采用宿主 OS/JDK/文件/属性隐式 profile 激活，不做远端解析、传递依赖计算或 BOM 属性继承。
 
-重要结果应当可以追溯到对应源码：
+Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spring-boot-dependencies` BOM，或已解析/继承的 Boot core/starter 依赖。构建信号不能证明应用入口一定存在。
 
-```text
-POST /users
-    ↓
-UserController.createUser()
-    ↓
-src/main/java/.../UserController.java:73
-```
+## 已知限制
 
-## 计划界面
+- V0.1 只支持 Java + Maven + Spring Boot，不支持 Gradle 和其他语言/框架。
+- 类型解析仅覆盖唯一确认的项目内声明。运行时装配、反射、生成式注册、代理和完整方法级调用图不属于 V0.1。
+- MyBatis/MyBatis-Plus Mapper 专用分类仍延后。
+- 仅继承 Spring Data repository 基类且没有直接 `@Repository` 的接口目前会漏报。固定 Petclinic 验证中因此缺少 3 个 Repository 组件，并使后续 6 条注入关系保持 unresolved。
+- 多个 wildcard import 可能使已知 Spring 注解被保守判为 ambiguous。固定 JHipster 验证中因此漏报 3 个 Controller、13 个 Endpoint 和 7 条确认依赖，而没有补造事实。
+- 筛选范围超过 60 个组件或 120 条确认边时，Architecture 会停止绘图；但预算内图仍可能在语义上过密。组件列表始终可用。
+- API row 与 Diagnostic 尚未虚拟化或分页。ThingsBoard 边界试验完成了 3,834 个 main Java file，但观察到 648.23 MiB 进程峰值、1,719 条诊断、581 个 API row、重复模块名歧义和仍可能不可读的图。RepoOnboard **不宣称完整支持**同等规模仓库。
+- 在 1280 px 视口下，中型仓库 Architecture 外侧标签可能裁切，API source 列可能需要横向滚动。
+- 首次接触验证中，API 定位最容易，Start Here 可以找到前三个文件，但 module、entry point、dependency 和推荐解释仍让参与者困惑。这次 5–10 分钟观察没有手工阅读对照组，因此 V0.1 不宣称相对手工探索有量化提速。
+- 原生 macOS/Linux 发布 smoke check 尚未完成。目前 POSIX 启动器只在 Git Bash 中实际执行，不能据此宣称完整原生平台认证。
 
-Spring Boot 构建识别使用模块声明的 `org.springframework.boot:spring-boot-starter-parent`、导入的 `spring-boot-dependencies` BOM，或已解析/继承的 Boot 核心与 starter 依赖。每条证据保留来源和版本位置。检测与版本解析分别表达；已知版本冲突时返回未知版本和诊断。构建证据不等于已发现应用入口。没有可识别依赖的间接 parent/BOM 链暂不分类。
+## 验证证据
 
-### 项目概览
+- [最小确定性 Spring 回归 fixture](./src/test/resources/fixtures/spring-analysis-project)
+- [小型仓库：Spring Petclinic](./docs/validation/T-0904-SPRING-PETCLINIC.md)
+- [中型仓库：JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
+- [大型边界试验：ThingsBoard](./docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
+- [首次接触上手观察](./docs/validation/T-0907-ONBOARDING-VALUE.md)
 
-汇总技术栈、模块、组件、HTTP 接口和应用入口。
+`./mvnw clean verify` 会运行 Java 和前端测试、构建生产 UI、打包可执行 JAR、使用空 Maven 缓存从该 JAR 启动受控 Spring fixture、检查报告路由并写出校验和；它不会构建或执行 fixture 应用。
 
-### 架构地图
+## 路线图
 
-以模块为范围，在交互式图中展示经过确认的 Spring 组件注入关系。节点和连线可打开基于报告事实的 Inspector，查看源码位置和原始 Evidence；未解析或有歧义的关系保持显式状态，不会画成确定事实。模块、组件类型、关系类型筛选可与所选节点的一阶邻域组合使用；可搜索组件列表始终提供替代入口，包括匹配范围超过图可读性预算时。
+M0–M9 以及发布准备中的打包、错误体验任务已完成。M10 仍包括独立演示仓库、演示媒体、License、GitHub 展示清理、原生跨平台 smoke check 和正式 V0.1 Release。任务级事实以 [TODO.md](./TODO.md) 为准。
 
-### API 地图
-
-展示报告中的 HTTP 方法、路径、Controller、处理方法、源码位置和 mapping conditions。模块、method 与文本筛选可以组合，且不会把 `ANY` 当成通配符；未解析 path 或 conditions 会保持显式。选中 Endpoint 后可查看 handler source，以及方法级与 Controller 类级 mapping Evidence。
-
-### 来源与证据详情
-
-从选中的 Architecture 组件或 API Endpoint 进入，不作为独立一级页面。它展示扫描根相对源码路径、真实 1-based 位置、可选 symbol、所属模块、SourceFile 元数据、原始 Evidence，以及仅通过精确身份连接得到的相关事实。浏览器 Clipboard 可用时可以复制 path、symbol 和格式化位置；不可用或失败时仍保留可选文本并明确反馈。RepoOnboard 不读取源码正文、不构造绝对路径、不推断 handler 调用链，也不展示没有真实宿主能力的 IDE 动作。
-
-### Start Here
-
-根据构建文件、应用入口、配置、公开 API 和已确认依赖，提供可解释且确定性的推荐阅读顺序。每个推荐项展示所属模块、全部原因和 Source Evidence；只有精确连接的组件与 Endpoint 才能进入现有 Architecture 或 API Inspector，PARTIAL 覆盖与空结果保持明确。排序规则只在 Java 中执行，通过独立、版本化、只读的 projection 交给前端，不修改公共报告 schema。
-
-## 设计原则
-
-- **静态分析优先**——优先从源码、AST、构建元数据和框架元数据中提取可靠事实。
-- **准确优先于炫酷**——宁可提供少量可信信息，也不生成推测性的关系。
-- **本地优先**——核心分析不应要求把用户源码上传到远程服务。
-- **结果可解释**——重要结论应尽可能附带源码证据。
-- **部分成功优于整体失败**——单个损坏文件不应导致其余有效分析结果全部丢失。
-- **先做好一个生态**——先完成 Java、Maven 和 Spring Boot 支持，再考虑更多语言。
-
-RepoOnboard V0.1 不依赖大语言模型。如果未来引入 AI，也应让 AI 使用经过验证的结构化分析结果，而不是替代静态分析。
-
-## 开发路线
-
-```text
-M0  技术架构                         ✓
-M1  工程基础                         ✓
-M2  Maven 分析                       ✓
-M3  Java 源码分析                    ✓
-M4  Spring Boot 分析                 ✓
-M5  API 与依赖分析                  ✓
-M6  报告组装与序列化             ✓
-M7  本地 Web UI                         ✓
-M8  Start Here                         ✓
-M9  回归测试与真实仓库验证           ✓
-M10 发布准备                         ◐
-```
-
-详细任务和验收标准维护在 [TODO.md](./TODO.md) 中。
-
-V0.1 继续采用 Web-first 交付：发布包为可执行 JAR 及 Windows/POSIX 启动脚本。Vue UI 保持宿主无关，以便未来复用；原生桌面容器、安装器和自带 Java Runtime 延后到 V0.2 技术试验，不阻塞首次发布。
-
-## 开发构建
-
-RepoOnboard 开发构建当前要求 JDK 21 或更高版本，以及 Node.js `^20.19.0` 或 `>=22.12.0`。无需单独安装 Maven，也不依赖 IDE：仓库中的 Maven Wrapper 会下载并校验固定版本的 Maven、安装锁定的前端依赖，并构建随包发布的 UI。最终用户使用发布产物时不需要 Node.js。
-
-Windows：
-
-```powershell
-git clone https://github.com/zhan-cm/RepoOnboard.git
-cd RepoOnboard
-.\mvnw.cmd clean verify
-.\repoonboard.cmd --help
-```
-
-macOS 或 Linux：
-
-```bash
-git clone https://github.com/zhan-cm/RepoOnboard.git
-cd RepoOnboard
-./mvnw clean verify
-./repoonboard --help
-```
-
-`verify` 还会用空 Maven 缓存从打包后的可执行 JAR 启动固定 Spring fixture，确认本地报告路由可用，并写出 SHA-256 校验和；它不会构建或执行被分析的 fixture 应用。
-
-当前 CLI 已提供 Maven 与 Java 源码分析，以及带来源证据的 Spring 组件、配置类、应用入口、注入、HTTP Endpoint 和组件依赖 facts。类级/方法级路径、HTTP method 与 mapping conditions 均被保留，`ANY` 和未知路径会明确表达。只有唯一确认的项目内组件目标才生成确定边；重复 Evidence 会合并，歧义或缺失目标保留为诊断。MyBatis/MyBatis-Plus Mapper 专用分类仍按计划延后。稳定报告组装和 schema `1.2` JSON 序列化现已接入 loopback 服务、响应式产品 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map 与共用的 Source & Evidence Detail。模块页面使用显式 Maven 聚合关系、精确坐标唯一确认的内部模块依赖、模块级统计、元数据、源码根、版本事实、诊断与证据。架构页面使用 Cytoscape.js，仅在单一模块范围内绘制确认的组件注入边，并提供可组合筛选、搜索、所选节点一阶邻域、缩放、平移、适配、选择、源码证据、响应式可搜索列表回退，以及明确的部分/不可用/超预算状态。API 页面提供模块/method/文本组合筛选、明确的未解析状态、handler 源码位置和两级 mapping Evidence。组件与 Endpoint Inspector 现在可以进入共用、由报告驱动的来源详情，并提供安全复制反馈和精确相关事实。
-
-## 项目文档
-
-- [PROJECT.md](./PROJECT.md)——产品愿景、范围和原则
-- [DECISIONS.md](./DECISIONS.md)——已接受的架构与技术决策
-- [TODO.md](./TODO.md)——开发路线和当前任务状态
-- [AGENTS.md](./AGENTS.md)——编码代理的仓库执行说明
-- [前端产品需求文档](./docs/product/FRONTEND-PRODUCT-REQUIREMENTS.md)——页面结构、交互、视觉方向、响应式规则与未来桌面体验
-
-## 目标用户
-
-RepoOnboard 面向加入现有项目的开发者、开源贡献者、学生、初级开发者，以及正在接手陌生或遗留代码库的维护者。
+V0.1 继续采用 Web-first，发布物将是可执行 JAR 与 Windows/POSIX 启动脚本。原生桌面容器、安装器、自带 Java Runtime 和选择性的 English/中文产品界面切换属于 V0.2 候选，不进入 V0.1。界面切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
 
 ## 参与贡献
 
-RepoOnboard 仍处于早期开发阶段。等实现适合外部参与后，项目会补充贡献指南。在此之前，所有变更都应遵守项目范围和已经接受的技术决策。
+RepoOnboard 仍处于发布前开发阶段。提出变更前请阅读 [PROJECT.md](./PROJECT.md)、[DECISIONS.md](./DECISIONS.md)、[TODO.md](./TODO.md) 和 [AGENTS.md](./AGENTS.md)。变更应聚焦已接受任务，补充最窄且充分的测试，保留源码 Evidence，并且不得在没有明确范围决策时扩大 V0.1 技术生态。
 
-## 许可证
+由于仓库尚无 License，外部贡献和复用条款还未确定。贡献指南与 License 属于发布准备工作；在此之前，请先通过 GitHub issue 讨论提案，再提交代码。
 
-项目许可证尚未最终确定，将在首个公开版本发布前完成选择。
+## License
+
+项目尚未选择 License。源码公开可见不等于获得复制、修改或再分发授权；V0.1 发布前必须完成 License 选择。
 
 ## 项目理念
 
