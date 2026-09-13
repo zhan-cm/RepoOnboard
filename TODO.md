@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1002 — Error Messages。**
+> **T-1003 — README V0.1。**
 
-M0 至 M9 已经完成。T-1001 已交付包含前端与运行依赖的单一可执行 JAR、Windows/POSIX 启动脚本、SHA-256 产物和中英文安装说明；`verify` 会从打包 JAR 用空 Maven 缓存离线分析固定 fixture。下一步只执行 T-1002 的错误体验工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 以及 T-1001、T-1002 已经完成。CLI 参数错误、分析失败和部分成功现使用稳定退出码与可操作文案；CLI 与 UI 直接消费同一组报告 Diagnostic，常见不支持场景不会回显内部异常或配置值。下一步只执行 T-1003 的 README V0.1 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2555,7 +2555,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 完善常见错误：
@@ -2573,9 +2573,9 @@ Partial analysis
 Acceptance Criteria:
 
 ```text
-[ ] 参数错误、FAILED、PARTIAL 使用一致退出码和文案
-[ ] 错误包含可操作上下文且不泄露配置秘密
-[ ] CLI 与 UI 对同一 Diagnostic 的含义一致
+[x] 参数错误、FAILED、PARTIAL 使用一致退出码和文案
+[x] 错误包含可操作上下文且不泄露配置秘密
+[x] CLI 与 UI 对同一 Diagnostic 的含义一致
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1002
-Improve error messages
+T-1003
+Complete the V0.1 README
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 和 T-1001 已完成；可选 T-0404 继续按非阻塞规则延后。可执行 JAR、双平台启动脚本、离线 fixture 安装验证、SHA-256 和中英文安装说明已建立。接下来只执行：
+M0 至 M9 和 T-1001、T-1002 已完成；可选 T-0404 继续按非阻塞规则延后。稳定退出码、可操作错误文案、安全异常边界和 CLI/UI Diagnostic 语义一致性已建立。接下来只执行：
 
 ```text
-T-1002 Error Messages
+T-1003 README V0.1
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-██░░░░░░░░░░░░░░░░░░  12%
+█████░░░░░░░░░░░░░░░  25%
 ```
 
 Next:
 
-> **T-1002 — Error Messages.**
+> **T-1003 — README V0.1.**
 
 ````

@@ -151,6 +151,8 @@ const visibleDiagnostics = computed(() => overview.value.diagnostics?.slice(0, 5
             <strong>{{ diagnostic.code ?? 'Code unavailable' }}</strong>
             <p>{{ diagnostic.message ?? 'Diagnostic message unavailable.' }}</p>
             <span v-if="diagnostic.stage">Stage: {{ diagnostic.stage }}</span>
+            <span v-if="diagnostic.moduleId">Module: {{ diagnostic.moduleId }}</span>
+            <span v-if="diagnostic.source">Source: {{ diagnostic.source }}</span>
           </div>
         </li>
       </ul>

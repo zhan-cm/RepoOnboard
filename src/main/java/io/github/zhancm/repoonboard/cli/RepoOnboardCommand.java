@@ -2,43 +2,49 @@ package io.github.zhancm.repoonboard.cli;
 
 import io.github.zhancm.repoonboard.analysis.ProjectAnalysisInput;
 import io.github.zhancm.repoonboard.analysis.ProjectModelAssembler;
-import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.java.JavaDeclarationIndex;
+import io.github.zhancm.repoonboard.analyzer.java.JavaFileDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
 import io.github.zhancm.repoonboard.analyzer.java.JavaSourceParser;
 import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceResolver;
 import io.github.zhancm.repoonboard.analyzer.java.JavaTypeReferenceStatus;
-import io.github.zhancm.repoonboard.analyzer.java.JavaSourceRootDiscoverer;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenMetadataValue;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalysis;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetection;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectDetector;
-import io.github.zhancm.repoonboard.analyzer.maven.MavenMetadataValue;
 import io.github.zhancm.repoonboard.analyzer.maven.MavenProjectMetadata;
-import io.github.zhancm.repoonboard.analyzer.maven.MavenModuleAnalyzer;
-import io.github.zhancm.repoonboard.analyzer.maven.MavenModule;
-import io.github.zhancm.repoonboard.analyzer.maven.MavenModelOptions;
-import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentKind;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringConfigurationAnalyzer;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringDependencyStatus;
+import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionAnalyzer;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringInjectionStatus;
 import io.github.zhancm.repoonboard.analyzer.spring.SpringMvcMappingAnalyzer;
-import io.github.zhancm.repoonboard.analyzer.spring.SpringEndpointAnalyzer;
-import io.github.zhancm.repoonboard.analyzer.spring.SpringComponentDependencyAnalyzer;
-import io.github.zhancm.repoonboard.analyzer.spring.SpringDependencyStatus;
+import io.github.zhancm.repoonboard.core.model.AnalysisStatus;
+import io.github.zhancm.repoonboard.core.model.Diagnostic;
+import io.github.zhancm.repoonboard.core.model.DiagnosticSeverity;
+import io.github.zhancm.repoonboard.core.model.SourceLocation;
 import io.github.zhancm.repoonboard.web.LocalUiApplication;
 import io.github.zhancm.repoonboard.web.LocalUiLauncher;
 import java.io.IOException;
-import java.util.List;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Spec;
 import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
+import picocli.CommandLine.Spec;
 
 @Command(
         name = "repoonboard",
@@ -93,6 +99,27 @@ public final class RepoOnboardCommand implements Callable<Integer> {
         CommandLine commandLine = new CommandLine(new RepoOnboardCommand(uiLauncher));
         commandLine.setOut(out);
         commandLine.setErr(err);
+        commandLine.setParameterExceptionHandler((exception, arguments) -> {
+            CliErrorReporter.printError(
+                    exception.getCommandLine().getErr(),
+                    "CLI_ARGUMENT_INVALID",
+                    "CLI",
+                    null,
+                    exception.getMessage(),
+                    "Run 'repoonboard --help', correct the command arguments, and try again.");
+            exception.getCommandLine().usage(exception.getCommandLine().getErr());
+            return CommandLine.ExitCode.USAGE;
+        });
+        commandLine.setExecutionExceptionHandler((exception, invokedCommand, parseResult) -> {
+            CliErrorReporter.printError(
+                    invokedCommand.getErr(),
+                    "ANALYSIS_UNEXPECTED_FAILURE",
+                    "CLI",
+                    "Failure type: " + exception.getClass().getSimpleName(),
+                    "Analysis stopped because of an unexpected internal error.",
+                    "Retry once; if it repeats, report this diagnostic code and the RepoOnboard version.");
+            return CommandLine.ExitCode.SOFTWARE;
+        });
         return commandLine.execute(args);
     }
 
@@ -100,13 +127,23 @@ public final class RepoOnboardCommand implements Callable<Integer> {
     public Integer call() {
         Path resolvedTarget = target.toAbsolutePath().normalize();
         if (!Files.exists(resolvedTarget)) {
-            commandSpec.commandLine().getErr()
-                    .printf("Error: target path does not exist: %s%n", resolvedTarget);
+            CliErrorReporter.printError(
+                    commandSpec.commandLine().getErr(),
+                    "CLI_TARGET_NOT_FOUND",
+                    "CLI",
+                    "Target: " + resolvedTarget,
+                    "The target path does not exist.",
+                    "Choose an existing Maven Spring Boot repository directory and rerun.");
             return CommandLine.ExitCode.USAGE;
         }
         if (!Files.isDirectory(resolvedTarget)) {
-            commandSpec.commandLine().getErr()
-                    .printf("Error: target path is not a directory: %s%n", resolvedTarget);
+            CliErrorReporter.printError(
+                    commandSpec.commandLine().getErr(),
+                    "CLI_TARGET_NOT_DIRECTORY",
+                    "CLI",
+                    "Target: " + resolvedTarget,
+                    "The target path is not a directory.",
+                    "Choose a Maven Spring Boot repository directory instead of a file.");
             return CommandLine.ExitCode.USAGE;
         }
 
@@ -207,53 +244,8 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                     springDependencies.dependencies().size(),
                     confirmedDependencies,
                     springDependencies.dependencies().size() - confirmedDependencies);
-            AnalysisStatus status = combine(
-                    analysis.status(), sourceRoots.status(), javaFiles.status(), javaFacts.status(),
-                    springComponents.status(), springConfiguration.status(), springInjection.status(),
-                    springMappings.status(), springEndpoints.status(), springDependencies.status());
-            commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
-            for (var diagnostic : analysis.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : sourceRoots.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : javaFiles.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : javaFacts.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : springComponents.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : springConfiguration.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : springInjection.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : springMappings.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : springEndpoints.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
-            for (var diagnostic : springDependencies.diagnostics()) {
-                commandSpec.commandLine().getErr().printf("%s [%s]: %s%n",
-                        diagnostic.fileId().orElse("pom.xml"), diagnostic.code(), diagnostic.message());
-            }
             if (analysis.root().isPresent()) {
-                List<io.github.zhancm.repoonboard.core.model.Diagnostic> additionalDiagnostics =
+                List<Diagnostic> additionalDiagnostics = new ArrayList<>(
                         java.util.stream.Stream.of(
                                         sourceRoots.diagnostics(),
                                         javaFiles.diagnostics(),
@@ -261,7 +253,8 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                                         springMappings.diagnostics())
                                 .flatMap(List::stream)
                                 .distinct()
-                                .toList();
+                                .toList());
+                springBootSupportDiagnostic(analysis).ifPresent(additionalDiagnostics::add);
                 var report = new ProjectModelAssembler().assemble(new ProjectAnalysisInput(
                         analysis,
                         javaFacts,
@@ -270,6 +263,10 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                         springEndpoints,
                         springDependencies,
                         additionalDiagnostics));
+                AnalysisStatus status = report.status();
+                commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
+                CliErrorReporter.printAnalysisSummary(commandSpec.commandLine().getErr(), status);
+                CliErrorReporter.printDiagnostics(commandSpec.commandLine().getErr(), report.diagnostics());
                 try {
                     uiLauncher.launch(
                             report,
@@ -277,29 +274,48 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                             commandSpec.commandLine().getOut(),
                             commandSpec.commandLine().getErr());
                 } catch (IOException exception) {
-                    commandSpec.commandLine().getErr().printf(
-                            "Error: local UI could not be started: %s%n", exception.getMessage());
+                    CliErrorReporter.printError(
+                            commandSpec.commandLine().getErr(),
+                            "LOCAL_UI_START_FAILED",
+                            "LOCAL_UI",
+                            "Loopback host: 127.0.0.1",
+                            "The local read-only UI could not be started.",
+                            "Check local loopback networking and retry; use --no-open only to disable "
+                                    + "browser opening.");
                     return CommandLine.ExitCode.SOFTWARE;
                 } catch (InterruptedException exception) {
                     Thread.currentThread().interrupt();
-                    commandSpec.commandLine().getErr().println(
-                            "Error: local UI was interrupted before shutdown completed.");
+                    CliErrorReporter.printError(
+                            commandSpec.commandLine().getErr(),
+                            "LOCAL_UI_INTERRUPTED",
+                            "LOCAL_UI",
+                            null,
+                            "The local UI was interrupted before shutdown completed.",
+                            "Rerun RepoOnboard when the interruption has cleared.");
                     return CommandLine.ExitCode.SOFTWARE;
                 }
-            } else {
-                commandSpec.commandLine().getErr().println(
-                        "Local UI not started because no analysis report could be assembled.");
+                return exitCode(status);
             }
-            return switch (status) {
-                case SUCCESS -> CommandLine.ExitCode.OK;
-                case PARTIAL -> 3;
-                case FAILED -> CommandLine.ExitCode.SOFTWARE;
-            };
+            AnalysisStatus status = AnalysisStatus.FAILED;
+            commandSpec.commandLine().getOut().printf("Analysis status: %s%n", status);
+            CliErrorReporter.printAnalysisSummary(commandSpec.commandLine().getErr(), status);
+            CliErrorReporter.printDiagnostics(commandSpec.commandLine().getErr(), analysis.diagnostics());
+            commandSpec.commandLine().getErr().println(
+                    "Action: no UI was started because a report could not be assembled; "
+                            + "fix the Maven errors and rerun.");
+            return CommandLine.ExitCode.SOFTWARE;
         } else {
             commandSpec.commandLine().getOut()
                     .println("Maven project: not detected (root pom.xml not found)");
+            CliErrorReporter.printError(
+                    commandSpec.commandLine().getErr(),
+                    "PROJECT_NOT_MAVEN",
+                    "PROJECT_DETECTION",
+                    "Target: " + resolvedTarget,
+                    "No root pom.xml was found; this is not a supported Maven project root.",
+                    "Run RepoOnboard from the root of a Maven Spring Boot repository.");
+            return CommandLine.ExitCode.SOFTWARE;
         }
-        return CommandLine.ExitCode.OK;
     }
 
     private void printMetadata(MavenProjectMetadata metadata) {
@@ -340,16 +356,39 @@ public final class RepoOnboardCommand implements Callable<Integer> {
                 () -> value.rawValue().map(raw -> raw + " (unresolved)").orElse("<unknown>"));
     }
 
-    private static AnalysisStatus combine(AnalysisStatus... statuses) {
-        AnalysisStatus result = AnalysisStatus.SUCCESS;
-        for (AnalysisStatus status : statuses) {
-            if (status == AnalysisStatus.FAILED) {
-                return AnalysisStatus.FAILED;
-            }
-            if (status == AnalysisStatus.PARTIAL) {
-                result = AnalysisStatus.PARTIAL;
-            }
+    private static Optional<Diagnostic> springBootSupportDiagnostic(MavenModuleAnalysis analysis) {
+        MavenModule root = analysis.root().orElseThrow();
+        if (containsSpringBoot(root)) {
+            return Optional.empty();
         }
-        return result;
+        boolean mavenComplete = analysis.status() == AnalysisStatus.SUCCESS;
+        String message = mavenComplete
+                ? "No Spring Boot build evidence was found in the Maven modules. RepoOnboard V0.1 "
+                        + "supports Spring Boot Maven repositories; choose the repository root or add a "
+                        + "recognized Spring Boot parent, BOM, or dependency, then rerun."
+                : "Spring Boot build evidence could not be confirmed while Maven model analysis is "
+                        + "incomplete. Restore missing parent or BOM files in the local Maven cache, then rerun.";
+        SourceLocation location = SourceLocation.file(root.pomFileId());
+        return Optional.of(new Diagnostic(
+                "SPRING_BOOT_NOT_DETECTED",
+                mavenComplete ? DiagnosticSeverity.ERROR : DiagnosticSeverity.WARNING,
+                "SPRING_BOOT_DETECTION",
+                Optional.empty(),
+                Optional.of(root.pomFileId()),
+                Optional.of(location),
+                message));
+    }
+
+    private static boolean containsSpringBoot(MavenModule module) {
+        return module.springBoot().detected()
+                || module.children().stream().anyMatch(RepoOnboardCommand::containsSpringBoot);
+    }
+
+    private static int exitCode(AnalysisStatus status) {
+        return switch (status) {
+            case SUCCESS -> CommandLine.ExitCode.OK;
+            case PARTIAL -> 3;
+            case FAILED -> CommandLine.ExitCode.SOFTWARE;
+        };
     }
 }

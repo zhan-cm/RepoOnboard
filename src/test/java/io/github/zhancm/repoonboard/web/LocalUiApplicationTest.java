@@ -55,8 +55,9 @@ class LocalUiApplicationTest {
                 new PrintWriter(err, true));
 
         assertTrue(out.toString().contains("Local UI: http://127.0.0.1:"));
-        assertTrue(err.toString().contains("browser unavailable"));
+        assertTrue(err.toString().contains("WARNING [BROWSER_OPEN_FAILED] stage=LOCAL_UI"));
         assertTrue(err.toString().contains("Open the local UI manually: http://127.0.0.1:"));
+        assertFalse(err.toString().contains("browser unavailable"));
     }
 
     @Test

@@ -141,7 +141,11 @@ repoonboard . --profile dev --local-repository /path/to/local/maven/repository
 
 `--profile` accepts repeated or comma-separated IDs. Only explicit and `activeByDefault` profiles participate; host OS/JDK/file/property activation and Maven settings are not used. The default cache is `~/.m2/repository`. Analysis does not execute Maven plugins, extensions, or lifecycle steps, or fetch remote POMs.
 
-All POM sources reject DTD/external entities and paths escaping their allowed roots. Default limits are 1 MiB per POM, 64 distinct POM sources, and XML nesting depth 128. External source evidence uses `local-repository/` identifiers without exposing the cache's absolute path. CLI exit codes: `0` success, `1` failed analysis, `2` invalid arguments, `3` partial analysis; diagnostics are printed to standard error.
+All POM sources reject DTD/external entities and paths escaping their allowed roots. Default limits are 1 MiB per POM, 64 distinct POM sources, and XML nesting depth 128. External source evidence uses `local-repository/` identifiers without exposing the cache's absolute path.
+
+CLI exit codes are stable: `0` success, `1` failed or unsupported analysis, `2` invalid arguments, and `3` partial analysis. A directory without a root `pom.xml`, or a complete Maven model with no recognized Spring Boot build evidence, is unsupported in V0.1 and returns `1`. If missing permitted local parent/BOM data prevents Spring Boot confirmation, RepoOnboard conservatively returns `3` instead. Invalid Java files also produce `PARTIAL`; confirmed facts remain available while the affected source and warning are reported.
+
+CLI and UI diagnostics use the same report facts: severity, code, stage, message, module, and source location. The CLI prints actionable summaries to standard error, while the Overview presents the same diagnostic identity and repository-relative source context. Unexpected internal and local UI startup errors use stable codes without echoing raw exception messages or configuration values.
 
 RepoOnboard will analyze the repository and produce information such as:
 

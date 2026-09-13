@@ -38,10 +38,11 @@ public final class LocalUiApplication implements LocalUiLauncher {
             } else {
                 try {
                     browserLauncher.open(uri);
-                } catch (IOException | RuntimeException exception) {
-                    err.printf("Warning: could not open the browser automatically: %s%n",
-                            message(exception));
-                    err.printf("Open the local UI manually: %s%n", uri);
+                } catch (IOException | RuntimeException ignored) {
+                    err.println("WARNING [BROWSER_OPEN_FAILED] stage=LOCAL_UI");
+                    err.println("  Message: The default browser could not be opened automatically; "
+                            + "the local UI remains available.");
+                    err.printf("  Action: Open the local UI manually: %s%n", uri);
                 }
             }
             out.println("Press Ctrl+C to stop RepoOnboard.");
@@ -74,11 +75,6 @@ public final class LocalUiApplication implements LocalUiLauncher {
                 // The JVM is already shutting down and owns hook execution.
             }
         }
-    }
-
-    private static String message(Exception exception) {
-        String message = exception.getMessage();
-        return message == null || message.isBlank() ? exception.getClass().getSimpleName() : message;
     }
 
     @FunctionalInterface

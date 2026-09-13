@@ -66,6 +66,35 @@ describe('report overview model', () => {
     expect(overview.coverage.heading).toBe(heading)
   })
 
+  it('preserves diagnostic identity, scope, and source context for the UI', () => {
+    const overview = createOverviewModel({
+      status: 'PARTIAL',
+      summary: { coverageLimited: true, coverageLimitationCodes: ['JAVA_PARSE_PROBLEM'] },
+      diagnostics: [{
+        code: 'JAVA_PARSE_PROBLEM',
+        severity: 'WARNING',
+        stage: 'JAVA_PARSER',
+        moduleId: 'module:api',
+        fileId: 'src/main/java/example/Broken.java',
+        location: {
+          sourceFileId: 'src/main/java/example/Broken.java',
+          startLine: 8,
+          startColumn: 3
+        },
+        message: 'JavaParser reported a syntax problem.'
+      }]
+    })
+
+    expect(overview.diagnostics).toEqual([{
+      code: 'JAVA_PARSE_PROBLEM',
+      severity: 'WARNING',
+      stage: 'JAVA_PARSER',
+      moduleId: 'module:api',
+      source: 'src/main/java/example/Broken.java:8:3',
+      message: 'JavaParser reported a syntax problem.'
+    }])
+  })
+
   it('keeps absent values unavailable instead of inventing defaults', () => {
     const overview = createOverviewModel({ project: {}, summary: {} })
 

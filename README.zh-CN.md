@@ -141,7 +141,11 @@ repoonboard . --profile dev --local-repository /path/to/local/maven/repository
 
 `--profile` 支持重复指定或逗号分隔的 ID。只采用显式选中与 `activeByDefault` profile，不使用宿主 OS/JDK/文件/属性隐式激活或 Maven settings。默认缓存为 `~/.m2/repository`。分析不执行 Maven 插件、扩展、生命周期，也不下载远程 POM。
 
-所有 POM 来源均拒绝 DTD/外部实体及逃逸允许根目录的路径。默认限制为单份 POM 1 MiB、64 个不同 POM 来源、XML 嵌套深度 128。外部来源证据使用 `local-repository/` 标识，不暴露缓存绝对路径。CLI 退出码：`0` 成功、`1` 分析失败、`2` 参数错误、`3` 部分成功；诊断输出到标准错误。
+所有 POM 来源均拒绝 DTD/外部实体及逃逸允许根目录的路径。默认限制为单份 POM 1 MiB、64 个不同 POM 来源、XML 嵌套深度 128。外部来源证据使用 `local-repository/` 标识，不暴露缓存绝对路径。
+
+CLI 退出码保持稳定：`0` 成功、`1` 分析失败或项目不受支持、`2` 参数错误、`3` 部分成功。没有根 `pom.xml` 的目录，或 Maven model 完整但没有识别到 Spring Boot 构建证据的项目，在 V0.1 中属于不受支持，返回 `1`。如果缺少允许范围内的本地 parent/BOM 导致无法确认 Spring Boot，RepoOnboard 会保守返回 `3`。无效 Java 文件同样产生 `PARTIAL`；已确认 facts 会保留，同时报告受影响源码和 warning。
+
+CLI 与 UI 使用同一组报告 Diagnostic：severity、code、stage、message、module 和 source location。CLI 在标准错误中给出可操作摘要，Overview 展示相同诊断身份与仓库相对源码位置。意外内部错误和本地 UI 启动错误使用稳定 code，不回显原始异常消息或配置值。
 
 RepoOnboard 将分析代码仓库，并生成类似以下的信息：
 
