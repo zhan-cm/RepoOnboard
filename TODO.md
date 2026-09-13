@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1003 — README V0.1。**
+> **T-1004 — Demo Repository。**
 
-M0 至 M9 以及 T-1001、T-1002 已经完成。CLI 参数错误、分析失败和部分成功现使用稳定退出码与可操作文案；CLI 与 UI 直接消费同一组报告 Diagnostic，常见不支持场景不会回显内部异常或配置值。下一步只执行 T-1003 的 README V0.1 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 以及 T-1001 至 T-1003 已经完成。中英文 README 现已覆盖可复现源码安装、当前 fixture 演示、实际功能、支持范围、PARTIAL 语义、验证证据、已知限制、路线和贡献/License 边界；没有虚构尚不存在的 Release 或独立 Demo。下一步只执行 T-1004 的 Demo Repository 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2585,7 +2585,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 README 至少包含：
@@ -2605,9 +2605,9 @@ Contribution
 Acceptance Criteria:
 
 ```text
-[ ] 安装和命令可由干净环境复现
-[ ] 支持范围、PARTIAL 语义和已知限制准确
-[ ] Demo 链接与当前发布产物一致
+[x] 安装和命令可由干净环境复现
+[x] 支持范围、PARTIAL 语义和已知限制准确
+[x] Demo 链接与当前发布产物一致
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1003
-Complete the V0.1 README
+T-1004
+Prepare the demo repository
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 和 T-1001、T-1002 已完成；可选 T-0404 继续按非阻塞规则延后。稳定退出码、可操作错误文案、安全异常边界和 CLI/UI Diagnostic 语义一致性已建立。接下来只执行：
+M0 至 M9 和 T-1001 至 T-1003 已完成；可选 T-0404 继续按非阻塞规则延后。README 已准确覆盖源码安装、当前 fixture 演示、能力、PARTIAL、限制、路线和贡献边界。接下来只执行：
 
 ```text
-T-1003 README V0.1
+T-1004 Demo Repository
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-█████░░░░░░░░░░░░░░░  25%
+████████░░░░░░░░░░░░  38%
 ```
 
 Next:
 
-> **T-1003 — README V0.1.**
+> **T-1004 — Demo Repository.**
 
 ````

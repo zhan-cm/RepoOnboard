@@ -2,236 +2,56 @@
 
 **English** | [简体中文](./README.zh-CN.md)
 
-> Turn unfamiliar repositories into interactive codebase maps.
+> Turn an unfamiliar Java, Maven, and Spring Boot repository into a traceable local codebase map.
 
-RepoOnboard is an open-source, local-first **codebase comprehension and developer onboarding tool**. It is designed to help developers understand an unfamiliar repository before they modify it.
+RepoOnboard is a local-first codebase comprehension and developer onboarding tool. It statically analyzes a repository, keeps the source evidence behind important findings, and presents the result in a read-only Web UI before you start changing code.
 
-> **Status: Early Development / Release Preparation**
+> **Status: pre-release (`0.1.0-SNAPSHOT`)**
 >
-> Maven, Java, Spring, API, component-dependency, stable report, and explainable reading-path analysis are available. The CLI serves each report to a packaged Vue application over loopback-only endpoints. Fixture, real-repository, scale, and first-contact onboarding findings are recorded; release preparation remains, and the first release is not available yet. The first-contact study showed partial value but did not establish a measured speed-up over manual source reading.
+> The implementation is in release preparation. There is no downloadable V0.1 release or release tag yet; use the source-build instructions below. The source is public, but a license has not been selected, so it should not yet be described as open source or assumed to grant reuse rights.
 
-## Why RepoOnboard?
+## Demo
 
-Understanding an unfamiliar codebase often means manually answering the same questions:
+The repository includes a [small deterministic Spring fixture](./src/test/resources/fixtures/spring-analysis-project) for trying the current packaged application. It demonstrates a single Maven module, a confirmed `Controller → Service → Repository` chain, `GET /users/{id}`, source evidence, and an explainable Start Here path. It is deliberately a test fixture, not the standalone public demo repository planned for a later release-preparation task.
 
-- What does this project do?
-- Where does the application start?
-- Which modules and components matter most?
-- Which HTTP APIs are exposed?
-- How do controllers, services, and repositories relate?
-- Which files should I read first?
+First [build from source](#install-from-source), then run:
 
-RepoOnboard aims to turn that exploration into a structured, traceable project map.
-
-## V0.1 Scope
-
-The first release intentionally focuses on one ecosystem:
-
-| Area | V0.1 target |
-| --- | --- |
-| Language | Java |
-| Build system | Maven |
-| Framework | Spring Boot |
-| Runtime | Java 21 or newer |
-| Interface | Local read-only Web UI |
-
-Multi-language support is a long-term direction, not a V0.1 requirement.
-
-## Planned V0.1 Capabilities
-
-- Detect Maven projects and modules.
-- Extract project metadata and Maven dependencies.
-- Discover Spring Boot application entry points.
-- Identify controllers, services, repositories, components, and common mapper patterns.
-- Extract Spring MVC HTTP endpoints.
-- Build confirmed component dependency relationships.
-- Preserve source locations and evidence for important findings.
-- Present Overview, Architecture, API Map, and Start Here views locally.
-- Recommend an explainable reading path through the repository.
-
-The intended analysis pipeline is:
-
-```text
-Repository
-    ↓
-Maven Analysis
-    ↓
-Java Source Analysis
-    ↓
-Spring Boot Analysis
-    ↓
-Unified Project Model
-    ↓
-Local Interactive Codebase Map
-```
-
-## Install and run
-
-RepoOnboard V0.1 has not been published yet. For the current release candidate, build the executable JAR from this source checkout. Runtime use requires Java 21 or newer; the source build additionally requires Node.js `^20.19.0` or `>=22.12.0`. Maven itself is supplied by the checked-in Wrapper.
-
-Windows:
+Windows PowerShell:
 
 ```powershell
-git clone https://github.com/zhan-cm/RepoOnboard.git
-cd RepoOnboard
-.\mvnw.cmd clean verify
-.\repoonboard.cmd C:\path\to\spring-project
+.\repoonboard.cmd .\src\test\resources\fixtures\spring-analysis-project --no-open
 ```
 
 macOS or Linux:
 
 ```bash
-git clone https://github.com/zhan-cm/RepoOnboard.git
-cd RepoOnboard
-./mvnw clean verify
-chmod +x repoonboard
-./repoonboard /path/to/spring-project
+./repoonboard ./src/test/resources/fixtures/spring-analysis-project --no-open
 ```
 
-The build produces `target/repoonboard.jar` and `target/repoonboard.jar.sha256`. The executable JAR includes its Java dependencies and the complete offline Web UI. The launchers use `repoonboard.jar` beside the script in a release layout, or `target/repoonboard.jar` in a source checkout; set `REPOONBOARD_JAR` only when an explicit alternate JAR is needed.
+Open the printed `http://127.0.0.1:<port>/` address and stop the process with Ctrl+C. This demo uses the current `target/repoonboard.jar` source-build artifact; it does not point to a release archive that does not exist yet.
 
-Verify the JAR before running a downloaded artifact. On Windows PowerShell:
+## Install from source
 
-```powershell
-$expectedHash = (Get-Content .\target\repoonboard.jar.sha256).Split()[0]
-$actualHash = (Get-FileHash .\target\repoonboard.jar -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($actualHash -ne $expectedHash) { throw "RepoOnboard checksum mismatch" }
-```
+### Requirements
 
-On Linux:
+| Requirement | Needed to run | Needed to build from source |
+| --- | --- | --- |
+| Java | Java 21 or newer | JDK 21 or newer |
+| Node.js | No | `^20.19.0` or `>=22.12.0` |
+| Maven | No | No separate install; the Wrapper supplies Maven 3.9.16 |
+| Git | No | Yes, for the commands below |
 
-```bash
-(cd target && sha256sum -c repoonboard.jar.sha256)
-```
+A clean machine needs network access for the initial clone and for the Wrapper to download Maven plus the locked Java and frontend build dependencies. An analyzed repository is not built or executed, and core repository analysis does not fetch its POMs or artifacts from remote repositories.
 
-On macOS:
-
-```bash
-(cd target && shasum -a 256 -c repoonboard.jar.sha256)
-```
-
-Run `repoonboard.cmd --help` on Windows or `./repoonboard --help` on POSIX systems to list available options. A future GitHub release will provide the JAR, checksum, and both launchers directly; no Node.js or Maven installation will be needed for those release files.
-
-## Intended Experience
-
-The current command-line experience is:
-
-```bash
-cd unfamiliar-project
-repoonboard .
-```
-
-After analysis, RepoOnboard starts a read-only local UI on a system-assigned `127.0.0.1` port and opens the default browser. Use `--no-open` to keep browser opening manual; the printed URL remains available until the process is stopped with Ctrl+C.
-
-The service accepts only its exact loopback Host and same-origin browser requests. It exposes fixed `GET` / `HEAD` routes for the packaged UI, current report, and Start Here projection, rejects non-canonical paths, foreign origins, writes, and arbitrary file access, and sends a restrictive Content Security Policy plus `no-store` and related browser security headers. The production build verifies that its JavaScript and CSS are present inside the JAR, use no runtime CDN, and declare the same report schema as the Java application.
-
-```bash
-repoonboard . --no-open
-```
-
-The command detects a root `pom.xml`, displays its resolved coordinates, and prints the module hierarchy, source directories, discovered Java source roots/files, and dependencies before starting the UI. Each dependency retains groupId, artifactId, version, scope, raw/resolved values, and field source locations. Versions and scopes supplied by available parents or imported BOMs are supported; missing versions remain unknown with diagnostics. Only declared/inherited dependencies and active profiles are included, without downloading artifacts or computing a transitive graph. Unused dependencyManagement entries are not listed as dependencies.
-
-Module aggregation and parent inheritance are recorded separately. Nested and active-profile modules are supported. Module paths and `build.sourceDirectory` resolve inside the scan root; source directories need not exist yet. Missing, malformed, escaping, duplicate, or cyclic modules produce diagnostics while other modules continue. The default Java source directory is `src/main/java` relative to each module; declared and resolved custom values remain available for source analysis.
-
-Maven model resolution is offline. Relative parents must stay inside the scan root; external parents and imported BOMs may be read from the local Maven repository. Missing models retain available facts and produce `PARTIAL` results. BOM properties are not inherited by the importing project.
-
-```bash
-repoonboard . --profile dev --local-repository /path/to/local/maven/repository
-```
-
-`--profile` accepts repeated or comma-separated IDs. Only explicit and `activeByDefault` profiles participate; host OS/JDK/file/property activation and Maven settings are not used. The default cache is `~/.m2/repository`. Analysis does not execute Maven plugins, extensions, or lifecycle steps, or fetch remote POMs.
-
-All POM sources reject DTD/external entities and paths escaping their allowed roots. Default limits are 1 MiB per POM, 64 distinct POM sources, and XML nesting depth 128. External source evidence uses `local-repository/` identifiers without exposing the cache's absolute path.
-
-CLI exit codes are stable: `0` success, `1` failed or unsupported analysis, `2` invalid arguments, and `3` partial analysis. A directory without a root `pom.xml`, or a complete Maven model with no recognized Spring Boot build evidence, is unsupported in V0.1 and returns `1`. If missing permitted local parent/BOM data prevents Spring Boot confirmation, RepoOnboard conservatively returns `3` instead. Invalid Java files also produce `PARTIAL`; confirmed facts remain available while the affected source and warning are reported.
-
-CLI and UI diagnostics use the same report facts: severity, code, stage, message, module, and source location. The CLI prints actionable summaries to standard error, while the Overview presents the same diagnostic identity and repository-relative source context. Unexpected internal and local UI startup errors use stable codes without echoing raw exception messages or configuration values.
-
-RepoOnboard will analyze the repository and produce information such as:
+Check the required tools:
 
 ```text
-Project: demo-shop
-Build: Maven
-Java: 21
-Framework: Spring Boot 3.x
-
-Modules: 4
-Controllers: 18
-Services: 27
-Repositories: 12
-HTTP endpoints: 83
+java -version
+node --version
+git --version
 ```
 
-Important results should remain traceable to their source:
-
-```text
-POST /users
-    ↓
-UserController.createUser()
-    ↓
-src/main/java/.../UserController.java:73
-```
-
-## Planned Interface
-
-Spring Boot build detection uses a module's declared `org.springframework.boot:spring-boot-starter-parent`, imported `spring-boot-dependencies` BOM, or resolved/inherited Boot core and starter dependencies. Each signal retains source and version locations. Detection remains separate from version resolution; conflicting known versions yield an unknown version and a diagnostic. A build signal does not establish an application entry point. Indirect parent/BOM chains without a recognized dependency are not yet classified.
-
-### Overview
-
-Summarizes the technology stack, modules, components, endpoints, and application entry points.
-
-### Architecture
-
-Shows confirmed Spring component-injection relationships in a module-scoped interactive graph. Nodes and edges open a report-backed Inspector with source locations and raw evidence; unresolved or ambiguous relationships remain explicit instead of being drawn as facts. Module, component-kind, and relationship filters compose with selected-node 1-hop exploration. A searchable component list remains available as an alternative entry point, including when a matching scope exceeds the graph readability budget.
-
-### API Map
-
-Lists reported HTTP methods, paths, controllers, handler methods, source locations, and mapping conditions. Module, method, and text filters compose without treating `ANY` as a wildcard. Unresolved paths or conditions remain explicit, and selecting an endpoint opens its handler source plus method-level and controller-level mapping evidence.
-
-### Source & Evidence Detail
-
-Opens from a selected Architecture component or API endpoint without becoming a separate top-level view. It shows the scan-root-relative source path, real 1-based position, optional symbol, module, source-file metadata, recorded evidence, and only exactly joined related facts. Paths, symbols, and formatted locations can be copied when browser clipboard access is available; selectable text and explicit fallback feedback remain available otherwise. RepoOnboard does not read source text, construct absolute paths, infer handler call chains, or advertise unavailable IDE actions.
-
-### Start Here
-
-Provides an explainable, deterministic reading order based on build files, entry points, configuration, public APIs, and confirmed dependencies. Every recommendation shows its owning module, all recorded reasons, and source evidence. Exactly joined components and endpoints open their existing Architecture or API inspectors; partial coverage and an empty guide remain explicit. The ranking rules run only in Java and are delivered through a separate versioned, read-only projection without changing the public report schema.
-
-## Design Principles
-
-- **Static analysis first** — derive reliable facts from source code, ASTs, build metadata, and framework metadata.
-- **Accurate before impressive** — prefer smaller amounts of trustworthy information over speculative relationships.
-- **Local first** — core analysis should run without uploading source code to a remote service.
-- **Explainable results** — important findings should include source evidence whenever possible.
-- **Partial success over total failure** — one broken file should not discard useful results from the rest of the repository.
-- **One ecosystem done well** — complete Java, Maven, and Spring Boot support before expanding to more languages.
-
-RepoOnboard V0.1 does not depend on an LLM. Future AI features, if introduced, should consume verified structured analysis rather than replace it.
-
-## Roadmap
-
-```text
-M0  Technical Architecture                 ✓
-M1  Project Foundation                     ✓
-M2  Maven Analysis                         ✓
-M3  Java Source Analysis                   ✓
-M4  Spring Boot Analysis                  ✓
-M5  API & Dependency Analysis             ✓
-M6  Report Assembly & Serialization          ✓
-M7  Local Web UI                           ✓
-M8  Start Here                             ✓
-M9  Regression & Real Repository Validation ✓
-M10 Release Preparation                   ◐
-```
-
-Detailed tasks and acceptance criteria are maintained in [TODO.md](./TODO.md).
-
-V0.1 remains Web-first: it will ship as an executable JAR with Windows and POSIX launcher scripts. The Vue UI is kept host-independent so it can be reused later, but a native desktop shell, installer, and bundled Java runtime are deferred to a V0.2 technical spike rather than blocking the first release.
-
-## Development Build
-
-RepoOnboard development currently requires JDK 21 or newer and Node.js `^20.19.0` or `>=22.12.0`. A separate Maven installation or IDE is not required: the checked-in Maven Wrapper downloads the pinned Maven distribution, verifies its checksum, installs the locked frontend dependencies, and builds the packaged UI. End users of a release artifact will not need Node.js.
-
-Windows:
+Windows PowerShell:
 
 ```powershell
 git clone https://github.com/zhan-cm/RepoOnboard.git
@@ -246,34 +66,147 @@ macOS or Linux:
 git clone https://github.com/zhan-cm/RepoOnboard.git
 cd RepoOnboard
 ./mvnw clean verify
+chmod +x repoonboard
 ./repoonboard --help
 ```
 
-`verify` also starts the packaged executable JAR against a controlled Spring fixture with an empty Maven cache, confirms that the local report route is available, and writes the SHA-256 checksum. It does not build or execute the analyzed fixture application.
+The verified build produces:
 
-The current CLI provides Maven and Java source analysis plus Spring component, configuration, application-entry, injection, HTTP endpoint, and component-dependency facts with source evidence. Class- and method-level paths, HTTP methods, and mapping conditions are retained; `ANY` and unresolved paths remain explicit. Only uniquely confirmed project-local component targets become graph edges, while duplicate evidence is consolidated and ambiguous or missing targets remain diagnostics. MyBatis/MyBatis-Plus mapper classification is deferred. Stable report assembly and schema `1.2` JSON serialization feed the loopback service, packaged responsive product Shell, Repository Overview, Module Explorer, Architecture Workspace, API Map, and shared Source & Evidence Detail. The module view uses explicit Maven aggregation relationships, confirmed exact-coordinate internal module dependencies, module-scoped counts, metadata, source roots, version facts, diagnostics, and evidence. The architecture view uses Cytoscape.js to render only confirmed component-injection edges within one module at a time, with composable filters, search, selected-node 1-hop exploration, zoom, pan, fit, selection, source evidence, responsive searchable-list fallback, and explicit partial/unavailable/over-budget states. The API view provides composable module/method/text filtering, explicit unresolved states, handler source locations, and both levels of mapping evidence. Component and endpoint inspectors now open a shared, report-backed source detail surface with safe copy feedback and exact related facts.
+```text
+target/repoonboard.jar
+target/repoonboard.jar.sha256
+```
 
-## Documentation
+The executable JAR contains the Java runtime dependencies and complete offline Web UI. The launchers use `repoonboard.jar` beside the script in a future release layout, or `target/repoonboard.jar` in a source checkout. Set `REPOONBOARD_JAR` only to select an explicit alternate JAR.
 
-- [PROJECT.md](./PROJECT.md) — product vision, scope, and principles
-- [DECISIONS.md](./DECISIONS.md) — accepted architecture and technical decisions
-- [TODO.md](./TODO.md) — development roadmap and current task status
-- [AGENTS.md](./AGENTS.md) — repository instructions for coding agents
-- [Frontend Product Requirements](./docs/product/FRONTEND-PRODUCT-REQUIREMENTS.md) — page structure, interaction, visual direction, responsive behavior, and future desktop experience
+Verify the checksum before running a copied or downloaded JAR.
 
-## Target Users
+Windows PowerShell:
 
-RepoOnboard is intended for developers joining existing projects, open-source contributors, students, junior developers, and maintainers taking over unfamiliar or legacy codebases.
+```powershell
+$expectedHash = (Get-Content .\target\repoonboard.jar.sha256).Split()[0]
+$actualHash = (Get-FileHash .\target\repoonboard.jar -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) { throw "RepoOnboard checksum mismatch" }
+```
+
+Linux:
+
+```bash
+(cd target && sha256sum -c repoonboard.jar.sha256)
+```
+
+macOS:
+
+```bash
+(cd target && shasum -a 256 -c repoonboard.jar.sha256)
+```
+
+## Usage
+
+```text
+repoonboard [OPTIONS] PATH
+```
+
+`PATH` must be the root of a supported Maven Spring Boot repository and contain its root `pom.xml`.
+
+| Option | Meaning |
+| --- | --- |
+| `--no-open` | Start the local UI without opening the default browser. |
+| `--profile ID[,ID...]` | Activate explicit Maven profile IDs; the option is repeatable. |
+| `--local-repository PATH` | Read permitted external parent/BOM POMs from this local Maven cache. Defaults to `~/.m2/repository`. |
+| `-h`, `--help` | Show command help. |
+| `-V`, `--version` | Show the RepoOnboard version. |
+
+Examples:
+
+```bash
+repoonboard /path/to/project
+repoonboard . --no-open
+repoonboard . --profile dev,local --local-repository /path/to/local/maven/repository
+```
+
+After analysis, RepoOnboard starts a read-only UI on a system-assigned `127.0.0.1` port. The process and UI remain available until Ctrl+C. The service accepts only its exact loopback Host and same-origin browser requests; it exposes fixed read-only routes and does not provide arbitrary file access.
+
+### Exit codes and partial analysis
+
+| Exit code | Meaning |
+| ---: | --- |
+| `0` | Analysis completed successfully. |
+| `1` | Analysis failed, or the project is unsupported. |
+| `2` | Command arguments are invalid. |
+| `3` | Analysis is partial; confirmed facts were preserved, but coverage is incomplete. |
+
+A missing local parent/BOM, invalid Java file, unresolved type, or unsupported pattern can produce `PARTIAL`. Review the warning code, module, repository-relative source location, and suggested action before relying on totals. CLI and UI diagnostics use the same report severity, code, stage, message, module, and source facts.
+
+A directory without a root `pom.xml`, or a complete Maven model without recognized Spring Boot build evidence, is unsupported in V0.1 and returns `1`. When incomplete Maven data prevents Spring Boot confirmation, RepoOnboard conservatively returns `3` rather than claiming either support or failure as a fact.
+
+## Current features
+
+- **Repository Overview** — project identity, reported technology versions, modules, source roots, component/API counts, application entry points, and coverage status.
+- **Module Explorer** — Maven aggregation hierarchy, metadata, source roots, exact-coordinate internal module dependencies, components, diagnostics, and evidence.
+- **Architecture Workspace** — module-scoped confirmed Spring component-injection relationships, filters, search, one-hop focus, graph/list fallback, source evidence, and unresolved counts.
+- **API Map** — Spring MVC method/path/handler facts, module/method/text filters, mapping conditions, unresolved states, and both method- and class-level evidence.
+- **Source & Evidence Detail** — repository-relative path, real 1-based location, symbol, module, evidence, and exactly joined related facts; it does not expose source text or pretend to open an IDE.
+- **Start Here** — deterministic file reading order with visible reasons based on build files, entry points, configuration, public APIs, and confirmed dependencies.
+- **Failure-tolerant reports** — stable report IDs and schema `1.2`, explicit `SUCCESS`/`PARTIAL`/`FAILED` status, actionable diagnostics, and preservation of confirmed facts after local failures.
+
+All production UI resources are packaged in the JAR and use no runtime CDN. RepoOnboard V0.1 does not use an LLM, upload repository contents, run the target application, execute Maven lifecycle/plugins/extensions, or modify analyzed source files.
+
+## Supported stack
+
+| Area | V0.1 support |
+| --- | --- |
+| Target language | Java source, including tested Java 8/11/17/21 syntax fixtures |
+| Build system | Maven, including single/multi-module projects, explicit and `activeByDefault` profiles, relative parents, and local-cache parent/BOM POMs |
+| Framework | Spring Boot build signals, common stereotype/configuration/application annotations, constructor/field injection facts, and Spring MVC mappings |
+| RepoOnboard runtime | Java 21 or newer |
+| Interface | Local read-only Web UI |
+| Report | UTF-8 JSON schema `1.2`; readers retain compatibility with `1.0` and `1.1` |
+
+Maven model resolution is intentionally restricted. Relative parents must stay inside the scan root; external parent/BOM POMs may only come from the selected local repository. RepoOnboard does not use Maven settings, implicit host OS/JDK/file/property profile activation, remote resolution, transitive dependency calculation, or BOM property inheritance.
+
+Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported `spring-boot-dependencies` BOM, or resolved/inherited Boot core or starter dependencies. A build signal does not prove that an application entry point exists.
+
+## Known limitations
+
+- V0.1 supports only Java + Maven + Spring Boot. Gradle and other languages/frameworks are not supported.
+- Type resolution is limited to uniquely confirmed project-local declarations. Runtime wiring, reflection, generated registrations, proxies, and a full method-level call graph are outside V0.1.
+- MyBatis/MyBatis-Plus Mapper-specific classification is deferred.
+- Spring Data interfaces that only inherit a repository base type and have no direct `@Repository` are currently missed. In the fixed Petclinic validation this omitted 3 repository components and left 6 downstream injection relationships unresolved.
+- Multiple wildcard imports can make a known Spring annotation conservatively ambiguous. In the fixed JHipster validation this omitted 3 controllers, 13 endpoints, and 7 confirmed dependency edges rather than inventing facts.
+- The Architecture graph stops drawing when the filtered scope exceeds 60 components or 120 confirmed edges, but a graph inside that budget can still be semantically dense. The component list remains available.
+- API rows and diagnostics are not virtualized or paginated. The ThingsBoard boundary trial completed 3,834 main Java files but observed 648.23 MiB peak process memory, 1,719 diagnostics, 581 API rows, ambiguous duplicate module labels, and graphs that could remain unreadable. RepoOnboard does **not** claim complete support for repositories of that scale.
+- At a 1280 px viewport, medium-repository Architecture labels may clip and the API source column may require horizontal scrolling.
+- First-contact validation showed that API lookup was easiest and Start Here could locate its first three files, but module, entry-point, dependency, and recommendation explanations still caused confusion. The 5–10 minute observation had no manual-reading control group, so V0.1 does not claim a measured speed-up over manual exploration.
+- Native macOS/Linux release smoke checks are still pending. Current POSIX launcher behavior has been exercised from Git Bash, not claimed as full native platform certification.
+
+## Validation evidence
+
+- [Minimal deterministic Spring regression fixture](./src/test/resources/fixtures/spring-analysis-project)
+- [Small repository: Spring Petclinic](./docs/validation/T-0904-SPRING-PETCLINIC.md)
+- [Medium repository: JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
+- [Large boundary trial: ThingsBoard](./docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
+- [First-contact onboarding observation](./docs/validation/T-0907-ONBOARDING-VALUE.md)
+
+`./mvnw clean verify` runs the Java and frontend suites, builds the production UI, packages the executable JAR, starts that JAR against the controlled Spring fixture with an empty Maven cache, checks the report route, and writes the checksum. It does not build or execute the fixture application.
+
+## Roadmap
+
+M0–M9 and the first release-preparation tasks for packaging and error messages are complete. M10 still includes a standalone demo repository, demo media, a license, GitHub presentation cleanup, native cross-platform smoke checks, and the actual V0.1 release. See [TODO.md](./TODO.md) for the task-level source of truth.
+
+V0.1 remains Web-first and will ship as an executable JAR plus Windows/POSIX launchers. A native desktop container, installer, bundled Java runtime, and selective English/中文 product-interface switch are V0.2 candidates, not V0.1 work. The language switch would translate product navigation, explanations, states, empty results, and errors while preserving code identifiers, paths, class names, APIs, framework terms, and original Evidence.
 
 ## Contributing
 
-RepoOnboard is still in early development. Contribution guidelines will be added when the implementation is ready for external participation. Until then, changes should remain consistent with the project scope and accepted decisions.
+RepoOnboard is still in pre-release development. Before proposing a change, read [PROJECT.md](./PROJECT.md), [DECISIONS.md](./DECISIONS.md), [TODO.md](./TODO.md), and [AGENTS.md](./AGENTS.md). Keep changes focused on an accepted task, add the narrowest sufficient test, preserve source evidence, and do not expand the V0.1 ecosystem without an explicit scope decision.
+
+Because the repository does not yet have a license, external contribution and reuse terms are not finalized. A contribution guide and license are release-preparation work; until then, use a GitHub issue to discuss a proposed contribution before submitting code.
 
 ## License
 
-A license has not been finalized yet. One will be selected before the first public release.
+No license has been selected yet. Public source availability alone does not grant permission to copy, modify, or redistribute the project. License selection is required before V0.1 is released.
 
-## Project Philosophy
+## Project philosophy
 
 > **Understand first. Modify later.**
 >
