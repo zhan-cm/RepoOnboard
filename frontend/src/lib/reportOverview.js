@@ -76,7 +76,9 @@ export function createOverviewModel(report) {
       code: text(item?.code),
       severity: text(item?.severity),
       message: text(item?.message),
-      stage: text(item?.stage)
+      stage: text(item?.stage),
+      moduleId: text(item?.moduleId),
+      source: formatLocation(item?.location) ?? text(item?.fileId)
     })) ?? null
   }
 }
@@ -94,7 +96,7 @@ function coverage(status, summary, limitationCodes, diagnostics) {
     return {
       variant: 'error',
       heading: 'Analysis failed',
-      message: 'The report contains terminal diagnostics. Counts may be incomplete or unavailable.',
+      message: 'Terminal diagnostics prevented a complete analysis. Fix the errors shown below, then rerun RepoOnboard; displayed counts may be incomplete.',
       limited,
       limitationCodes,
       diagnosticCount: diagnostics?.length ?? null
@@ -104,7 +106,7 @@ function coverage(status, summary, limitationCodes, diagnostics) {
     return {
       variant: 'warning',
       heading: 'Coverage is limited',
-      message: 'RepoOnboard kept the facts it could confirm. Review the reported limitations before relying on totals.',
+      message: 'Confirmed facts were preserved, but coverage is incomplete. Review warnings and source locations, fix relevant inputs, then rerun before relying on totals.',
       limited: true,
       limitationCodes,
       diagnosticCount: diagnostics?.length ?? null
@@ -152,7 +154,13 @@ function formatLocation(location) {
   const startLine = Number.isInteger(location?.startLine) && location.startLine > 0
     ? location.startLine
     : null
-  return startLine === null ? sourceFileId : `${sourceFileId}:${startLine}`
+  const startColumn = Number.isInteger(location?.startColumn) && location.startColumn > 0
+    ? location.startColumn
+    : null
+  if (startLine === null) return sourceFileId
+  return startColumn === null
+    ? `${sourceFileId}:${startLine}`
+    : `${sourceFileId}:${startLine}:${startColumn}`
 }
 
 function statusTone(status) {

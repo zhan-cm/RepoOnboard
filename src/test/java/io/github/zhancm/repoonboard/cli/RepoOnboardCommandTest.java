@@ -1,6 +1,7 @@
 package io.github.zhancm.repoonboard.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ class RepoOnboardCommandTest {
         CliResult result = execute(".");
         Path currentDirectory = Path.of(".").toAbsolutePath().normalize();
 
-        assertEquals(CommandLine.ExitCode.OK, result.exitCode());
+        assertEquals(CommandLine.ExitCode.SOFTWARE, result.exitCode());
         assertTrue(result.out().contains("Target: " + currentDirectory));
         assertTrue(result.out().contains("Maven project: detected (pom.xml)"));
         assertTrue(result.out().contains("groupId: io.github.zhancm"));
@@ -45,7 +46,8 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Spring HTTP endpoints: 0 (unresolved: 0)"));
         assertTrue(result.out().contains(
                 "Spring component dependencies: 0 (confirmed: 0, unresolved: 0)"));
-        assertTrue(result.err().isEmpty());
+        assertTrue(result.err().contains(
+                "ERROR [SPRING_BOOT_NOT_DETECTED] stage=SPRING_BOOT_DETECTION"));
     }
 
     @Test
@@ -78,6 +80,15 @@ class RepoOnboardCommandTest {
                 .anyMatch(diagnostic -> diagnostic.code().equals("SPRING_MVC_PATH_UNRESOLVED")));
         assertTrue(launchedReport.get().diagnostics().stream()
                 .anyMatch(diagnostic -> diagnostic.code().equals("SPRING_MVC_CONDITION_UNRESOLVED")));
+        var diagnostic = launchedReport.get().diagnostics().stream()
+                .filter(item -> item.code().equals("SPRING_MVC_PATH_UNRESOLVED"))
+                .findFirst()
+                .orElseThrow();
+        assertTrue(err.toString().contains(
+                diagnostic.severity() + " [" + diagnostic.code() + "] stage=" + diagnostic.stage()));
+        assertTrue(err.toString().contains("Message: " + diagnostic.message()));
+        assertTrue(err.toString().contains("Source: " + diagnostic.fileId().orElseThrow()));
+        assertTrue(err.toString().contains("Analysis result: PARTIAL"));
     }
 
     @Test
@@ -119,7 +130,9 @@ class RepoOnboardCommandTest {
     void reportsDiscoveredJavaFiles(@TempDir Path directory) throws IOException {
         Files.writeString(directory.resolve("pom.xml"), """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
-                <artifactId>app</artifactId><version>1</version></project>
+                <artifactId>app</artifactId><version>1</version><dependencies><dependency>
+                <groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter</artifactId>
+                <version>3.5.0</version></dependency></dependencies></project>
                 """);
         Path source = directory.resolve("src/main/java/example");
         Files.createDirectories(source);
@@ -143,10 +156,12 @@ class RepoOnboardCommandTest {
 
         CliResult result = execute(temporaryDirectory.toString());
 
-        assertEquals(CommandLine.ExitCode.OK, result.exitCode());
+        assertEquals(CommandLine.ExitCode.SOFTWARE, result.exitCode());
         assertTrue(result.out().contains("Maven project: not detected"));
         assertTrue(result.out().contains("root pom.xml not found"));
-        assertTrue(result.err().isEmpty());
+        assertTrue(result.err().contains("ERROR [PROJECT_NOT_MAVEN] stage=PROJECT_DETECTION"));
+        assertTrue(result.err().contains(
+                "Action: Run RepoOnboard from the root of a Maven Spring Boot repository."));
     }
 
     @Test
@@ -156,7 +171,9 @@ class RepoOnboardCommandTest {
         CliResult result = execute(missingPath.toString());
 
         assertEquals(CommandLine.ExitCode.USAGE, result.exitCode());
-        assertTrue(result.err().contains("target path does not exist: " + missingPath));
+        assertTrue(result.err().contains("ERROR [CLI_TARGET_NOT_FOUND] stage=CLI"));
+        assertTrue(result.err().contains("Context: Target: " + missingPath));
+        assertTrue(result.err().contains("The target path does not exist."));
     }
 
     @Test
@@ -166,7 +183,9 @@ class RepoOnboardCommandTest {
         CliResult result = execute(file.toString());
 
         assertEquals(CommandLine.ExitCode.USAGE, result.exitCode());
-        assertTrue(result.err().contains("target path is not a directory: " + file));
+        assertTrue(result.err().contains("ERROR [CLI_TARGET_NOT_DIRECTORY] stage=CLI"));
+        assertTrue(result.err().contains("Context: Target: " + file));
+        assertTrue(result.err().contains("The target path is not a directory."));
     }
 
     @Test
@@ -218,7 +237,68 @@ class RepoOnboardCommandTest {
                 });
 
         assertEquals(CommandLine.ExitCode.SOFTWARE, exitCode);
-        assertTrue(err.toString().contains("local UI could not be started: port unavailable"));
+        assertTrue(err.toString().contains("ERROR [LOCAL_UI_START_FAILED] stage=LOCAL_UI"));
+        assertTrue(err.toString().contains("Action: Check local loopback networking"));
+        assertFalse(err.toString().contains("port unavailable"));
+    }
+
+    @Test
+    void rejectsAMavenProjectWithoutSpringBootAsUnsupported(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>plain-maven</artifactId><version>1</version></project>
+                """);
+
+        CliResult result = execute(directory.toString());
+
+        assertEquals(CommandLine.ExitCode.SOFTWARE, result.exitCode());
+        assertTrue(result.out().contains("Analysis status: FAILED"));
+        assertTrue(result.err().contains(
+                "ERROR [SPRING_BOOT_NOT_DETECTED] stage=SPRING_BOOT_DETECTION"));
+        assertTrue(result.err().contains("Source: pom.xml"));
+        assertTrue(result.err().contains("RepoOnboard V0.1 supports Spring Boot Maven repositories"));
+    }
+
+    @Test
+    void keepsValidFactsAndReportsInvalidJavaSourceAsPartial(@TempDir Path directory) throws IOException {
+        Files.writeString(directory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
+                <artifactId>broken-source</artifactId><version>1</version><dependencies><dependency>
+                <groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter</artifactId>
+                <version>3.5.0</version></dependency></dependencies></project>
+                """);
+        Path source = directory.resolve("src/main/java/example");
+        Files.createDirectories(source);
+        Files.writeString(source.resolve("Broken.java"), "package example; class Broken {");
+
+        CliResult result = execute(directory.toString());
+
+        assertEquals(3, result.exitCode());
+        assertTrue(result.out().contains("Analysis status: PARTIAL"));
+        assertTrue(result.err().contains("Analysis result: PARTIAL"));
+        assertTrue(result.err().contains("WARNING [JAVA_PARSE_PROBLEM] stage=JAVA_PARSE"));
+        assertTrue(result.err().contains("Source: src/main/java/example/Broken.java"));
+        assertTrue(result.err().contains("analysis continued")
+                || result.err().contains("confirmed facts were preserved"));
+    }
+
+    @Test
+    void hidesUnexpectedExceptionDetailsAndReturnsFailedExitCode() {
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+
+        int exitCode = RepoOnboardCommand.execute(
+                new String[] {FixturePaths.project("spring-analysis-project").toString()},
+                new PrintWriter(out, true),
+                new PrintWriter(err, true),
+                (report, noOpen, standardOut, standardErr) -> {
+                    throw new IllegalStateException("secret-token-value");
+                });
+
+        assertEquals(CommandLine.ExitCode.SOFTWARE, exitCode);
+        assertTrue(err.toString().contains("ERROR [ANALYSIS_UNEXPECTED_FAILURE] stage=CLI"));
+        assertTrue(err.toString().contains("Context: Failure type: IllegalStateException"));
+        assertFalse(err.toString().contains("secret-token-value"));
     }
 
     @Test
@@ -260,6 +340,9 @@ class RepoOnboardCommandTest {
         Files.writeString(directory.resolve("pom.xml"), """
                 <project><modelVersion>4.0.0</modelVersion><groupId>example</groupId>
                 <artifactId>app</artifactId><version>${revision}</version>
+                <dependencies><dependency><groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId><version>3.5.0</version>
+                </dependency></dependencies>
                 <profiles><profile><id>manual</id><properties><revision>2</revision></properties>
                 </profile></profiles></project>
                 """);
@@ -292,7 +375,9 @@ class RepoOnboardCommandTest {
         CliResult result = execute();
 
         assertEquals(CommandLine.ExitCode.USAGE, result.exitCode());
+        assertTrue(result.err().contains("ERROR [CLI_ARGUMENT_INVALID] stage=CLI"));
         assertTrue(result.err().contains("Missing required parameter: 'PATH'"));
+        assertTrue(result.err().contains("Action: Run 'repoonboard --help'"));
     }
 
     private static CliResult execute(String... args) {

@@ -15,8 +15,9 @@ RepoOnboard 已完成 **M9 — Regression & Real Repository Validation**，当�
 - **T-0906** 已完成；固定 ThingsBoard `v4.3.1.5` commit 的大型仓库试验完成 59 个 active module、3,834 个 main Java file 的分析，无 parse failure、OOM 或 server crash；记录 25.498 秒冷启动、648.23 MiB 进程峰值，以及离线模型、Spring 语义、诊断规模和图/API UI 的实际上限，不承诺完整支持。
 - **T-0907** 已完成；固定 `joyheros/realworld` commit 的 5 项首次接触任务记录了 5–10 分钟总耗时和混合结果：API 定位最快，Start Here 能导航到前三个文件，但入口、模块、依赖和推荐原因仍存在理解障碍。Overview 已统一为浅色主题，Start Here 已在卡片内显式展示全部原因。
 - **T-1001** 已完成；构建产出包含运行依赖与前端资源的 `repoonboard.jar` 和 SHA-256，Windows/POSIX 启动脚本校验 Java 21、定位 JAR 并透传参数，中英文 README 已给出源码候选的安装、运行与校验步骤。
-- 当前下一任务是 **T-1002 — Error Messages**。
-- Java 21 / Maven 3.9.16 当前运行 81 项前端测试和 165 项 Java 测试并全部通过；T-0901 至 T-0907 均不构建或执行 fixture/目标应用。`clean verify` 会从最终可执行 JAR 启动独立进程，用空 Maven 缓存离线分析固定 fixture，读取本地报告路由并生成 SHA-256；它仍不构建或执行被分析项目。
+- **T-1002** 已完成；参数错误、FAILED、PARTIAL 和常见不支持场景使用稳定退出码与可操作文案，CLI 与 UI 展示同一组报告 Diagnostic，异常边界不回显内部错误或配置值。
+- 当前下一任务是 **T-1003 — README V0.1**。
+- Java 21 / Maven 3.9.16 当前运行 82 项前端测试和 168 项 Java 测试并全部通过；T-0901 至 T-0907 均不构建或执行 fixture/目标应用。`clean verify` 会从最终可执行 JAR 启动独立进程，用空 Maven 缓存离线分析固定 fixture，读取本地报告路由并生成 SHA-256；它仍不构建或执行被分析项目。
 
 ## 2. 已完成任务
 
@@ -180,6 +181,7 @@ RepoOnboard
 - T-0906 用大型 ThingsBoard 仓库量化当前边界：3,834 个 main Java file 均完成解析，但离线 Maven model 和 Spring 语义解析产生 1,719 条诊断；冷启动与本地 UI ready 用时 25.498 秒，浏览器核验后进程峰值工作集 648.23 MiB。最大模块被图预算安全暂停，但 52 节点/77 关系的预算内图仍可能形成 hairball，说明数值门槛不能保证语义可读性。
 - T-0907 用固定的 realworld 仓库和 5 项任务完成首次接触验证。参与者在 5–10 分钟内最快找到 API，并找到前三个推荐文件，但未发现推荐原因，对入口、模块和依赖仍困惑。Overview 已统一为浅色，Start Here 卡片已直接显示全部原因；没有手工阅读对照组，因此结果只证明部分可观察价值，不证明整体提速。
 - T-1001 将原有瘦 JAR 改为带 CLI 入口、运行依赖与离线前端的单一可执行 JAR，新增 Java 21 门禁和参数透传一致的 Windows/POSIX 启动脚本。完整 verify 直接运行该 JAR 离线分析 fixture、访问报告 API 并生成 SHA-256；README 中英文版本记录当前源码安装与未来 release 文件布局。Windows Maven Wrapper 对普通 `.m2` 目录读取空链接目标的启动问题也已修复。
+- T-1002 为 CLI 参数、项目识别、分析状态和本地 UI 启动建立稳定错误码、上下文与下一步动作；非 Maven 或确认无 Spring Boot 的项目明确失败，无法确认 Spring Boot 的不完整 Maven 模型保持 `PARTIAL`。终端现在从公共报告读取与 UI 相同的 Diagnostic 字段，前端保留 stage、module 和 source，异常消息只暴露安全分类而不回显原始内部内容。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
 
@@ -197,7 +199,7 @@ RepoOnboard
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **原生平台发布检查尚未完成**：Windows 启动脚本与 Git Bash 下的 POSIX 启动脚本已实际执行；M10 出口仍要求在原生 macOS/Linux 环境完成 release smoke checks。
 - **前端包体警告**：单一生产 JavaScript 产物约 602 kB（gzip 约 190 kB），Vite 会提示超过 500 kB；T-0709 已确认离线 JAR 可正确加载，是否拆包应在真实仓库性能数据表明必要时再决定。
-- **发布尚未就绪**：当前仍为 `0.1.0-SNAPSHOT`；许可、错误体验、演示资源、原生跨平台 smoke checks 和正式 V0.1 Release 尚未完成。
+- **发布尚未就绪**：当前仍为 `0.1.0-SNAPSHOT`；README 发布说明、许可、演示资源、原生跨平台 smoke checks 和正式 V0.1 Release 尚未完成。
 
 ## 8. 未完成任务
 
@@ -209,10 +211,10 @@ RepoOnboard
 
 下一项开发任务：
 
-> **T-1002 — Error Messages**
+> **T-1003 — README V0.1**
 
-审计并统一参数错误、FAILED、PARTIAL 与常见不支持场景的退出码和可操作文案，保持 CLI 与 UI Diagnostic 语义一致。
+完善 V0.1 README，准确说明能力、使用方式、支持范围、已知限制和验证边界。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M9 与 T-1001 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有统一浅色 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。发布构建生成带运行依赖和离线 UI 的 `target/repoonboard.jar`、SHA-256，并由 Windows/POSIX 启动脚本提供 Java 21 门禁；verify 会从 JAR 离线分析 fixture。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence。下一任务是 **T-1002 — Error Messages**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M9 与 T-1001、T-1002 已完成，公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有统一浅色 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。发布构建生成带运行依赖和离线 UI 的 `target/repoonboard.jar`、SHA-256，并由 Windows/POSIX 启动脚本提供 Java 21 门禁；verify 会从 JAR 离线分析 fixture。CLI 退出码为成功 0、失败 1、参数错误 2、部分成功 3，终端与 UI 消费相同的报告 Diagnostic。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence。下一任务是 **T-1003 — README V0.1**。每个 T 应独立测试、更新 TODO/STATE、提交并推送 GitHub。

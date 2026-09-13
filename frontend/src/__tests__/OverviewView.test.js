@@ -37,7 +37,19 @@ function report(overrides = {}) {
     dependencies: [],
     diagnostics: [
       { code: 'SCAN_NOTE', severity: 'INFO', message: 'Informational only.', stage: 'java' },
-      { code: 'JAVA_PARSE_FAILED', severity: 'WARNING', message: 'One file failed.', stage: 'java' }
+      {
+        code: 'JAVA_PARSE_FAILED',
+        severity: 'WARNING',
+        message: 'One file failed.',
+        stage: 'JAVA_PARSER',
+        moduleId: 'module:root',
+        fileId: 'src/main/java/sample/Broken.java',
+        location: {
+          sourceFileId: 'src/main/java/sample/Broken.java',
+          startLine: 12,
+          startColumn: 4
+        }
+      }
     ],
     ...overrides
   }
@@ -55,6 +67,10 @@ describe('OverviewView', () => {
     expect(view.container.textContent).toContain('sample.Application')
     expect(view.container.textContent).toContain('src/main/java/sample/Application.java:7')
     expect(view.container.textContent).toContain('JAVA_PARSE_FAILED')
+    expect(view.container.textContent).toContain('Stage: JAVA_PARSER')
+    expect(view.container.textContent).toContain('Module: module:root')
+    expect(view.container.textContent).toContain('Source: src/main/java/sample/Broken.java:12:4')
+    expect(view.container.textContent).toContain('fix relevant inputs, then rerun')
     expect(view.container.textContent).not.toContain('Informational only.')
     expect(view.container.querySelectorAll('.metric-card')).toHaveLength(11)
     view.unmount()
