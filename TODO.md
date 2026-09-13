@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1005 — Demo GIF / Video。**
+> **T-1006 — License。**
 
-M0 至 M9 以及 T-1001 至 T-1004 已经完成。V0.1 公开 Demo 已固定到许可明确的 JHipster Sample Application commit，并记录可复现 checkout、真实 `PARTIAL` 结果、四页面演示路径和只读验证证据。下一步只执行 T-1005 的 Demo GIF / Video 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 以及 T-1001 至 T-1005 已经完成。14.4 秒 Demo GIF 使用当前打包候选和固定 JHipster 输入，展示扫描、Overview、Architecture、API 与 Start Here，并全程保留 `PARTIAL` / 限制提示；录制输入、哈希和真实性边界已记录。下一步只执行 T-1006 的 License 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2637,7 +2637,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 目标：
@@ -2663,9 +2663,9 @@ Start Here
 Acceptance Criteria:
 
 ```text
-[ ] 使用真实发布候选和固定 demo 输入录制
-[ ] 展示扫描、Architecture、API 和 Start Here 主路径
-[ ] 不隐藏影响理解的 PARTIAL/限制提示
+[x] 使用真实发布候选和固定 demo 输入录制
+[x] 展示扫描、Architecture、API 和 Start Here 主路径
+[x] 不隐藏影响理解的 PARTIAL/限制提示
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1005
-Create the demo GIF / video
+T-1006
+Select and document the project license
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 和 T-1001 至 T-1004 已完成；可选 T-0404 继续按非阻塞规则延后。固定公开 Demo 仓库及其许可、checkout、结果快照和四页面演示路径已记录。接下来只执行：
+M0 至 M9 和 T-1001 至 T-1005 已完成；可选 T-0404 继续按非阻塞规则延后。README 已嵌入固定输入、真实打包候选生成的 14.4 秒 Demo GIF，并公开录制哈希、场景和 `PARTIAL` 边界。接下来只执行：
 
 ```text
-T-1005 Demo GIF / Video
+T-1006 License
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-██████████░░░░░░░░░░  50%
+█████████████░░░░░░░  63%
 ```
 
 Next:
 
-> **T-1005 — Demo GIF / Video.**
+> **T-1006 — License.**
 
 ````
