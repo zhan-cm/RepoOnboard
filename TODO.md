@@ -121,9 +121,9 @@ Legend:
 
 当前唯一最高优先级任务：
 
-> **T-1004 — Demo Repository。**
+> **T-1005 — Demo GIF / Video。**
 
-M0 至 M9 以及 T-1001 至 T-1003 已经完成。中英文 README 现已覆盖可复现源码安装、当前 fixture 演示、实际功能、支持范围、PARTIAL 语义、验证证据、已知限制、路线和贡献/License 边界；没有虚构尚不存在的 Release 或独立 Demo。下一步只执行 T-1004 的 Demo Repository 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+M0 至 M9 以及 T-1001 至 T-1004 已经完成。V0.1 公开 Demo 已固定到许可明确的 JHipster Sample Application commit，并记录可复现 checkout、真实 `PARTIAL` 结果、四页面演示路径和只读验证证据。下一步只执行 T-1005 的 Demo GIF / Video 工作。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
 
 ---
 
@@ -2617,7 +2617,7 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
 
 准备一个可以稳定展示 RepoOnboard 效果的公开项目。
@@ -2625,9 +2625,9 @@ Status:
 Acceptance Criteria:
 
 ```text
-[ ] 使用固定 commit，许可允许公开演示
-[ ] 覆盖 Overview、Architecture、API 和 Start Here
-[ ] 不为演示修改第三方仓库源码
+[x] 使用固定 commit，许可允许公开演示
+[x] 覆盖 Overview、Architecture、API 和 Start Here
+[x] 不为演示修改第三方仓库源码
 ```
 
 ---
@@ -3110,18 +3110,18 @@ Remaining Issues:
 当前下一步：
 
 ```text
-T-1004
-Prepare the demo repository
+T-1005
+Create the demo GIF / video
 ```
 
 本阶段：
 
 > **M10 — Release Preparation**
 
-M0 至 M9 和 T-1001 至 T-1003 已完成；可选 T-0404 继续按非阻塞规则延后。README 已准确覆盖源码安装、当前 fixture 演示、能力、PARTIAL、限制、路线和贡献边界。接下来只执行：
+M0 至 M9 和 T-1001 至 T-1004 已完成；可选 T-0404 继续按非阻塞规则延后。固定公开 Demo 仓库及其许可、checkout、结果快照和四页面演示路径已记录。接下来只执行：
 
 ```text
-T-1004 Demo Repository
+T-1005 Demo GIF / Video
 ```
 
 ---
@@ -3157,11 +3157,11 @@ Validation
 ████████████████████  100%
 
 Release
-████████░░░░░░░░░░░░  38%
+██████████░░░░░░░░░░  50%
 ```
 
 Next:
 
-> **T-1004 — Demo Repository.**
+> **T-1005 — Demo GIF / Video.**
 
 ````
