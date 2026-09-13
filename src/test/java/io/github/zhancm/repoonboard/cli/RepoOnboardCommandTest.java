@@ -29,7 +29,7 @@ class RepoOnboardCommandTest {
         assertTrue(result.out().contains("Maven project: detected (pom.xml)"));
         assertTrue(result.out().contains("groupId: io.github.zhancm"));
         assertTrue(result.out().contains("artifactId: repoonboard"));
-        assertTrue(result.out().contains("version: 0.1.0-SNAPSHOT"));
+        assertTrue(result.out().contains("version: 0.1.0"));
         assertTrue(result.out().contains("packaging: jar"));
         assertTrue(result.out().contains("Metadata status: SUCCESS"));
         assertTrue(result.out().contains("Java source roots: 1"));
@@ -366,7 +366,7 @@ class RepoOnboardCommandTest {
         CliResult result = execute("--version");
 
         assertEquals(CommandLine.ExitCode.OK, result.exitCode());
-        assertEquals("RepoOnboard 0.1.0-SNAPSHOT" + System.lineSeparator(), result.out());
+        assertEquals("RepoOnboard 0.1.0" + System.lineSeparator(), result.out());
         assertTrue(result.err().isEmpty());
     }
 

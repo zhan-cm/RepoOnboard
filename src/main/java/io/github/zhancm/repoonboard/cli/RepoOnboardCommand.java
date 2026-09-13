@@ -50,7 +50,7 @@ import picocli.CommandLine.Spec;
         name = "repoonboard",
         description = "Detect a Maven project at a repository path.",
         mixinStandardHelpOptions = true,
-        version = "RepoOnboard 0.1.0-SNAPSHOT")
+        version = "RepoOnboard 0.1.0")
 public final class RepoOnboardCommand implements Callable<Integer> {
 
     private final LocalUiLauncher uiLauncher;

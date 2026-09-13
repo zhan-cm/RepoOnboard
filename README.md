@@ -6,9 +6,9 @@
 
 RepoOnboard is a local-first codebase comprehension and developer onboarding tool. It statically analyzes a repository, keeps the source evidence behind important findings, and presents the result in a read-only Web UI before you start changing code.
 
-> **Status: pre-release (`0.1.0-SNAPSHOT`)**
+> **Status: V0.1.0 released**
 >
-> The implementation is in release preparation. There is no downloadable V0.1 release or release tag yet; use the source-build instructions below. RepoOnboard is licensed under the Apache License 2.0; bundled third-party components remain under their respective licenses.
+> Download the verified archive from the [V0.1.0 GitHub Release](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0). RepoOnboard is licensed under the Apache License 2.0; bundled third-party components remain under their respective licenses.
 
 ## Demo
 
@@ -34,7 +34,53 @@ macOS or Linux:
 ./repoonboard ./src/test/resources/fixtures/spring-analysis-project --no-open
 ```
 
-Open the printed `http://127.0.0.1:<port>/` address and stop the process with Ctrl+C. Both paths use the current `target/repoonboard.jar` source-build artifact; they do not point to a release archive that does not exist yet.
+Open the printed `http://127.0.0.1:<port>/` address and stop the process with Ctrl+C. These fixture commands use the current `target/repoonboard.jar` source-build artifact because the test fixture is not included in the release archive.
+
+## Install the V0.1.0 release
+
+### Requirements
+
+The packaged release only requires Java 21 or newer. It does not require Maven,
+Node.js, or Git.
+
+Download `repoonboard-0.1.0.zip` and `repoonboard-0.1.0.zip.sha256` from the
+[V0.1.0 release](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0).
+
+Windows PowerShell:
+
+```powershell
+$expectedHash = (Get-Content .\repoonboard-0.1.0.zip.sha256).Split()[0]
+$actualHash = (Get-FileHash .\repoonboard-0.1.0.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) { throw "RepoOnboard checksum mismatch" }
+Expand-Archive .\repoonboard-0.1.0.zip -DestinationPath .
+cd .\repoonboard-0.1.0
+.\repoonboard.cmd --version
+.\repoonboard.cmd C:\path\to\spring-project
+```
+
+Linux:
+
+```bash
+sha256sum -c repoonboard-0.1.0.zip.sha256
+unzip repoonboard-0.1.0.zip
+cd repoonboard-0.1.0
+./repoonboard --version
+./repoonboard /path/to/spring-project
+```
+
+macOS:
+
+```bash
+shasum -a 256 -c repoonboard-0.1.0.zip.sha256
+unzip repoonboard-0.1.0.zip
+cd repoonboard-0.1.0
+./repoonboard --version
+./repoonboard /path/to/spring-project
+```
+
+The archive includes `repoonboard.jar`, both launchers, the JAR checksum, both
+README files, `LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES.md`, and all distributed
+third-party license texts.
 
 ## Install from source
 
@@ -83,7 +129,7 @@ target/repoonboard.jar
 target/repoonboard.jar.sha256
 ```
 
-The executable JAR contains the Java runtime dependencies and complete offline Web UI. The launchers use `repoonboard.jar` beside the script in a future release layout, or `target/repoonboard.jar` in a source checkout. Set `REPOONBOARD_JAR` only to select an explicit alternate JAR.
+The executable JAR contains the Java runtime dependencies and complete offline Web UI. The launchers use `repoonboard.jar` beside the script in the extracted release, or `target/repoonboard.jar` in a source checkout. Set `REPOONBOARD_JAR` only to select an explicit alternate JAR.
 
 Verify the checksum before running a copied or downloaded JAR.
 
@@ -184,7 +230,6 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 - API rows and diagnostics are not virtualized or paginated. The ThingsBoard boundary trial completed 3,834 main Java files but observed 648.23 MiB peak process memory, 1,719 diagnostics, 581 API rows, ambiguous duplicate module labels, and graphs that could remain unreadable. RepoOnboard does **not** claim complete support for repositories of that scale.
 - At a 1280 px viewport, medium-repository Architecture labels may clip and the API source column may require horizontal scrolling.
 - First-contact validation showed that API lookup was easiest and Start Here could locate its first three files, but module, entry-point, dependency, and recommendation explanations still caused confusion. The 5–10 minute observation had no manual-reading control group, so V0.1 does not claim a measured speed-up over manual exploration.
-- Native macOS/Linux release smoke checks are still pending. Current POSIX launcher behavior has been exercised from Git Bash, not claimed as full native platform certification.
 
 ## Validation evidence
 
@@ -195,20 +240,21 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 - [Medium repository: JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
 - [Large boundary trial: ThingsBoard](./docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
 - [First-contact onboarding observation](./docs/validation/T-0907-ONBOARDING-VALUE.md)
+- [Windows/macOS/Linux release gate](https://github.com/zhan-cm/RepoOnboard/actions/workflows/release.yml)
 
 `./mvnw clean verify` runs the Java and frontend suites, builds the production UI, packages the executable JAR, starts that JAR against the controlled Spring fixture with an empty Maven cache, checks the report route, and writes the checksum. It does not build or execute the fixture application.
 
 ## Roadmap
 
-M0–M9 plus release preparation for packaging, error messages, README, the fixed public demo target, demo media, and licensing are complete. M10 still includes GitHub presentation cleanup, native cross-platform smoke checks, and the actual V0.1 release. See [TODO.md](./TODO.md) for the task-level source of truth.
+M0–M10 and the V0.1.0 public release are complete. Future work requires a separately scoped V0.2 decision; the deferred candidates remain recorded in [TODO.md](./TODO.md).
 
-V0.1 remains Web-first and will ship as an executable JAR plus Windows/POSIX launchers. A native desktop container, installer, bundled Java runtime, and selective English/中文 product-interface switch are V0.2 candidates, not V0.1 work. The language switch would translate product navigation, explanations, states, empty results, and errors while preserving code identifiers, paths, class names, APIs, framework terms, and original Evidence.
+V0.1 remains Web-first and ships as an executable JAR plus Windows/POSIX launchers. A native desktop container, installer, bundled Java runtime, and selective English/中文 product-interface switch are V0.2 candidates, not V0.1 work. The language switch would translate product navigation, explanations, states, empty results, and errors while preserving code identifiers, paths, class names, APIs, framework terms, and original Evidence.
 
 ## Contributing
 
-RepoOnboard is still in pre-release development. Before proposing a change, read [PROJECT.md](./PROJECT.md), [DECISIONS.md](./DECISIONS.md), [TODO.md](./TODO.md), and [AGENTS.md](./AGENTS.md). Keep changes focused on an accepted task, add the narrowest sufficient test, preserve source evidence, and do not expand the V0.1 ecosystem without an explicit scope decision.
+Before proposing a change, read [PROJECT.md](./PROJECT.md), [DECISIONS.md](./DECISIONS.md), [TODO.md](./TODO.md), and [AGENTS.md](./AGENTS.md). Keep changes focused on an accepted task, add the narrowest sufficient test, preserve source evidence, and do not expand the supported ecosystem without an explicit scope decision.
 
-Unless explicitly stated otherwise, contributions intentionally submitted for inclusion in RepoOnboard are accepted under the Apache License 2.0, consistent with section 5 of that license. Use a GitHub issue to discuss a proposed contribution before submitting code while the project remains pre-release.
+Unless explicitly stated otherwise, contributions intentionally submitted for inclusion in RepoOnboard are accepted under the Apache License 2.0, consistent with section 5 of that license. Use a GitHub issue to discuss substantial proposed changes before submitting code.
 
 ## License
 

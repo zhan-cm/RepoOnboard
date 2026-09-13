@@ -84,12 +84,12 @@ Implementation
 
 Current Phase:
 
-> **M10 — Release Preparation**
+> **V0.1 — Released**
 
 Current Product Version:
 
 ```text
-V0.1 — In Progress
+V0.1.0 — Released
 ```
 
 Current Implementation Status:
@@ -102,7 +102,7 @@ Project Scaffold         ✓
 Core Analysis            ✓
 Web UI                   ✓
 Real-world Validation    ✓
-Public Release           ◐
+Public Release           ✓
 ```
 
 Legend:
@@ -119,11 +119,7 @@ Legend:
 
 # 5. Current Priority
 
-当前唯一最高优先级任务：
-
-> **T-1008 — V0.1 Release。**
-
-M0 至 M9 以及 T-1001 至 T-1007 已经完成。公开仓库不再跟踪 IDE 状态文件；泄露的 Apifox token 已撤销，相关 `.idea/` 内容和 `RepoOnboard.iml` 已从可达 `master` 历史清除，本机路径与高置信凭据扫描通过，发布所需文件完整。下一步只执行 T-1008 的 V0.1 Release。后续任务必须遵守 DECISIONS.md 中 ADR-0001 至 ADR-0017，并按本文件的里程碑出口逐项推进。
+V0.1 当前没有未完成的必需任务。`v0.1.0` 已通过 Windows、macOS、Linux 发布门禁并作为 GitHub Release 发布。可选 T-0404 和 V0.2 候选继续延后；开始下一阶段前需要明确新的任务范围。
 
 ---
 
@@ -2498,7 +2494,7 @@ Goal:
 Status:
 
 ```text
-◐ IN PROGRESS
+✓ COMPLETED
 ```
 
 Boundary:
@@ -2508,10 +2504,10 @@ Boundary:
 Exit Criteria:
 
 ```text
-[ ] Windows/macOS/Linux 的 JAR 与启动脚本 smoke checks 通过
+[x] Windows/macOS/Linux 的 JAR 与启动脚本 smoke checks 通过
 [x] README、安装、用法、支持范围和已知限制准确
 [x] License、依赖许可、校验和和仓库清理完成
-[ ] Demo 与发布 checklist 可由陌生用户复现
+[x] Demo 与发布 checklist 可由陌生用户复现
 ```
 
 ---
@@ -2725,19 +2721,25 @@ Acceptance Criteria:
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-13
+
+Deliverable: [RepoOnboard V0.1.0](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0)
+
+Validation: Java 21 / Maven 3.9.16 本地 `clean verify` 通过；GitHub-hosted Windows、macOS 与 Linux runner 均执行同一 clean build、完整测试、生产 JAR 离线 fixture 分析和原生启动脚本 `--version` smoke check。tag `v0.1.0` 只在三平台门禁通过后自动组装含 JAR、启动脚本、校验和与许可文件的发布压缩包并创建 GitHub Release。
 
 Acceptance Criteria:
 
 ```text
-[ ] Clean build
-[ ] Tests pass
-[ ] Installation documented
-[ ] Demo works
-[ ] Real repository tested
-[ ] Known limitations documented
-[ ] GitHub release created
+[x] Clean build
+[x] Tests pass
+[x] Installation documented
+[x] Demo works
+[x] Real repository tested
+[x] Known limitations documented
+[x] GitHub release created
 ```
 
 ---
@@ -2747,37 +2749,37 @@ Acceptance Criteria:
 RepoOnboard V0.1 只有在以下条件全部基本满足时才算完成：
 
 ```text
-[ ] Can analyze real Spring Boot Maven repositories
+[x] Can analyze real Spring Boot Maven repositories
 
-[ ] Can detect Maven modules
+[x] Can detect Maven modules
 
-[ ] Can detect Spring components
+[x] Can detect Spring components
 
-[ ] Can detect HTTP APIs
+[x] Can detect HTTP APIs
 
-[ ] Can build major component dependencies
+[x] Can build major component dependencies
 
-[ ] Can identify application entry points
+[x] Can identify application entry points
 
-[ ] Can generate Project Overview
+[x] Can generate Project Overview
 
-[ ] Can generate Architecture Map
+[x] Can generate Architecture Map
 
-[ ] Can generate API Map
+[x] Can generate API Map
 
-[ ] Can generate Start Here guide
+[x] Can generate Start Here guide
 
-[ ] Results contain source traceability
+[x] Results contain source traceability
 
-[ ] Local Web UI works
+[x] Local Web UI works
 
-[ ] Basic automated tests exist
+[x] Basic automated tests exist
 
-[ ] Real repositories have been validated
+[x] Real repositories have been validated
 
-[ ] README and demo are usable by strangers
+[x] README and demo are usable by strangers
 
-[ ] No external AI service is required
+[x] No external AI service is required
 ```
 
 ---
@@ -3107,22 +3109,7 @@ Remaining Issues:
 
 # 29. Current Next Action
 
-当前下一步：
-
-```text
-T-1008
-Create the V0.1 release
-```
-
-本阶段：
-
-> **M10 — Release Preparation**
-
-M0 至 M9 和 T-1001 至 T-1007 已完成；可选 T-0404 继续按非阻塞规则延后。IDE 元数据已从当前树和可达历史移除，泄露的 Apifox token 已撤销；本机路径、凭据、临时/生成物、Markdown 链接和发布文件完整性检查均已通过。接下来只执行：
-
-```text
-T-1008 V0.1 Release
-```
+V0.1 已完成，没有自动开始的下一任务。可选 T-0404 与 V0.2 候选仍然延后；继续开发前先明确下一阶段范围并建立对应任务。
 
 ---
 
@@ -3157,11 +3144,11 @@ Validation
 ████████████████████  100%
 
 Release
-██████████████████░░  88%
+████████████████████ 100%
 ```
 
 Next:
 
-> **T-1008 — V0.1 Release.**
+> **等待明确下一阶段任务。**
 
 ````

@@ -6,9 +6,9 @@
 
 RepoOnboard 是一个本地优先的代码库理解与开发者上手工具。它通过静态分析仓库、保留重要结论背后的源码证据，并在你开始修改代码前把结果呈现在只读 Web UI 中。
 
-> **状态：发布前（`0.1.0-SNAPSHOT`）**
+> **状态：V0.1.0 已发布**
 >
-> 当前实现处于发布准备阶段，尚无可下载的 V0.1 Release 或 release tag，请使用下方源码构建步骤。RepoOnboard 采用 Apache License 2.0；打包的第三方组件仍分别遵循各自 License。
+> 可从 [V0.1.0 GitHub Release](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0) 下载已验证的压缩包。RepoOnboard 采用 Apache License 2.0；打包的第三方组件仍分别遵循各自 License。
 
 ## 演示
 
@@ -34,7 +34,51 @@ macOS 或 Linux：
 ./repoonboard ./src/test/resources/fixtures/spring-analysis-project --no-open
 ```
 
-打开终端打印的 `http://127.0.0.1:<port>/` 地址，使用 Ctrl+C 停止进程。两种路径均使用当前源码构建生成的 `target/repoonboard.jar`，不会指向尚不存在的发布压缩包。
+打开终端打印的 `http://127.0.0.1:<port>/` 地址，使用 Ctrl+C 停止进程。测试 fixture 不随发布压缩包提供，因此以上命令使用当前源码构建生成的 `target/repoonboard.jar`。
+
+## 安装 V0.1.0 Release
+
+### 环境要求
+
+打包后的 Release 只需要 Java 21 或更高版本，不需要 Maven、Node.js 或 Git。
+
+从 [V0.1.0 Release](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0)
+下载 `repoonboard-0.1.0.zip` 和 `repoonboard-0.1.0.zip.sha256`。
+
+Windows PowerShell：
+
+```powershell
+$expectedHash = (Get-Content .\repoonboard-0.1.0.zip.sha256).Split()[0]
+$actualHash = (Get-FileHash .\repoonboard-0.1.0.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) { throw "RepoOnboard checksum mismatch" }
+Expand-Archive .\repoonboard-0.1.0.zip -DestinationPath .
+cd .\repoonboard-0.1.0
+.\repoonboard.cmd --version
+.\repoonboard.cmd C:\path\to\spring-project
+```
+
+Linux：
+
+```bash
+sha256sum -c repoonboard-0.1.0.zip.sha256
+unzip repoonboard-0.1.0.zip
+cd repoonboard-0.1.0
+./repoonboard --version
+./repoonboard /path/to/spring-project
+```
+
+macOS：
+
+```bash
+shasum -a 256 -c repoonboard-0.1.0.zip.sha256
+unzip repoonboard-0.1.0.zip
+cd repoonboard-0.1.0
+./repoonboard --version
+./repoonboard /path/to/spring-project
+```
+
+压缩包内包含 `repoonboard.jar`、两个启动脚本、JAR 校验和、中英文 README、
+`LICENSE`、`NOTICE`、`THIRD_PARTY_NOTICES.md` 和随分发提供的全部第三方 License 文本。
 
 ## 从源码安装
 
@@ -83,7 +127,7 @@ target/repoonboard.jar
 target/repoonboard.jar.sha256
 ```
 
-可执行 JAR 包含 Java 运行依赖和完整离线 Web UI。未来发布目录中的启动脚本会使用同目录的 `repoonboard.jar`；源码 checkout 中会使用 `target/repoonboard.jar`。只有需要显式选择其他 JAR 时才设置 `REPOONBOARD_JAR`。
+可执行 JAR 包含 Java 运行依赖和完整离线 Web UI。解压后的 Release 启动脚本会使用同目录的 `repoonboard.jar`；源码 checkout 中会使用 `target/repoonboard.jar`。只有需要显式选择其他 JAR 时才设置 `REPOONBOARD_JAR`。
 
 运行复制或下载的 JAR 前应校验 SHA-256。
 
@@ -184,7 +228,6 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - API row 与 Diagnostic 尚未虚拟化或分页。ThingsBoard 边界试验完成了 3,834 个 main Java file，但观察到 648.23 MiB 进程峰值、1,719 条诊断、581 个 API row、重复模块名歧义和仍可能不可读的图。RepoOnboard **不宣称完整支持**同等规模仓库。
 - 在 1280 px 视口下，中型仓库 Architecture 外侧标签可能裁切，API source 列可能需要横向滚动。
 - 首次接触验证中，API 定位最容易，Start Here 可以找到前三个文件，但 module、entry point、dependency 和推荐解释仍让参与者困惑。这次 5–10 分钟观察没有手工阅读对照组，因此 V0.1 不宣称相对手工探索有量化提速。
-- 原生 macOS/Linux 发布 smoke check 尚未完成。目前 POSIX 启动器只在 Git Bash 中实际执行，不能据此宣称完整原生平台认证。
 
 ## 验证证据
 
@@ -195,20 +238,21 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - [中型仓库：JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
 - [大型边界试验：ThingsBoard](./docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
 - [首次接触上手观察](./docs/validation/T-0907-ONBOARDING-VALUE.md)
+- [Windows/macOS/Linux 发布门禁](https://github.com/zhan-cm/RepoOnboard/actions/workflows/release.yml)
 
 `./mvnw clean verify` 会运行 Java 和前端测试、构建生产 UI、打包可执行 JAR、使用空 Maven 缓存从该 JAR 启动受控 Spring fixture、检查报告路由并写出校验和；它不会构建或执行 fixture 应用。
 
 ## 路线图
 
-M0–M9 以及发布准备中的打包、错误体验、README、固定公开 Demo 目标、演示媒体和 License 已完成。M10 仍包括 GitHub 展示清理、原生跨平台 smoke check 和正式 V0.1 Release。任务级事实以 [TODO.md](./TODO.md) 为准。
+M0–M10 与 V0.1.0 公开发布均已完成。后续工作需要单独确定 V0.2 范围；延后候选继续记录在 [TODO.md](./TODO.md)。
 
-V0.1 继续采用 Web-first，发布物将是可执行 JAR 与 Windows/POSIX 启动脚本。原生桌面容器、安装器、自带 Java Runtime 和选择性的 English/中文产品界面切换属于 V0.2 候选，不进入 V0.1。界面切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
+V0.1 继续采用 Web-first，发布物是可执行 JAR 与 Windows/POSIX 启动脚本。原生桌面容器、安装器、自带 Java Runtime 和选择性的 English/中文产品界面切换属于 V0.2 候选，不进入 V0.1。界面切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
 
 ## 参与贡献
 
-RepoOnboard 仍处于发布前开发阶段。提出变更前请阅读 [PROJECT.md](./PROJECT.md)、[DECISIONS.md](./DECISIONS.md)、[TODO.md](./TODO.md) 和 [AGENTS.md](./AGENTS.md)。变更应聚焦已接受任务，补充最窄且充分的测试，保留源码 Evidence，并且不得在没有明确范围决策时扩大 V0.1 技术生态。
+提出变更前请阅读 [PROJECT.md](./PROJECT.md)、[DECISIONS.md](./DECISIONS.md)、[TODO.md](./TODO.md) 和 [AGENTS.md](./AGENTS.md)。变更应聚焦已接受任务，补充最窄且充分的测试，保留源码 Evidence，并且不得在没有明确范围决策时扩大支持的技术生态。
 
-除非另有明确说明，有意提交并纳入 RepoOnboard 的贡献按照 Apache License 2.0 第 5 节接受。项目仍处于预发布阶段，请先通过 GitHub issue 讨论提案，再提交代码。
+除非另有明确说明，有意提交并纳入 RepoOnboard 的贡献按照 Apache License 2.0 第 5 节接受。较大变更请先通过 GitHub issue 讨论，再提交代码。
 
 ## License
 

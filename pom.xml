@@ -6,7 +6,7 @@
 
     <groupId>io.github.zhancm</groupId>
     <artifactId>repoonboard</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 
     <name>RepoOnboard</name>
     <description>Local-first codebase comprehension and developer onboarding.</description>
