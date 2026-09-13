@@ -14,6 +14,10 @@ RepoOnboard 是一个本地优先的代码库理解与开发者上手工具。�
 
 V0.1 公开 Demo 目标是固定 commit [`e06e87abe0be8a3a194381ce651164a734811b3f`](https://github.com/jhipster/jhipster-sample-app/commit/e06e87abe0be8a3a194381ce651164a734811b3f) 的 [`jhipster/jhipster-sample-app`](https://github.com/jhipster/jhipster-sample-app)。该 revision 包含 [Apache License 2.0 文件](https://github.com/jhipster/jhipster-sample-app/blob/e06e87abe0be8a3a194381ce651164a734811b3f/LICENSE.txt)；RepoOnboard 不修改、不构建、也不运行第三方源码。
 
+![RepoOnboard V0.1 精简演示](./docs/demo/media/repoonboard-v0.1-demo.gif)
+
+这段 14.4 秒 GIF 使用当前 V0.1 打包候选和固定 Demo 输入，全程保留 `PARTIAL`；它压缩展示已验证的运行过程，不宣称扫描只需 14.4 秒。精确哈希和画面证据见[录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)。
+
 完整的固定 checkout、空缓存分析命令、预期计数、限制和四页面演示路径见 [V0.1 Demo Repository 指南](./docs/demo/V0.1-DEMO.md)。固定运行会如实产生 `PARTIAL` 报告：1 个 module、81 个 source file、30 个 component、24 个 endpoint、7 条 confirmed component edge 和 24 项 Start Here。Partial 状态和已知 wildcard-import 漏报属于演示内容，不会被隐藏。
 
 如需更快的合成 smoke test，先[从源码构建](#从源码安装)，再运行仓库内的[小型确定性 Spring fixture](./src/test/resources/fixtures/spring-analysis-project)：
@@ -184,6 +188,7 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 
 ## 验证证据
 
+- [V0.1 Demo GIF 录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)
 - [V0.1 固定公开 Demo 仓库与演示路径](./docs/demo/V0.1-DEMO.md)
 - [最小确定性 Spring 回归 fixture](./src/test/resources/fixtures/spring-analysis-project)
 - [小型仓库：Spring Petclinic](./docs/validation/T-0904-SPRING-PETCLINIC.md)
@@ -195,7 +200,7 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 
 ## 路线图
 
-M0–M9 以及发布准备中的打包、错误体验、README 和固定公开 Demo 目标已完成。M10 仍包括演示媒体、License、GitHub 展示清理、原生跨平台 smoke check 和正式 V0.1 Release。任务级事实以 [TODO.md](./TODO.md) 为准。
+M0–M9 以及发布准备中的打包、错误体验、README、固定公开 Demo 目标和演示媒体已完成。M10 仍包括 License、GitHub 展示清理、原生跨平台 smoke check 和正式 V0.1 Release。任务级事实以 [TODO.md](./TODO.md) 为准。
 
 V0.1 继续采用 Web-first，发布物将是可执行 JAR 与 Windows/POSIX 启动脚本。原生桌面容器、安装器、自带 Java Runtime 和选择性的 English/中文产品界面切换属于 V0.2 候选，不进入 V0.1。界面切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
 
