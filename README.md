@@ -12,9 +12,11 @@ RepoOnboard is a local-first codebase comprehension and developer onboarding too
 
 ## Demo
 
-The repository includes a [small deterministic Spring fixture](./src/test/resources/fixtures/spring-analysis-project) for trying the current packaged application. It demonstrates a single Maven module, a confirmed `Controller → Service → Repository` chain, `GET /users/{id}`, source evidence, and an explainable Start Here path. It is deliberately a test fixture, not the standalone public demo repository planned for a later release-preparation task.
+The V0.1 public demo target is [`jhipster/jhipster-sample-app`](https://github.com/jhipster/jhipster-sample-app) at fixed commit [`e06e87abe0be8a3a194381ce651164a734811b3f`](https://github.com/jhipster/jhipster-sample-app/commit/e06e87abe0be8a3a194381ce651164a734811b3f). That revision contains an [Apache License 2.0 file](https://github.com/jhipster/jhipster-sample-app/blob/e06e87abe0be8a3a194381ce651164a734811b3f/LICENSE.txt) and is analyzed without modifying, building, or running the third-party source.
 
-First [build from source](#install-from-source), then run:
+See the [V0.1 Demo Repository guide](./docs/demo/V0.1-DEMO.md) for the exact checkout, empty-cache analysis command, expected counts, limitations, and four-page walkthrough. The fixed run produces a transparent `PARTIAL` report with one module, 81 source files, 30 components, 24 endpoints, 7 confirmed component edges, and 24 Start Here items. The partial status and known wildcard-import omissions are part of the demo, not hidden.
+
+For a faster synthetic smoke test, first [build from source](#install-from-source), then run the repository's [small deterministic Spring fixture](./src/test/resources/fixtures/spring-analysis-project):
 
 Windows PowerShell:
 
@@ -28,7 +30,7 @@ macOS or Linux:
 ./repoonboard ./src/test/resources/fixtures/spring-analysis-project --no-open
 ```
 
-Open the printed `http://127.0.0.1:<port>/` address and stop the process with Ctrl+C. This demo uses the current `target/repoonboard.jar` source-build artifact; it does not point to a release archive that does not exist yet.
+Open the printed `http://127.0.0.1:<port>/` address and stop the process with Ctrl+C. Both paths use the current `target/repoonboard.jar` source-build artifact; they do not point to a release archive that does not exist yet.
 
 ## Install from source
 
@@ -182,6 +184,7 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 
 ## Validation evidence
 
+- [V0.1 fixed public demo repository and walkthrough](./docs/demo/V0.1-DEMO.md)
 - [Minimal deterministic Spring regression fixture](./src/test/resources/fixtures/spring-analysis-project)
 - [Small repository: Spring Petclinic](./docs/validation/T-0904-SPRING-PETCLINIC.md)
 - [Medium repository: JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
@@ -192,7 +195,7 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 
 ## Roadmap
 
-M0–M9 and the first release-preparation tasks for packaging and error messages are complete. M10 still includes a standalone demo repository, demo media, a license, GitHub presentation cleanup, native cross-platform smoke checks, and the actual V0.1 release. See [TODO.md](./TODO.md) for the task-level source of truth.
+M0–M9 plus release preparation for packaging, error messages, README, and the fixed public demo target are complete. M10 still includes demo media, a license, GitHub presentation cleanup, native cross-platform smoke checks, and the actual V0.1 release. See [TODO.md](./TODO.md) for the task-level source of truth.
 
 V0.1 remains Web-first and will ship as an executable JAR plus Windows/POSIX launchers. A native desktop container, installer, bundled Java runtime, and selective English/中文 product-interface switch are V0.2 candidates, not V0.1 work. The language switch would translate product navigation, explanations, states, empty results, and errors while preserving code identifiers, paths, class names, APIs, framework terms, and original Evidence.
 
