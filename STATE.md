@@ -22,8 +22,9 @@ RepoOnboard 已完成 **M10 — Release Preparation**，`v0.1.0` 已正式发布
 - **T-1006** 已完成；RepoOnboard 采用 Apache License 2.0，根目录 License/NOTICE、中英文复用与贡献说明、Maven 运行时依赖和前端生产资产审计均已补齐。Apache-2.0、EPL-2.0、MIT、BSD-2-Clause、BSD-3-Clause 和 ISC 信息以固定路径随可执行 JAR 分发并由 verify 校验。
 - **T-1007** 已完成；`.idea/` 与 `RepoOnboard.iml` 不再跟踪并已从可达 `master` 历史清除，`AGENTS.md` 的模板包装和真实本机路径已移除，忽略规则覆盖 IDE、环境和临时产物。已暴露的 Apifox token 由用户在服务端撤销；当前树和重写后的历史通过高置信凭据扫描，发布文件与 Markdown 本地链接完整。
 - **T-1008** 已完成；项目版本与 CLI 固定为 `0.1.0`，中英文 README 提供 Release 下载、校验与运行步骤。GitHub Actions 在 Windows、macOS、Linux 上执行 clean build、完整测试、生产 JAR 离线 fixture 分析和原生启动器检查；`v0.1.0` tag 通过门禁后自动创建含压缩包、JAR 与校验和的 GitHub Release。
+- `master` 已在 V0.1.0 发布后引入新的 workbench Shell、repository/module 导航上下文、浅色/深色切换以及带组件角色、package/module 和确认入向/出向数量的 Architecture 卡片式图谱。这些变化尚未进入新 Release。
 - V0.1 当前没有未完成的必需任务；继续开发前需明确下一阶段范围。
-- Java 21 / Maven 3.9.16 当前运行 83 项前端测试和 169 项 Java 测试并全部通过；T-0901 至 T-0907 均不构建或执行 fixture/目标应用。`clean verify` 会从最终可执行 JAR 启动独立进程，用空 Maven 缓存离线分析固定 fixture，读取本地报告路由，校验分发许可文件并生成 SHA-256；它仍不构建或执行被分析项目。
+- Java 21 / Maven 3.9.16 当前运行 83 项前端测试和 169 项 Java 测试并全部通过；但当前 `master` 的 `clean verify` 会因 `frontend/index.html` 引用 Google Fonts，被 `PackagedUiVerifier` 以“非本地资源”拒绝而失败。V0.1.0 Release 的已验证产物不受影响；新 UI 必须在下一次发布前恢复离线资源闭包。T-0901 至 T-0907 均不构建或执行 fixture/目标应用。
 
 ## 2. 已完成任务
 
@@ -195,7 +196,7 @@ RepoOnboard
 - T-1007 识别并处理了被误提交的 IDE/插件状态：Apifox token 先在服务端撤销，再从全部可达 `master` 历史清除；其余 `.idea/`、`.iml` 和 AGENTS 模板包装同步清理。发布文件、Wrapper、前端 lockfile、许可文件、Markdown 链接、仓库对象和当前工作树均完成核验；Stitch 设计资产、验证记录和 Demo GIF 属于有意保留的产品证据，不按生成物误删。
 - T-1008 将 Maven/CLI 版本从 snapshot 固定为 `0.1.0`，补充双语二进制安装说明和正式 release notes，并以 GitHub-hosted Windows、macOS、Linux matrix 作为发布门禁。只有三平台的 clean verify、打包 JAR 离线分析和原生启动脚本检查全部通过，tag workflow 才组装带完整许可材料的压缩包并创建 GitHub Release。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
-- README 已提供中英文版本和语言切换，并更新为当前本地 UI 启动方式。
+- README 已提供中英文版本和语言切换，并区分 V0.1.0 Release UI 与当前 `master` 的发布后视觉改版。
 
 ## 7. 已知限制 / 技术债
 
@@ -209,17 +210,19 @@ RepoOnboard
 - **大型仓库边界**：ThingsBoard 试验在 3,834 个 main Java file 上完成但进程峰值达到 648.23 MiB，并产生 1,719 条诊断；当前诊断视图不适合大规模逐项 triage。重复 Maven leaf module 名在选择器中没有路径区分，581 个 API row 一次性渲染；52 节点/77 关系的预算内图仍可能不可读。V0.1 不承诺完整支持同规模仓库。
 - **Onboarding 证据有限**：首次接触者能较快定位 API 和 Start Here 前三个文件，但入口、模块和 unresolved 依赖任务仍令人困惑；没有逐项计时、完整答案记录或手工源码对照组。英语产品文案可能是干扰变量，选择性界面翻译继续留在 V0.2 候选。V0.1 不宣称已经量化证明比手工阅读更快。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
-- **前端包体警告**：单一生产 JavaScript 产物约 602 kB（gzip 约 190 kB），Vite 会提示超过 500 kB；T-0709 已确认离线 JAR 可正确加载，是否拆包应在真实仓库性能数据表明必要时再决定。
+- **前端包体警告**：当前单一生产 JavaScript 产物约 627 kB（gzip 约 197 kB），Vite 会提示超过 500 kB；是否拆包应在真实仓库性能数据表明必要时再决定。
+- **发布后 UI 离线边界回归**：当前 `master` 的 Google Fonts 样式表引用违反 ADR-0011 / ADR-0012 下的打包本地资源约束，并使 `clean verify` 在 `PackagedUiVerifier` 失败。Loopback CSP 会阻止外部请求并回退到本地字体，但该状态仍是下一 Release 的 blocker。
+- **发布后 UI 细节缺陷**：主题偏好受系统分配端口隔离而无法跨会话保留；ArchitectureGraph 的 render/destroy 会断开主题观察器，Architecture 的无关系提示和状态栏仍有硬编码白底；Overview 的 6 个指标使用 5 列桌面网格。这些问题不改变分析 facts、Evidence 或报告 schema，延后到后续 UI hardening。
 
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。这些候选未进入 V0.1。
+- **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文；以及发布后 Web UI hardening，包括恢复离线打包闭包和修复已知主题/布局回归。这些候选未进入 V0.1。
 
 ## 9. 下一步
 
-V0.1 没有未完成的必需任务。可选 T-0404 与 V0.2 候选仍延后；继续开发前先明确下一阶段范围和任务。
+V0.1 没有未完成的必需任务。可选 T-0404 与 V0.2 候选仍延后；当前 `master` 的发布后 UI 改版未达到新 Release 门禁，恢复离线打包闭包是下一次发布前的必须工作。继续开发前先明确下一阶段范围和任务。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。本地 Vue UI 已有统一浅色 Shell、Repository Overview、Module Explorer、Architecture Workspace、API Map、Start Here，以及从 Component / Endpoint 进入的 Source & Evidence Detail。项目采用 Apache License 2.0；Maven runtime 与前端 production 依赖清单及 EPL/MIT/BSD/ISC 文本随 JAR 分发。Release 包含带运行依赖和离线 UI 的 `repoonboard.jar`、Windows/POSIX 启动脚本、SHA-256 与许可材料；Windows、macOS、Linux 发布门禁会从 JAR 离线分析 fixture 并校验原生启动器。CLI 退出码为成功 0、失败 1、参数错误 2、部分成功 3，终端与 UI 消费相同的报告 Diagnostic。公开 Demo 固定到 Apache License 2.0 的 JHipster Sample Application commit，并公开可复现的 `PARTIAL` 结果与四页面路径；README 已嵌入 14.4 秒演示 GIF，录制记录固定打包输入与媒体哈希且不声称扫描耗时。IDE 元数据和泄露凭据已从可达历史清除，用户已撤销对应 Apifox token。V0.2 候选新增 Settings English / 中文界面切换，且只翻译产品文案、不翻译代码与 Evidence。V0.1 当前没有自动开始的下一任务；每个后续 T 仍应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。V0.1.0 Release 仍是通过跨平台离线门禁的已验证产物；当前 `master` 在发布后新增更紧凑的 workbench、repository/module 导航上下文、主题切换和 Architecture 卡片式图谱，但因外部 Google Fonts 引用导致 `clean verify` 打包校验失败，尚不可发布。已知主题/布局问题与离线边界回归已记入 TODO，延后到后续 UI hardening；它们不改变分析 facts、Evidence 或 schema。项目采用 Apache License 2.0；Release 包含离线 `repoonboard.jar`、Windows/POSIX 启动脚本、SHA-256 与许可材料。V0.2 候选包括 Desktop 技术试验、Settings English / 中文界面切换（只翻译产品文案，不翻译代码与 Evidence）和发布后 Web UI hardening。V0.1 当前没有自动开始的下一任务；每个后续 T 仍应独立测试、更新 TODO/STATE、提交并推送 GitHub。

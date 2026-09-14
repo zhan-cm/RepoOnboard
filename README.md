@@ -9,6 +9,8 @@ RepoOnboard is a local-first codebase comprehension and developer onboarding too
 > **Status: V0.1.0 released**
 >
 > Download the verified archive from the [V0.1.0 GitHub Release](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0). RepoOnboard is licensed under the Apache License 2.0; bundled third-party components remain under their respective licenses.
+>
+> The verified V0.1.0 archive remains the current release. The `master` branch now contains a post-release workbench and Architecture visual refresh that is not included in that archive and has not yet been published as a new release.
 
 ## Demo
 
@@ -16,7 +18,7 @@ The V0.1 public demo target is [`jhipster/jhipster-sample-app`](https://github.c
 
 ![RepoOnboard V0.1 condensed demo](./docs/demo/media/repoonboard-v0.1-demo.gif)
 
-The 14.4-second GIF uses the current packaged V0.1 candidate and the fixed demo input. It keeps `PARTIAL` visible and condenses the verified run rather than claiming a 14.4-second scan. See the [capture record](./docs/demo/V0.1-DEMO-MEDIA.md) for exact hashes and scene evidence.
+The 14.4-second GIF records the V0.1.0-era packaged UI and the fixed demo input. It keeps `PARTIAL` visible and condenses the verified run rather than claiming a 14.4-second scan. The current `master` UI is newer than this recording. See the [capture record](./docs/demo/V0.1-DEMO-MEDIA.md) for exact hashes and scene evidence.
 
 See the [V0.1 Demo Repository guide](./docs/demo/V0.1-DEMO.md) for the exact checkout, empty-cache analysis command, expected counts, limitations, and four-page walkthrough. The fixed run produces a transparent `PARTIAL` report with one module, 81 source files, 30 components, 24 endpoints, 7 confirmed component edges, and 24 Start Here items. The partial status and known wildcard-import omissions are part of the demo, not hidden.
 
@@ -194,9 +196,11 @@ A directory without a root `pom.xml`, or a complete Maven model without recogniz
 
 ## Current features
 
+Current `master` keeps the V0.1 analysis and report contracts while introducing a denser, IDE-style workbench shell, repository and module context in navigation, a light/dark theme control, and richer Architecture component cards. The cards expose component role, package/module context, and confirmed incoming/outgoing relationship counts without changing the underlying evidence model. These visual changes are post-release source work, not V0.1.0 release contents.
+
 - **Repository Overview** — project identity, reported technology versions, modules, source roots, component/API counts, application entry points, and coverage status.
 - **Module Explorer** — Maven aggregation hierarchy, metadata, source roots, exact-coordinate internal module dependencies, components, diagnostics, and evidence.
-- **Architecture Workspace** — module-scoped confirmed Spring component-injection relationships, filters, search, one-hop focus, graph/list fallback, source evidence, and unresolved counts.
+- **Architecture Workspace** — module-scoped confirmed Spring component-injection relationships, searchable card-based graph, component role/package/module context, confirmed in/out counts, filters, one-hop focus, graph/list fallback, source evidence, and unresolved counts.
 - **API Map** — Spring MVC method/path/handler facts, module/method/text filters, mapping conditions, unresolved states, and both method- and class-level evidence.
 - **Source & Evidence Detail** — repository-relative path, real 1-based location, symbol, module, evidence, and exactly joined related facts; it does not expose source text or pretend to open an IDE.
 - **Start Here** — deterministic file reading order with visible reasons based on build files, entry points, configuration, public APIs, and confirmed dependencies.
@@ -230,6 +234,8 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 - API rows and diagnostics are not virtualized or paginated. The ThingsBoard boundary trial completed 3,834 main Java files but observed 648.23 MiB peak process memory, 1,719 diagnostics, 581 API rows, ambiguous duplicate module labels, and graphs that could remain unreadable. RepoOnboard does **not** claim complete support for repositories of that scale.
 - At a 1280 px viewport, medium-repository Architecture labels may clip and the API source column may require horizontal scrolling.
 - First-contact validation showed that API lookup was easiest and Start Here could locate its first three files, but module, entry-point, dependency, and recommendation explanations still caused confusion. The 5–10 minute observation had no manual-reading control group, so V0.1 does not claim a measured speed-up over manual exploration.
+- The post-release UI refresh on `master` is not release-ready yet. Its Google Fonts stylesheet references violate the offline-only UI boundary and currently make `./mvnw clean verify` fail at packaged-resource verification. The loopback CSP blocks those requests and the browser falls back to local fonts; the published V0.1.0 archive is unaffected. This must be corrected before another release.
+- Current-source UI polish still has deferred defects: theme preference is scoped to the system-assigned loopback port and therefore does not survive a new RepoOnboard session; Architecture edge colors may not refresh after a theme change; some Architecture empty/status surfaces retain white backgrounds in dark mode; and the six Overview metrics leave an incomplete row in the five-column desktop grid. These issues do not change analysis facts or Evidence.
 
 ## Validation evidence
 

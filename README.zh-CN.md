@@ -9,6 +9,8 @@ RepoOnboard 是一个本地优先的代码库理解与开发者上手工具。�
 > **状态：V0.1.0 已发布**
 >
 > 可从 [V0.1.0 GitHub Release](https://github.com/zhan-cm/RepoOnboard/releases/tag/v0.1.0) 下载已验证的压缩包。RepoOnboard 采用 Apache License 2.0；打包的第三方组件仍分别遵循各自 License。
+>
+> 已验证的 V0.1.0 压缩包仍是当前正式版本。`master` 分支已经加入发布后的 workbench 与 Architecture 视觉改版；这些变化不在该压缩包内，也尚未作为新版本发布。
 
 ## 演示
 
@@ -16,7 +18,7 @@ V0.1 公开 Demo 目标是固定 commit [`e06e87abe0be8a3a194381ce651164a734811b
 
 ![RepoOnboard V0.1 精简演示](./docs/demo/media/repoonboard-v0.1-demo.gif)
 
-这段 14.4 秒 GIF 使用当前 V0.1 打包候选和固定 Demo 输入，全程保留 `PARTIAL`；它压缩展示已验证的运行过程，不宣称扫描只需 14.4 秒。精确哈希和画面证据见[录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)。
+这段 14.4 秒 GIF 记录的是 V0.1.0 时期的打包 UI 和固定 Demo 输入，全程保留 `PARTIAL`；它压缩展示已验证的运行过程，不宣称扫描只需 14.4 秒。当前 `master` 的界面已经比该录制更新。精确哈希和画面证据见[录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)。
 
 完整的固定 checkout、空缓存分析命令、预期计数、限制和四页面演示路径见 [V0.1 Demo Repository 指南](./docs/demo/V0.1-DEMO.md)。固定运行会如实产生 `PARTIAL` 报告：1 个 module、81 个 source file、30 个 component、24 个 endpoint、7 条 confirmed component edge 和 24 项 Start Here。Partial 状态和已知 wildcard-import 漏报属于演示内容，不会被隐藏。
 
@@ -192,9 +194,11 @@ repoonboard . --profile dev,local --local-repository /path/to/local/maven/reposi
 
 ## 当前功能
 
+当前 `master` 保持 V0.1 的分析与报告契约不变，同时加入更紧凑的 IDE 风格 workbench、导航中的 repository/module 上下文、浅色/深色主题控制，以及信息更完整的 Architecture component 卡片。卡片展示组件角色、package/module 上下文和已确认的入向/出向关系数量，不改变底层 Evidence 模型。这些视觉变化属于发布后的源码工作，并非 V0.1.0 Release 内容。
+
 - **Repository Overview**——项目身份、已报告技术版本、模块、源码根、组件/API 统计、应用入口和覆盖状态。
 - **Module Explorer**——Maven 聚合层级、元数据、源码根、精确坐标确认的内部模块依赖、组件、诊断和 Evidence。
-- **Architecture Workspace**——按模块展示确认的 Spring 组件注入关系，支持筛选、搜索、一阶邻域聚焦、图/列表回退、源码 Evidence 和 unresolved 计数。
+- **Architecture Workspace**——按模块展示确认的 Spring 组件注入关系，提供可搜索的卡片式图谱、组件角色、package/module 上下文、确认的入向/出向数量、筛选、一阶邻域聚焦、图/列表回退、源码 Evidence 和 unresolved 计数。
 - **API Map**——Spring MVC method/path/handler facts、模块/method/文本筛选、mapping conditions、未解析状态，以及方法级和类级 Evidence。
 - **Source & Evidence Detail**——仓库相对路径、真实 1-based 位置、symbol、module、Evidence 和精确连接的相关 facts；不会展示源码正文或假装打开 IDE。
 - **Start Here**——依据构建文件、应用入口、配置、公开 API 和确认依赖生成确定性文件阅读顺序，并直接展示推荐原因。
@@ -228,6 +232,8 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - API row 与 Diagnostic 尚未虚拟化或分页。ThingsBoard 边界试验完成了 3,834 个 main Java file，但观察到 648.23 MiB 进程峰值、1,719 条诊断、581 个 API row、重复模块名歧义和仍可能不可读的图。RepoOnboard **不宣称完整支持**同等规模仓库。
 - 在 1280 px 视口下，中型仓库 Architecture 外侧标签可能裁切，API source 列可能需要横向滚动。
 - 首次接触验证中，API 定位最容易，Start Here 可以找到前三个文件，但 module、entry point、dependency 和推荐解释仍让参与者困惑。这次 5–10 分钟观察没有手工阅读对照组，因此 V0.1 不宣称相对手工探索有量化提速。
+- `master` 上发布后的 UI 改版尚未达到可发布状态。Google Fonts 样式表引用违反离线 UI 边界，并使当前 `./mvnw clean verify` 在打包资源校验阶段失败。Loopback CSP 会拦截这些请求，浏览器会回退到本地字体；已经发布的 V0.1.0 压缩包不受影响。该问题必须在下一次发布前修复。
+- 当前源码 UI 仍有延后处理的细节缺陷：主题偏好按系统分配的 loopback 端口隔离，重新启动 RepoOnboard 后不会保留；切换主题后 Architecture 边线颜色可能不刷新；深色模式中的部分 Architecture 空状态/状态栏仍保留白底；Overview 的 6 个指标放入 5 列桌面网格后会留下未填满的一行。这些问题不改变分析 facts 或 Evidence。
 
 ## 验证证据
 

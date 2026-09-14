@@ -2859,6 +2859,7 @@ V0.1 核心价值被验证
 V0.2
 Desktop Application technical spike and Windows-first packaging
 Settings 中提供 English / 中文界面切换；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文
+Post-release Web UI hardening：恢复纯离线打包边界，修复主题生命周期/跨会话偏好、Architecture 深色状态与 Overview 指标网格，补齐视觉与打包回归
 
 V0.2+
 Improve Java / Spring analysis based on V0.1 validation
@@ -2941,6 +2942,38 @@ Mapper 接口目前只作为普通 Java 声明出现，不会生成 Mapper 组�
 
 Related Task:
 T-0404
+```
+
+```text
+ISSUE-UI-0001
+
+Status:
+OPEN / DEFERRED TO NEXT UI HARDENING
+
+Description:
+当前 master 的发布后前端改版在 frontend/index.html 引用 Google Fonts 外部样式表，与已接受的本地优先、运行时无 CDN 和打包资源闭包边界冲突。
+
+Impact:
+前端 83 项测试和 Java 169 项测试仍通过，但 ./mvnw clean verify 会在 PackagedUiVerifier 拒绝 https://fonts.googleapis.com 时失败。Loopback CSP 会阻止这些请求并回退到本地字体；v0.1.0 Release 不受影响。未修复前不得创建下一个 Release。
+
+Related Task:
+V0.2 Web UI hardening task（未排期）
+```
+
+```text
+ISSUE-UI-0002
+
+Status:
+OPEN / DEFERRED TO NEXT UI HARDENING
+
+Description:
+当前源码 UI 仍存在主题与布局细节缺陷：localStorage 主题偏好会因系统分配端口变化而无法跨 RepoOnboard 会话保留；ArchitectureGraph render/destroy 生命周期会断开主题观察器；Architecture 的无关系提示和状态栏仍有硬编码白底；Overview 将 6 个指标放入 5 列桌面网格。
+
+Impact:
+分析 facts、Evidence 和报告 schema 不受影响，但主题一致性、跨会话偏好、深色可读性和 Overview 视觉完整性受影响。
+
+Related Task:
+V0.2 Web UI hardening task（未排期）
 ```
 
 以后格式：
@@ -3109,7 +3142,7 @@ Remaining Issues:
 
 # 29. Current Next Action
 
-V0.1 已完成，没有自动开始的下一任务。可选 T-0404 与 V0.2 候选仍然延后；继续开发前先明确下一阶段范围并建立对应任务。
+V0.1 已完成，没有自动开始的下一任务。可选 T-0404 与 V0.2 候选仍然延后；当前 master 的发布后 UI 改版存在 ISSUE-UI-0001 / ISSUE-UI-0002，其中离线打包闭包回归是下一次发布前的必修项。继续开发前先明确下一阶段范围并建立对应任务。
 
 ---
 
