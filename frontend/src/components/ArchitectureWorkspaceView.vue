@@ -286,12 +286,14 @@ function relationCount(node, direction) {
               @click="selectGraphItem({ type: 'component', id: node.id })"
             >
               <span class="architecture-component-list__identity">
-                <i :class="`architecture-list-dot architecture-list-dot--${node.kindFamily}`"></i>
+                <span :class="`architecture-kind-badge architecture-kind-badge--${node.kindFamily}`">
+                  {{ node.kind }}
+                </span>
                 <strong>{{ node.label }}</strong>
-                <small>{{ node.kindLabel }}</small>
+                <span class="architecture-node-card__module-pill font-mono">{{ node.moduleLabel }}</span>
               </span>
-              <code>{{ node.qualifiedName }}</code>
-              <span class="architecture-component-list__relations">
+              <code class="font-mono">{{ node.qualifiedName }}</code>
+              <span class="architecture-component-list__relations font-mono">
                 {{ relationCount(node, 'incoming') }} in / {{ relationCount(node, 'outgoing') }} out
               </span>
             </button>

@@ -219,11 +219,11 @@
   font-weight: 800;
 }
 
-.architecture-kind--controller { color: #d2a8ff; border-color: #8957e5; background: rgba(137, 87, 229, 0.15); }
-.architecture-kind--service { color: var(--color-accent); border-color: var(--color-accent-strong); background: var(--color-accent-soft); }
-.architecture-kind--repository { color: var(--color-success); border-color: var(--color-success); background: var(--color-success-soft); }
-.architecture-kind--configuration { color: var(--color-warning); border-color: var(--color-warning); background: var(--color-warning-soft); }
-.architecture-kind--component { color: var(--color-text-secondary); border-color: var(--color-border-strong); background: var(--color-surface-subtle); }
+.architecture-kind--controller { color: var(--color-kind-controller); border-color: var(--color-kind-controller-border); background: var(--color-kind-controller-soft); }
+.architecture-kind--service { color: var(--color-kind-service); border-color: var(--color-kind-service-border); background: var(--color-kind-service-soft); }
+.architecture-kind--repository { color: var(--color-kind-repository); border-color: var(--color-kind-repository-border); background: var(--color-kind-repository-soft); }
+.architecture-kind--configuration { color: var(--color-kind-config); border-color: var(--color-kind-config-border); background: var(--color-kind-config-soft); }
+.architecture-kind--component { color: var(--color-kind-component); border-color: var(--color-kind-component-border); background: var(--color-kind-component-soft); }
 
 .architecture-toolbar {
   display: flex;
@@ -410,35 +410,326 @@
   min-height: 20rem;
 }
 
+.architecture-graph-frame {
+  position: relative;
+  overflow: hidden;
+}
+
 .architecture-graph { position: relative; }
 
+/* HTML Node Cards Overlay Layer */
+.architecture-graph-nodes-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 5;
+  will-change: transform;
+}
+
+/* Architecture Node Card */
+.architecture-node-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 216px;
+  height: 88px;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.architecture-node-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Header */
+.architecture-node-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+}
+
+.architecture-node-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+/* Kind Badges */
+.architecture-kind-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.35rem;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  line-height: 1.15;
+}
+
+.architecture-kind-badge--controller {
+  background: var(--color-kind-controller-soft);
+  color: var(--color-kind-controller);
+  border: 1px solid var(--color-kind-controller-border);
+}
+
+.architecture-kind-badge--service {
+  background: var(--color-kind-service-soft);
+  color: var(--color-kind-service);
+  border: 1px solid var(--color-kind-service-border);
+}
+
+.architecture-kind-badge--repository {
+  background: var(--color-kind-repository-soft);
+  color: var(--color-kind-repository);
+  border: 1px solid var(--color-kind-repository-border);
+}
+
+.architecture-kind-badge--configuration {
+  background: var(--color-kind-config-soft);
+  color: var(--color-kind-config);
+  border: 1px solid var(--color-kind-config-border);
+}
+
+.architecture-kind-badge--component {
+  background: var(--color-kind-component-soft);
+  color: var(--color-kind-component);
+  border: 1px solid var(--color-kind-component-border);
+}
+
+/* Selected Badge Pill */
+.architecture-node-card__selected-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+}
+
+/* In / Out Relations */
+.architecture-node-card__relations {
+  color: var(--color-text-muted);
+  font-size: 0.58rem;
+  white-space: nowrap;
+}
+
+/* Card Body */
+.architecture-node-card__body {
+  margin: 0.2rem 0;
+  min-width: 0;
+}
+
+.architecture-node-card__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+.architecture-node-card__title span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.architecture-node-card__selected-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.architecture-node-card__package {
+  font-size: 0.58rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 0.05rem;
+}
+
+/* Card Footer */
+.architecture-node-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.58rem;
+}
+
+.architecture-node-card__module-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.54rem;
+  max-width: 8.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.architecture-node-card__kind-label {
+  color: var(--color-text-muted);
+  font-size: 0.58rem;
+  font-weight: 500;
+}
+
+.architecture-node-card__kind-label--controller { color: var(--color-kind-controller); }
+.architecture-node-card__kind-label--service { color: var(--color-kind-service); }
+.architecture-node-card__kind-label--repository { color: var(--color-kind-repository); }
+.architecture-node-card__kind-label--configuration { color: var(--color-kind-config); }
+.architecture-node-card__kind-label--component { color: var(--color-kind-component); }
+
+/* Selection States */
+.architecture-node-card.is-selected {
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft), 0 4px 14px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.architecture-node-card.is-selected .architecture-node-card__title {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.architecture-node-card.is-selected .architecture-node-card__relations {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.architecture-node-card.is-selected .architecture-node-card__footer {
+  border-top-color: var(--color-accent-soft);
+}
+
+.architecture-node-card.is-connected:not(.is-selected) {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent-soft);
+  z-index: 8;
+}
+
+.architecture-node-card.is-muted {
+  opacity: 0.28;
+  filter: grayscale(0.2);
+}
+
+/* Canvas Floating Bottom-Left Keyboard Helper */
+.architecture-graph-helper {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  box-shadow: var(--shadow-sm);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.architecture-graph-helper kbd {
+  padding: 0.08rem 0.28rem;
+  border-radius: 3px;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+}
+
+/* Floating Zoom / Fit Controls */
 .architecture-graph-controls {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
   display: flex;
-  overflow: hidden;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.25rem 0.35rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.45rem;
-  background: rgb(255 255 255 / 96%);
-  box-shadow: 0 4px 14px rgb(31 45 68 / 10%);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  z-index: 6;
 }
 
 .architecture-graph-controls button {
-  display: grid;
-  width: 2.35rem;
-  height: 2.35rem;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
   border: 0;
-  border-right: 1px solid var(--color-border);
+  border-radius: 3px;
   color: var(--color-text-secondary);
   background: transparent;
-  font-family: var(--font-mono);
   cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 
-.architecture-graph-controls button:last-child { border-right: 0; }
-.architecture-graph-controls button:hover { color: var(--color-accent); background: var(--color-accent-soft); }
+.architecture-graph-controls button:hover {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.architecture-graph-controls__divider {
+  width: 1px;
+  height: 1rem;
+  background: var(--color-border);
+  margin: 0 0.2rem;
+}
+
+.architecture-graph-controls__zoom-level {
+  padding: 0 0.35rem;
+  color: var(--color-text-muted);
+  font-size: 0.6rem;
+  font-weight: 600;
+  min-width: 2.2rem;
+  text-align: center;
+  user-select: none;
+}
 
 .architecture-no-edges {
   position: absolute;

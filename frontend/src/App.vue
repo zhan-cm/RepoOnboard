@@ -241,19 +241,40 @@ onMounted(async () => {
 <template>
   <AppShell :workbench="workbench">
     <template #sidebar>
-      <SidebarNav :items="navigation" @select="selectPage" />
+      <SidebarNav
+        :items="navigation"
+        :repository-name="repositoryName"
+        :module-count="moduleModel?.modules.length"
+        @select="selectPage"
+      />
     </template>
 
     <template v-if="workbench" #topbar>
       <div class="workbench-topbar">
-        <div><span>Repository</span><strong>{{ repositoryName }}</strong></div>
+        <div class="workbench-topbar__breadcrumbs">
+          <span class="workbench-topbar__repo-label">Repository</span>
+          <strong class="workbench-topbar__repo-name">{{ repositoryName }}</strong>
+          <span class="workbench-topbar__crumb-sep">/</span>
+          <span class="workbench-topbar__crumb-page">{{ navigationItems.find(i => i.id === activePage)?.label || activePage }}</span>
+          <template v-if="activePage === 'modules' && selectedModule">
+            <span class="workbench-topbar__crumb-sep">/</span>
+            <span class="workbench-topbar__crumb-entity">{{ selectedModule.name || selectedModule.id }}</span>
+          </template>
+        </div>
         <div class="workbench-topbar__summary">
-          <span>{{ moduleModel?.modules.length ?? '—' }} modules</span>
-          <span v-if="activePage === 'overview' || activePage === 'modules'">{{ report?.summary?.sourceFileCount ?? report?.sourceFiles?.length ?? '—' }} source files</span>
-          <span v-else-if="activePage === 'architecture'">{{ architectureModel?.counts.components ?? '—' }} components</span>
-          <span v-else-if="activePage === 'apis'">{{ apiModel?.counts.endpoints ?? '—' }} endpoints</span>
-          <span v-else>{{ startHereModel?.totalItemCount ?? '—' }} recommended files</span>
-          <span v-if="activePage === 'architecture'">{{ architectureModel?.counts.confirmedRelations ?? '—' }} confirmed relations</span>
+          <div class="workbench-topbar__stats-pill">
+            <span class="workbench-topbar__pill-dot"></span>
+            <span>{{ moduleModel?.modules.length ?? '—' }} modules</span>
+            <span class="workbench-topbar__dot-sep">•</span>
+            <span v-if="activePage === 'overview' || activePage === 'modules'">{{ report?.summary?.sourceFileCount ?? report?.sourceFiles?.length ?? '—' }} source files</span>
+            <span v-else-if="activePage === 'architecture'">{{ architectureModel?.counts.components ?? '—' }} components</span>
+            <span v-else-if="activePage === 'apis'">{{ apiModel?.counts.endpoints ?? '—' }} endpoints</span>
+            <span v-else>{{ startHereModel?.totalItemCount ?? '—' }} recommended files</span>
+            <template v-if="activePage === 'architecture'">
+              <span class="workbench-topbar__dot-sep">•</span>
+              <span>{{ architectureModel?.counts.confirmedRelations ?? '—' }} confirmed relations</span>
+            </template>
+          </div>
           <span class="workbench-status" :class="`workbench-status--${statusTone}`">{{ analysisStatus || 'UNKNOWN' }}</span>
           <button
             class="theme-toggle"

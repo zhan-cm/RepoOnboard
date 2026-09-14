@@ -254,20 +254,22 @@
   min-width: 3.4rem;
   min-height: 1.35rem;
   padding: 0.15rem 0.4rem;
-  border: 1px solid var(--color-accent);
+  border: 1px solid rgb(186 230 253 / 70%);
   border-radius: var(--radius-sm);
-  color: var(--color-accent);
-  background: var(--color-accent-soft);
+  color: var(--color-primary);
+  background: var(--color-primary-container);
   font-family: var(--font-mono);
-  font-size: 0.59rem;
-  font-weight: 800;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.api-method--post { color: var(--color-success); border-color: var(--color-success); background: var(--color-success-soft); }
-.api-method--put { color: var(--color-warning); border-color: var(--color-warning); background: var(--color-warning-soft); }
-.api-method--patch { color: #d2a8ff; border-color: #8957e5; background: rgba(137, 87, 229, 0.15); }
-.api-method--delete { color: var(--color-danger); border-color: var(--color-danger); background: var(--color-danger-soft); }
-.api-method--any { color: var(--color-text-secondary); border-color: var(--color-border-strong); background: var(--color-surface-subtle); }
+.api-method--get { color: var(--color-primary); border-color: rgb(186 230 253 / 70%); background: var(--color-primary-container); }
+.api-method--post { color: var(--color-success); border-color: rgb(167 243 208 / 70%); background: var(--color-success-soft); }
+.api-method--put { color: var(--color-warning); border-color: rgb(253 230 138 / 70%); background: var(--color-warning-soft); }
+.api-method--patch { color: var(--color-kind-controller); border-color: var(--color-kind-controller-border); background: var(--color-kind-controller-soft); }
+.api-method--delete { color: var(--color-danger); border-color: rgb(254 202 202 / 70%); background: var(--color-danger-soft); }
+.api-method--any { color: var(--color-text-secondary); border-color: var(--color-border); background: var(--color-surface-subtle); }
 .api-method--unresolved,
 .api-method--unavailable { color: var(--color-warning); border-color: var(--color-warning); background: var(--color-warning-soft); }
 
