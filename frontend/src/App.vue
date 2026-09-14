@@ -52,6 +52,25 @@ const startHereLoading = ref(false)
 const startHereExpanded = ref(false)
 const selectedStartHereSourceFileId = ref('')
 const sourceNavigationHost = createSourceNavigationHost()
+const theme = ref(typeof window !== 'undefined' && window.localStorage ? (window.localStorage.getItem('repoonboard-theme') || 'dark') : 'dark')
+
+function applyTheme(newTheme) {
+  theme.value = newTheme
+  if (typeof document !== 'undefined' && document.documentElement) {
+    document.documentElement.setAttribute('data-theme', newTheme)
+  }
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      window.localStorage.setItem('repoonboard-theme', newTheme)
+    } catch {
+      // ignore storage write errors
+    }
+  }
+}
+
+function toggleTheme() {
+  applyTheme(theme.value === 'dark' ? 'light' : 'dark')
+}
 const navigation = computed(() => navigationItems.map((item) => ({
   ...item,
   active: item.id === activePage.value
@@ -200,6 +219,7 @@ function exploreStartHereEndpoint(endpointId) {
 }
 
 onMounted(async () => {
+  applyTheme(theme.value)
   try {
     const response = await fetch('/api/report', {
       headers: { Accept: 'application/json' }
@@ -235,6 +255,14 @@ onMounted(async () => {
           <span v-else>{{ startHereModel?.totalItemCount ?? '—' }} recommended files</span>
           <span v-if="activePage === 'architecture'">{{ architectureModel?.counts.confirmedRelations ?? '—' }} confirmed relations</span>
           <span class="workbench-status" :class="`workbench-status--${statusTone}`">{{ analysisStatus || 'UNKNOWN' }}</span>
+          <button
+            class="theme-toggle"
+            type="button"
+            :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+            @click="toggleTheme"
+          >
+            {{ theme === 'dark' ? '☀️ Light' : '🌙 Dark' }}
+          </button>
         </div>
       </div>
     </template>

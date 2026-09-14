@@ -1,35 +1,35 @@
 :root {
   color-scheme: dark;
 
-  --color-canvas: #080d18;
-  --color-surface: #0f1728;
-  --color-surface-subtle: #151f34;
-  --color-surface-raised: #1b2942;
-  --color-border: #2c3b55;
-  --color-border-strong: #415574;
-  --color-text: #f5f7fb;
-  --color-text-secondary: #bcc7d8;
-  --color-text-muted: #9aa9c0;
-  --color-accent: #7dd3fc;
-  --color-accent-strong: #38bdf8;
-  --color-accent-soft: #102d40;
-  --color-success: #86efac;
-  --color-success-soft: #123322;
-  --color-warning: #fde68a;
-  --color-warning-soft: #392f12;
-  --color-danger: #fda4af;
-  --color-danger-soft: #3d1820;
+  --color-canvas: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-subtle: #21262d;
+  --color-surface-raised: #272d37;
+  --color-border: #30363d;
+  --color-border-strong: #484f58;
+  --color-text: #f0f6fc;
+  --color-text-secondary: #c9d1d9;
+  --color-text-muted: #919baf;
+  --color-accent: #58a6ff;
+  --color-accent-strong: #388bfd;
+  --color-accent-soft: #101e33;
+  --color-success: #7ee787;
+  --color-success-soft: #0e2a18;
+  --color-warning: #f2cc60;
+  --color-warning-soft: #342609;
+  --color-danger: #ff7b72;
+  --color-danger-soft: #371418;
 
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.375rem;
-  --text-2xl: clamp(1.75rem, 3vw, 2.5rem);
-  --leading-tight: 1.2;
-  --leading-normal: 1.6;
+  --text-2xl: clamp(1.5rem, 2.5vw, 2rem);
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -41,17 +41,43 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.1875rem;
+  --radius-lg: 0.25rem;
   --radius-pill: 999px;
   --border-thin: 1px;
-  --shadow-raised: 0 18px 42px rgb(0 0 0 / 24%);
-  --focus-ring: 0 0 0 3px rgb(56 189 248 / 35%);
+  --shadow-raised: 0 2px 8px rgb(0 0 0 / 24%);
+  --focus-ring: 0 0 0 2px var(--color-accent);
 
-  --sidebar-width: 15rem;
-  --inspector-width: 20rem;
-  --content-max: 72rem;
-  --control-height: 2.75rem;
-  --transition-fast: 140ms ease;
+  --sidebar-width: 14rem;
+  --inspector-width: 22rem;
+  --content-max: 100%;
+  --control-height: 2rem;
+  --transition-fast: 100ms ease;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-canvas: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f6f8fa;
+  --color-surface-raised: #f3f4f6;
+  --color-border: #d0d7de;
+  --color-border-strong: #afb8c1;
+  --color-text: #1f2328;
+  --color-text-secondary: #656d76;
+  --color-text-muted: #57606a;
+  --color-accent: #0969da;
+  --color-accent-strong: #0550ae;
+  --color-accent-soft: #ddf4ff;
+  --color-success: #1a7f37;
+  --color-success-soft: #dafbe1;
+  --color-warning: #9a6700;
+  --color-warning-soft: #fff8c5;
+  --color-danger: #cf222e;
+  --color-danger-soft: #ffebe9;
+
+  --shadow-raised: 0 4px 16px rgb(31 35 40 / 12%);
+  --focus-ring: 0 0 0 3px rgb(9 105 218 / 30%);
 }

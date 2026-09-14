@@ -18,46 +18,50 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1.25rem;
-  padding: 1rem 1.35rem;
+  gap: 1rem;
+  padding: 0.65rem 0.85rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 .api-header h1 {
-  margin-top: 0.15rem;
-  font-size: 1.2rem;
-  letter-spacing: -0.025em;
+  margin-top: 0.1rem;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
 }
 
 .api-header > div:first-child > p:last-child {
   max-width: 40rem;
-  margin-top: 0.35rem;
+  margin-top: 0.2rem;
   color: var(--color-text-secondary);
-  font-size: 0.72rem;
-  line-height: 1.45;
+  font-size: 0.7rem;
+  line-height: 1.4;
 }
 
 .api-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(6.5rem, 1fr));
-  gap: 0.5rem;
-  min-width: 21rem;
+  grid-template-columns: repeat(3, minmax(5.5rem, 1fr));
+  gap: 1px;
+  min-width: 18rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
+  overflow: hidden;
 }
 
 .api-summary article {
   display: grid;
   gap: 0.1rem;
   min-width: 0;
-  padding: 0.55rem 0.65rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.4rem;
-  background: var(--color-surface-subtle);
+  padding: 0.35rem 0.55rem;
+  border: none;
+  border-radius: 0;
+  background: var(--color-surface);
 }
 
 .api-summary strong {
   color: var(--color-text);
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
 
 .api-summary span {
@@ -66,7 +70,7 @@
 }
 
 .api-summary .api-summary--warning {
-  border-color: #f3cf7a;
+  border-color: var(--color-warning);
   background: var(--color-warning-soft);
 }
 
@@ -77,15 +81,15 @@
   display: grid;
   grid-template-columns: minmax(11rem, 1.25fr) minmax(9rem, 0.7fr) minmax(14rem, 1fr) auto;
   align-items: end;
-  gap: 0.65rem;
-  padding: 0.7rem 1.35rem;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
   border-bottom: 1px solid var(--color-border);
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .api-filters label {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.2rem;
   min-width: 0;
 }
 
@@ -99,34 +103,40 @@
 }
 
 .api-filters select,
-.api-filters input,
-.api-filters button,
-.api-index button {
-  min-height: 2.15rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 0.4rem;
+.api-filters input {
+  width: 100%;
+  height: 1.65rem;
+  padding: 0 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   color: var(--color-text);
   background: var(--color-surface-subtle);
   font-size: 0.68rem;
 }
 
-.api-filters select,
-.api-filters input {
-  width: 100%;
-  padding: 0 0.65rem;
+.api-filters select:focus,
+.api-filters input:focus {
+  border-color: var(--color-accent);
+  outline: 0;
 }
 
-.api-filters input { font-family: var(--font-mono); }
-
-.api-filters button,
-.api-index button {
-  padding: 0.35rem 0.7rem;
+.api-reset {
+  height: 1.65rem;
+  padding: 0 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.api-filters button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+.api-reset:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-raised);
 }
 
 .api-coverage {
@@ -134,8 +144,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.45rem 1.35rem;
-  border-bottom: 1px solid #f2dda9;
-  color: #7a5715;
+  border-bottom: 1px solid var(--color-warning);
+  color: var(--color-warning);
   background: var(--color-warning-soft);
   font-size: 0.64rem;
 }
@@ -184,13 +194,13 @@
   position: sticky;
   z-index: 2;
   top: 0;
-  padding: 0.55rem 0.75rem;
+  padding: 0.35rem 0.65rem;
   border-bottom: 1px solid var(--color-border-strong);
   color: var(--color-text-secondary);
-  background: #f8f9fc;
+  background: var(--color-surface-subtle);
   font-family: var(--font-mono);
-  font-size: 0.57rem;
-  letter-spacing: 0.08em;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -201,21 +211,21 @@
 .api-table th:nth-child(5) { width: auto; }
 
 .api-table tbody tr {
-  border-bottom: 1px solid #edf0f5;
-  background: #fff;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
   cursor: pointer;
   transition: background var(--transition-fast);
 }
 
-.api-table tbody tr:hover { background: #f8fbfe; }
-.api-table tbody tr.api-row--selected { background: #edf7fd; box-shadow: inset 3px 0 var(--color-accent); }
+.api-table tbody tr:hover { background: var(--color-surface-subtle); }
+.api-table tbody tr.api-row--selected { background: var(--color-accent-soft); box-shadow: inset 2px 0 var(--color-accent); }
 
 .api-table td {
   min-width: 0;
-  padding: 0.65rem 0.75rem;
+  padding: 0.4rem 0.65rem;
   vertical-align: top;
   color: var(--color-text-secondary);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
 }
 
 .api-table td > strong,
@@ -226,8 +236,8 @@
   overflow-wrap: anywhere;
 }
 
-.api-table td > strong { color: var(--color-text); font-size: 0.67rem; }
-.api-table td > small { margin-top: 0.25rem; color: var(--color-text-muted); line-height: 1.4; }
+.api-table td > strong { color: var(--color-text); font-size: 0.72rem; }
+.api-table td > small { margin-top: 0.15rem; color: var(--color-text-muted); line-height: 1.4; }
 .api-table td > code { color: var(--color-text-secondary); font-size: 0.62rem; line-height: 1.45; }
 
 .api-method-button {
@@ -244,22 +254,22 @@
   min-width: 3.4rem;
   min-height: 1.35rem;
   padding: 0.15rem 0.4rem;
-  border: 1px solid #9ac8ee;
-  border-radius: 0.3rem;
-  color: #075ea2;
-  background: #eaf5ff;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
   font-family: var(--font-mono);
   font-size: 0.59rem;
   font-weight: 800;
 }
 
-.api-method--post { color: #087a52; border-color: #8fd7bb; background: #e8f8f0; }
-.api-method--put { color: #8a5a08; border-color: #e4c476; background: #fff7df; }
-.api-method--patch { color: #7640a6; border-color: #cbb0e4; background: #f7effd; }
-.api-method--delete { color: #a32f42; border-color: #efadb7; background: #fff0f2; }
-.api-method--any { color: #4c5b70; border-color: #bcc6d4; background: #f0f3f7; }
+.api-method--post { color: var(--color-success); border-color: var(--color-success); background: var(--color-success-soft); }
+.api-method--put { color: var(--color-warning); border-color: var(--color-warning); background: var(--color-warning-soft); }
+.api-method--patch { color: #d2a8ff; border-color: #8957e5; background: rgba(137, 87, 229, 0.15); }
+.api-method--delete { color: var(--color-danger); border-color: var(--color-danger); background: var(--color-danger-soft); }
+.api-method--any { color: var(--color-text-secondary); border-color: var(--color-border-strong); background: var(--color-surface-subtle); }
 .api-method--unresolved,
-.api-method--unavailable { color: #8a5a08; border-color: #e4c476; background: #fff7df; }
+.api-method--unavailable { color: var(--color-warning); border-color: var(--color-warning); background: var(--color-warning-soft); }
 
 .api-path--unresolved { color: var(--color-warning) !important; font-weight: 750; }
 
@@ -321,10 +331,10 @@
   max-width: 9rem;
   padding: 0.2rem 0.42rem;
   overflow: hidden;
-  border: 1px solid #7dd3fc;
-  border-radius: 0.35rem;
-  color: #0369a1;
-  background: #f0f9ff;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
   font-family: var(--font-mono);
   font-size: 0.56rem;
   font-weight: 750;
@@ -356,18 +366,18 @@
 .api-inspector__route code { overflow-wrap: anywhere; color: var(--color-text); font-size: 0.66rem; font-weight: 700; }
 
 .api-inspector__facts { margin-top: 0.6rem; }
-.api-inspector__facts > div { display: grid; grid-template-columns: 6.25rem minmax(0, 1fr); gap: 0.5rem; padding: 0.38rem 0; border-bottom: 1px solid #edf0f5; }
+.api-inspector__facts > div { display: grid; grid-template-columns: 6.25rem minmax(0, 1fr); gap: 0.5rem; padding: 0.38rem 0; border-bottom: 1px solid var(--color-border); }
 .api-inspector__facts dt { color: var(--color-text-muted); font-size: 0.61rem; }
 .api-inspector__facts dd { overflow-wrap: anywhere; color: var(--color-text); font-family: var(--font-mono); font-size: 0.6rem; }
 
 .api-condition-list { margin-top: 0.55rem; }
-.api-condition-list > div { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); gap: 0.45rem; padding: 0.4rem 0; border-bottom: 1px solid #edf0f5; }
+.api-condition-list > div { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); gap: 0.45rem; padding: 0.4rem 0; border-bottom: 1px solid var(--color-border); }
 .api-condition-list dt { color: var(--color-text-muted); font-size: 0.6rem; }
 .api-condition-list dd { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.25rem; }
-.api-condition-list dd span { padding: 0.15rem 0.3rem; border: 1px solid var(--color-border); border-radius: 0.3rem; color: var(--color-text-secondary); background: var(--color-surface-subtle); font-family: var(--font-mono); font-size: 0.57rem; overflow-wrap: anywhere; }
+.api-condition-list dd span { padding: 0.15rem 0.3rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text-secondary); background: var(--color-surface-subtle); font-family: var(--font-mono); font-size: 0.57rem; overflow-wrap: anywhere; }
 .api-condition-list em { color: var(--color-text-muted); font-size: 0.59rem; font-style: normal; }
 
-.api-unresolved-note { margin-top: 0.5rem; padding: 0.45rem; border: 1px solid #f2dda9; border-radius: 0.35rem; color: var(--color-warning); background: var(--color-warning-soft); font-size: 0.61rem; }
+.api-unresolved-note { margin-top: 0.5rem; padding: 0.45rem; border: 1px solid var(--color-warning); border-radius: var(--radius-sm); color: var(--color-warning); background: var(--color-warning-soft); font-size: 0.61rem; }
 
 .api-evidence-groups { display: grid; gap: 0.55rem; margin-top: 0.55rem; }
 .api-evidence-groups article { padding: 0.6rem; border: 1px solid var(--color-border); border-radius: 0.4rem; background: var(--color-surface-subtle); }

@@ -4,6 +4,8 @@ import { flushUi, mount } from './mount.js'
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  localStorage.clear()
+  document.documentElement.removeAttribute('data-theme')
 })
 
 describe('App', () => {
@@ -251,6 +253,36 @@ describe('App', () => {
     await flushUi()
     expect(view.container.querySelector('.architecture-inspector__body')).not.toBeNull()
     expect(view.container.querySelector('.nav-item--active').textContent).toContain('Architecture')
+    view.unmount()
+  })
+
+  it('toggles theme between dark and light, persisting in localStorage and document attribute', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => sourceReport()
+    }))
+
+    const view = mount(App)
+    await flushUi()
+
+    const toggle = view.container.querySelector('.theme-toggle')
+    expect(toggle).not.toBeNull()
+    expect(toggle.getAttribute('aria-label')).toBe('Switch to light theme')
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+
+    toggle.click()
+    await flushUi()
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+    expect(localStorage.getItem('repoonboard-theme')).toBe('light')
+    expect(toggle.getAttribute('aria-label')).toBe('Switch to dark theme')
+
+    toggle.click()
+    await flushUi()
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+    expect(localStorage.getItem('repoonboard-theme')).toBe('dark')
+    expect(toggle.getAttribute('aria-label')).toBe('Switch to light theme')
     view.unmount()
   })
 })

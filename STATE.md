@@ -23,7 +23,7 @@ RepoOnboard 已完成 **M10 — Release Preparation**，`v0.1.0` 已正式发布
 - **T-1007** 已完成；`.idea/` 与 `RepoOnboard.iml` 不再跟踪并已从可达 `master` 历史清除，`AGENTS.md` 的模板包装和真实本机路径已移除，忽略规则覆盖 IDE、环境和临时产物。已暴露的 Apifox token 由用户在服务端撤销；当前树和重写后的历史通过高置信凭据扫描，发布文件与 Markdown 本地链接完整。
 - **T-1008** 已完成；项目版本与 CLI 固定为 `0.1.0`，中英文 README 提供 Release 下载、校验与运行步骤。GitHub Actions 在 Windows、macOS、Linux 上执行 clean build、完整测试、生产 JAR 离线 fixture 分析和原生启动器检查；`v0.1.0` tag 通过门禁后自动创建含压缩包、JAR 与校验和的 GitHub Release。
 - V0.1 当前没有未完成的必需任务；继续开发前需明确下一阶段范围。
-- Java 21 / Maven 3.9.16 当前运行 82 项前端测试和 169 项 Java 测试并全部通过；T-0901 至 T-0907 均不构建或执行 fixture/目标应用。`clean verify` 会从最终可执行 JAR 启动独立进程，用空 Maven 缓存离线分析固定 fixture，读取本地报告路由，校验分发许可文件并生成 SHA-256；它仍不构建或执行被分析项目。
+- Java 21 / Maven 3.9.16 当前运行 83 项前端测试和 169 项 Java 测试并全部通过；T-0901 至 T-0907 均不构建或执行 fixture/目标应用。`clean verify` 会从最终可执行 JAR 启动独立进程，用空 Maven 缓存离线分析固定 fixture，读取本地报告路由，校验分发许可文件并生成 SHA-256；它仍不构建或执行被分析项目。
 
 ## 2. 已完成任务
 

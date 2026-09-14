@@ -11,72 +11,153 @@ const emit = defineEmits(['select', 'error'])
 const container = ref(null)
 let graph = null
 let resizeObserver = null
+let themeObserver = null
 
-const graphStyles = [
-  {
-    selector: 'node',
-    style: {
-      width: 190,
-      height: 76,
-      shape: 'round-rectangle',
-      'background-color': '#ffffff',
-      'border-width': 1,
-      'border-color': '#cbd5e1',
-      label: 'data(graphLabel)',
-      color: '#172033',
-      'font-family': 'Inter, ui-sans-serif, system-ui, sans-serif',
-      'font-size': 11,
-      'font-weight': 600,
-      'text-wrap': 'wrap',
-      'text-max-width': 154,
-      'text-valign': 'center',
-      'text-halign': 'center',
-      'overlay-opacity': 0
-    }
-  },
-  { selector: 'node.controller', style: { 'border-color': '#8b5cf6', 'border-width': 1.5 } },
-  { selector: 'node.service', style: { 'border-color': '#0284c7', 'border-width': 1.5 } },
-  { selector: 'node.repository', style: { 'border-color': '#16a36a', 'border-width': 1.5 } },
-  { selector: 'node.configuration', style: { 'border-color': '#d18a16', 'border-width': 1.5 } },
-  {
-    selector: 'node.connected',
-    style: { 'border-color': '#38bdf8', 'border-width': 2 }
-  },
-  {
-    selector: 'node:selected',
-    style: {
-      'border-color': '#087eb8',
-      'border-width': 3,
-      'background-color': '#f0f9ff'
-    }
-  },
-  {
-    selector: 'edge',
-    style: {
-      width: 1.35,
-      'curve-style': 'bezier',
-      'line-color': '#aab6c7',
-      'target-arrow-color': '#7a879d',
-      'target-arrow-shape': 'triangle',
-      'arrow-scale': 0.8,
-      'overlay-opacity': 0
-    }
-  },
-  {
-    selector: 'edge.connected, edge:selected',
-    style: {
-      width: 2.25,
-      'line-color': '#087eb8',
-      'target-arrow-color': '#087eb8'
-    }
-  },
-  {
-    selector: 'node.context-muted, edge.context-muted',
-    style: { opacity: 0.24 }
+function getGraphStyles() {
+  const isLight = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'light'
+  if (isLight) {
+    return [
+      {
+        selector: 'node',
+        style: {
+          width: 190,
+          height: 76,
+          shape: 'round-rectangle',
+          'background-color': '#ffffff',
+          'border-width': 1,
+          'border-color': '#d0d7de',
+          label: 'data(graphLabel)',
+          color: '#1f2328',
+          'font-family': '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          'font-size': 11,
+          'font-weight': 600,
+          'text-wrap': 'wrap',
+          'text-max-width': 154,
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'overlay-opacity': 0
+        }
+      },
+      { selector: 'node.controller', style: { 'border-color': '#8250df', 'border-width': 1.5 } },
+      { selector: 'node.service', style: { 'border-color': '#0969da', 'border-width': 1.5 } },
+      { selector: 'node.repository', style: { 'border-color': '#1a7f37', 'border-width': 1.5 } },
+      { selector: 'node.configuration', style: { 'border-color': '#9a6700', 'border-width': 1.5 } },
+      {
+        selector: 'node.connected',
+        style: { 'border-color': '#0969da', 'border-width': 2 }
+      },
+      {
+        selector: 'node:selected',
+        style: {
+          'border-color': '#0969da',
+          'border-width': 3,
+          'background-color': '#ddf4ff'
+        }
+      },
+      {
+        selector: 'edge',
+        style: {
+          width: 1.35,
+          'curve-style': 'bezier',
+          'line-color': '#afb8c1',
+          'target-arrow-color': '#8c959f',
+          'target-arrow-shape': 'triangle',
+          'arrow-scale': 0.8,
+          'overlay-opacity': 0
+        }
+      },
+      {
+        selector: 'edge.connected, edge:selected',
+        style: {
+          width: 2.25,
+          'line-color': '#0969da',
+          'target-arrow-color': '#0969da'
+        }
+      },
+      {
+        selector: 'node.context-muted, edge.context-muted',
+        style: { opacity: 0.24 }
+      }
+    ]
   }
-]
 
-onMounted(render)
+  // Dark Theme (Default)
+  return [
+    {
+      selector: 'node',
+      style: {
+        width: 190,
+        height: 76,
+        shape: 'round-rectangle',
+        'background-color': '#161b22',
+        'border-width': 1,
+        'border-color': '#30363d',
+        label: 'data(graphLabel)',
+        color: '#f0f6fc',
+        'font-family': '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        'font-size': 11,
+        'font-weight': 600,
+        'text-wrap': 'wrap',
+        'text-max-width': 154,
+        'text-valign': 'center',
+        'text-halign': 'center',
+        'overlay-opacity': 0
+      }
+    },
+    { selector: 'node.controller', style: { 'border-color': '#d2a8ff', 'border-width': 1.5 } },
+    { selector: 'node.service', style: { 'border-color': '#58a6ff', 'border-width': 1.5 } },
+    { selector: 'node.repository', style: { 'border-color': '#7ee787', 'border-width': 1.5 } },
+    { selector: 'node.configuration', style: { 'border-color': '#f2cc60', 'border-width': 1.5 } },
+    {
+      selector: 'node.connected',
+      style: { 'border-color': '#58a6ff', 'border-width': 2 }
+    },
+    {
+      selector: 'node:selected',
+      style: {
+        'border-color': '#58a6ff',
+        'border-width': 3,
+        'background-color': '#1f293d'
+      }
+    },
+    {
+      selector: 'edge',
+      style: {
+        width: 1.35,
+        'curve-style': 'bezier',
+        'line-color': '#484f58',
+        'target-arrow-color': '#6e7681',
+        'target-arrow-shape': 'triangle',
+        'arrow-scale': 0.8,
+        'overlay-opacity': 0
+      }
+    },
+    {
+      selector: 'edge.connected, edge:selected',
+      style: {
+        width: 2.25,
+        'line-color': '#58a6ff',
+        'target-arrow-color': '#58a6ff'
+      }
+    },
+    {
+      selector: 'node.context-muted, edge.context-muted',
+      style: { opacity: 0.24 }
+    }
+  ]
+}
+
+onMounted(() => {
+  render()
+  if (typeof MutationObserver === 'function' && typeof document !== 'undefined') {
+    themeObserver = new MutationObserver(() => {
+      if (graph) {
+        graph.style(getGraphStyles()).update()
+      }
+    })
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  }
+})
 onBeforeUnmount(destroy)
 
 watch(() => [props.nodes, props.edges], render)
@@ -106,7 +187,7 @@ async function render() {
           data: { id: edge.id, source: edge.sourceId, target: edge.targetId }
         }))
       ],
-      style: headless ? [] : graphStyles,
+      style: headless ? [] : getGraphStyles(),
       layout: {
         name: 'breadthfirst',
         directed: true,
@@ -165,6 +246,8 @@ function applySelection() {
 }
 
 function destroy() {
+  themeObserver?.disconnect()
+  themeObserver = null
   resizeObserver?.disconnect()
   resizeObserver = null
   graph?.destroy()
