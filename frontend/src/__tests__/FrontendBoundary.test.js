@@ -30,4 +30,10 @@ describe('frontend host boundary', () => {
     expect(Object.keys(dependencies)).not.toContain('electron')
     expect(Object.keys(dependencies).some((name) => name.startsWith('@tauri-apps/'))).toBe(false)
   })
+
+  it('keeps the UI entry document free of remote runtime resources', () => {
+    const index = readFileSync(resolve(frontendDirectory, 'index.html'), 'utf8')
+
+    expect(index).not.toMatch(/<(?:link|script)\b[^>]*(?:href|src)=["'](?:https?:)?\/\//i)
+  })
 })

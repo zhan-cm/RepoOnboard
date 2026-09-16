@@ -12,13 +12,21 @@ RepoOnboard 是一个本地优先的代码库理解与开发者上手工具。�
 >
 > 已验证的 V0.1.0 压缩包仍是当前正式版本。`master` 分支已经加入发布后的 workbench 与 Architecture 视觉改版；这些变化不在该压缩包内，也尚未作为新版本发布。
 
-## 演示
+## 当前界面与 V0.1.0 Release 演示
+
+### 当前 `master` 界面方向
+
+![RepoOnboard 发布后 Architecture workbench 设计](./docs/ui/stitch/T-0706/screen.png)
+
+上图是已纳入仓库、并由当前 `master` 发布后 workbench 与 Architecture 卡片改版实现的 Stitch 设计交付参考。它是设计资产，不是运行时截图或 Release 验证记录；其中的仓库名、计数、状态和组件数据均为示例。实际应用仍只展示被分析报告中的 facts。
+
+### 已验证的 V0.1.0 Release 演示
 
 V0.1 公开 Demo 目标是固定 commit [`e06e87abe0be8a3a194381ce651164a734811b3f`](https://github.com/jhipster/jhipster-sample-app/commit/e06e87abe0be8a3a194381ce651164a734811b3f) 的 [`jhipster/jhipster-sample-app`](https://github.com/jhipster/jhipster-sample-app)。该 revision 包含 [Apache License 2.0 文件](https://github.com/jhipster/jhipster-sample-app/blob/e06e87abe0be8a3a194381ce651164a734811b3f/LICENSE.txt)；RepoOnboard 不修改、不构建、也不运行第三方源码。
 
 ![RepoOnboard V0.1 精简演示](./docs/demo/media/repoonboard-v0.1-demo.gif)
 
-这段 14.4 秒 GIF 记录的是 V0.1.0 时期的打包 UI 和固定 Demo 输入，全程保留 `PARTIAL`；它压缩展示已验证的运行过程，不宣称扫描只需 14.4 秒。当前 `master` 的界面已经比该录制更新。精确哈希和画面证据见[录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)。
+这段 14.4 秒 GIF 记录的是已发布的 V0.1.0 时期 UI 和固定 Demo 输入；它作为 Release 证据保留，不再作为当前 `master` 的界面展示。录制全程保留 `PARTIAL`，压缩展示已验证的运行过程，不宣称扫描只需 14.4 秒。精确哈希和画面证据见[录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)。
 
 完整的固定 checkout、空缓存分析命令、预期计数、限制和四页面演示路径见 [V0.1 Demo Repository 指南](./docs/demo/V0.1-DEMO.md)。固定运行会如实产生 `PARTIAL` 报告：1 个 module、81 个 source file、30 个 component、24 个 endpoint、7 条 confirmed component edge 和 24 项 Start Here。Partial 状态和已知 wildcard-import 漏报属于演示内容，不会被隐藏。
 
@@ -102,6 +110,8 @@ java -version
 node --version
 git --version
 ```
+
+> **当前 `master` 构建提示：**发布后的 UI 改版仍未正式发布，但生产资源已经重新实现全本地闭包，完整 `clean verify` 门禁现已通过。在单独确定版本并通过跨平台工作流前，V0.1.0 仍是当前正式发布的压缩包。
 
 Windows PowerShell：
 
@@ -204,7 +214,7 @@ repoonboard . --profile dev,local --local-repository /path/to/local/maven/reposi
 - **Start Here**——依据构建文件、应用入口、配置、公开 API 和确认依赖生成确定性文件阅读顺序，并直接展示推荐原因。
 - **容错报告**——稳定报告 ID 和 schema `1.2`、明确的 `SUCCESS`/`PARTIAL`/`FAILED`、可操作 Diagnostic，以及局部失败后的确认 facts 保留。
 
-所有生产 UI 资源均随 JAR 提供，运行时不使用 CDN。RepoOnboard V0.1 不使用 LLM、不上传仓库内容、不运行目标应用、不执行 Maven lifecycle/plugin/extension，也不修改被分析源码。
+已发布的 V0.1.0 UI 与当前 `master` 都将所有生产资源随 JAR 提供，运行时不使用 CDN；`master` 上的发布后视觉变化仍未正式发布。RepoOnboard V0.1 不使用 LLM、不上传仓库内容、不运行目标应用、不执行 Maven lifecycle/plugin/extension，也不修改被分析源码。
 
 ## 支持范围
 
@@ -232,7 +242,6 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - API row 与 Diagnostic 尚未虚拟化或分页。ThingsBoard 边界试验完成了 3,834 个 main Java file，但观察到 648.23 MiB 进程峰值、1,719 条诊断、581 个 API row、重复模块名歧义和仍可能不可读的图。RepoOnboard **不宣称完整支持**同等规模仓库。
 - 在 1280 px 视口下，中型仓库 Architecture 外侧标签可能裁切，API source 列可能需要横向滚动。
 - 首次接触验证中，API 定位最容易，Start Here 可以找到前三个文件，但 module、entry point、dependency 和推荐解释仍让参与者困惑。这次 5–10 分钟观察没有手工阅读对照组，因此 V0.1 不宣称相对手工探索有量化提速。
-- `master` 上发布后的 UI 改版尚未达到可发布状态。Google Fonts 样式表引用违反离线 UI 边界，并使当前 `./mvnw clean verify` 在打包资源校验阶段失败。Loopback CSP 会拦截这些请求，浏览器会回退到本地字体；已经发布的 V0.1.0 压缩包不受影响。该问题必须在下一次发布前修复。
 - 当前源码 UI 仍有延后处理的细节缺陷：主题偏好按系统分配的 loopback 端口隔离，重新启动 RepoOnboard 后不会保留；切换主题后 Architecture 边线颜色可能不刷新；深色模式中的部分 Architecture 空状态/状态栏仍保留白底；Overview 的 6 个指标放入 5 列桌面网格后会留下未填满的一行。这些问题不改变分析 facts 或 Evidence。
 
 ## 验证证据

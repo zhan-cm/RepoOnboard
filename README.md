@@ -12,13 +12,21 @@ RepoOnboard is a local-first codebase comprehension and developer onboarding too
 >
 > The verified V0.1.0 archive remains the current release. The `master` branch now contains a post-release workbench and Architecture visual refresh that is not included in that archive and has not yet been published as a new release.
 
-## Demo
+## Current UI and V0.1.0 release demo
+
+### Current `master` UI direction
+
+![RepoOnboard post-release Architecture workbench design](./docs/ui/stitch/T-0706/screen.png)
+
+The checked-in Stitch handoff above is the visual reference implemented by the post-release workbench and Architecture card refresh on current `master`. It is a design artifact, not a runtime capture or release-validation record; its repository name, counts, status, and component data are illustrative. The application continues to render only facts from the analyzed report.
+
+### Verified V0.1.0 release demo
 
 The V0.1 public demo target is [`jhipster/jhipster-sample-app`](https://github.com/jhipster/jhipster-sample-app) at fixed commit [`e06e87abe0be8a3a194381ce651164a734811b3f`](https://github.com/jhipster/jhipster-sample-app/commit/e06e87abe0be8a3a194381ce651164a734811b3f). That revision contains an [Apache License 2.0 file](https://github.com/jhipster/jhipster-sample-app/blob/e06e87abe0be8a3a194381ce651164a734811b3f/LICENSE.txt) and is analyzed without modifying, building, or running the third-party source.
 
 ![RepoOnboard V0.1 condensed demo](./docs/demo/media/repoonboard-v0.1-demo.gif)
 
-The 14.4-second GIF records the V0.1.0-era packaged UI and the fixed demo input. It keeps `PARTIAL` visible and condenses the verified run rather than claiming a 14.4-second scan. The current `master` UI is newer than this recording. See the [capture record](./docs/demo/V0.1-DEMO-MEDIA.md) for exact hashes and scene evidence.
+The 14.4-second GIF records the published V0.1.0-era UI and fixed demo input; it is retained as release evidence rather than presented as the current `master` interface. It keeps `PARTIAL` visible and condenses the verified run rather than claiming a 14.4-second scan. See the [capture record](./docs/demo/V0.1-DEMO-MEDIA.md) for exact hashes and scene evidence.
 
 See the [V0.1 Demo Repository guide](./docs/demo/V0.1-DEMO.md) for the exact checkout, empty-cache analysis command, expected counts, limitations, and four-page walkthrough. The fixed run produces a transparent `PARTIAL` report with one module, 81 source files, 30 components, 24 endpoints, 7 confirmed component edges, and 24 Start Here items. The partial status and known wildcard-import omissions are part of the demo, not hidden.
 
@@ -104,6 +112,8 @@ java -version
 node --version
 git --version
 ```
+
+> **Current `master` build note:** the post-release UI refresh remains unreleased, but its production resources are local again and the full `clean verify` gate passes. V0.1.0 remains the current published archive until a separately versioned release passes the cross-platform workflow.
 
 Windows PowerShell:
 
@@ -206,7 +216,7 @@ Current `master` keeps the V0.1 analysis and report contracts while introducing 
 - **Start Here** — deterministic file reading order with visible reasons based on build files, entry points, configuration, public APIs, and confirmed dependencies.
 - **Failure-tolerant reports** — stable report IDs and schema `1.2`, explicit `SUCCESS`/`PARTIAL`/`FAILED` status, actionable diagnostics, and preservation of confirmed facts after local failures.
 
-All production UI resources are packaged in the JAR and use no runtime CDN. RepoOnboard V0.1 does not use an LLM, upload repository contents, run the target application, execute Maven lifecycle/plugins/extensions, or modify analyzed source files.
+The published V0.1.0 UI and current `master` package all production resources in the JAR and use no runtime CDN. The post-release visual changes on `master` remain unreleased. RepoOnboard V0.1 does not use an LLM, upload repository contents, run the target application, execute Maven lifecycle/plugins/extensions, or modify analyzed source files.
 
 ## Supported stack
 
@@ -234,7 +244,6 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 - API rows and diagnostics are not virtualized or paginated. The ThingsBoard boundary trial completed 3,834 main Java files but observed 648.23 MiB peak process memory, 1,719 diagnostics, 581 API rows, ambiguous duplicate module labels, and graphs that could remain unreadable. RepoOnboard does **not** claim complete support for repositories of that scale.
 - At a 1280 px viewport, medium-repository Architecture labels may clip and the API source column may require horizontal scrolling.
 - First-contact validation showed that API lookup was easiest and Start Here could locate its first three files, but module, entry-point, dependency, and recommendation explanations still caused confusion. The 5–10 minute observation had no manual-reading control group, so V0.1 does not claim a measured speed-up over manual exploration.
-- The post-release UI refresh on `master` is not release-ready yet. Its Google Fonts stylesheet references violate the offline-only UI boundary and currently make `./mvnw clean verify` fail at packaged-resource verification. The loopback CSP blocks those requests and the browser falls back to local fonts; the published V0.1.0 archive is unaffected. This must be corrected before another release.
 - Current-source UI polish still has deferred defects: theme preference is scoped to the system-assigned loopback port and therefore does not survive a new RepoOnboard session; Architecture edge colors may not refresh after a theme change; some Architecture empty/status surfaces retain white backgrounds in dark mode; and the six Overview metrics leave an incomplete row in the five-column desktop grid. These issues do not change analysis facts or Evidence.
 
 ## Validation evidence

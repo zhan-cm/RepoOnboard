@@ -119,7 +119,7 @@ Legend:
 
 # 5. Current Priority
 
-V0.1 当前没有未完成的必需任务。`v0.1.0` 已通过 Windows、macOS、Linux 发布门禁并作为 GitHub Release 发布。可选 T-0404 和 V0.2 候选继续延后；开始下一阶段前需要明确新的任务范围。
+V0.1 当前没有未完成的必需功能任务。`v0.1.0` 已通过 Windows、macOS、Linux 发布门禁并作为 GitHub Release 发布。当前 `master` 的 ISSUE-UI-0001 已修复并恢复本地完整 `clean verify`；ISSUE-UI-0002 继续作为后续 UI hardening 延后。可选 T-0404 和其他 V0.2 候选继续延后；开始下一阶段或新 Release 前需要明确范围与版本。
 
 ---
 
@@ -2859,7 +2859,7 @@ V0.1 核心价值被验证
 V0.2
 Desktop Application technical spike and Windows-first packaging
 Settings 中提供 English / 中文界面切换；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文
-Post-release Web UI hardening：恢复纯离线打包边界，修复主题生命周期/跨会话偏好、Architecture 深色状态与 Overview 指标网格，补齐视觉与打包回归
+Post-release Web UI hardening：修复主题生命周期/跨会话偏好、Architecture 深色状态与 Overview 指标网格，补齐视觉回归
 
 V0.2+
 Improve Java / Spring analysis based on V0.1 validation
@@ -2948,16 +2948,25 @@ T-0404
 ISSUE-UI-0001
 
 Status:
-OPEN / DEFERRED TO NEXT UI HARDENING
+RESOLVED
+
+Resolved:
+2026-09-16
 
 Description:
 当前 master 的发布后前端改版在 frontend/index.html 引用 Google Fonts 外部样式表，与已接受的本地优先、运行时无 CDN 和打包资源闭包边界冲突。
 
 Impact:
-前端 83 项测试和 Java 169 项测试仍通过，但 ./mvnw clean verify 会在 PackagedUiVerifier 拒绝 https://fonts.googleapis.com 时失败。Loopback CSP 会阻止这些请求并回退到本地字体；v0.1.0 Release 不受影响。未修复前不得创建下一个 Release。
+该回归曾使 ./mvnw clean verify 在 PackagedUiVerifier 拒绝 https://fonts.googleapis.com 时失败；v0.1.0 Release 不受影响。
+
+Resolution:
+移除 frontend/index.html 中四个 Google Fonts / Material Symbols 外链，继续使用已有系统字体 fallback；FrontendBoundary.test.js 增加源级远程运行时资源回归检查。
+
+Validation:
+前端 84 项测试与 Java 169 项测试通过；完整 ./mvnw.cmd clean verify 成功，PackagedUiVerifier、可执行 JAR 离线 fixture、报告路由和 SHA-256 均通过。
 
 Related Task:
-V0.2 Web UI hardening task（未排期）
+Post-release UI offline resource closure（完成）
 ```
 
 ```text
@@ -3142,7 +3151,7 @@ Remaining Issues:
 
 # 29. Current Next Action
 
-V0.1 已完成，没有自动开始的下一任务。可选 T-0404 与 V0.2 候选仍然延后；当前 master 的发布后 UI 改版存在 ISSUE-UI-0001 / ISSUE-UI-0002，其中离线打包闭包回归是下一次发布前的必修项。继续开发前先明确下一阶段范围并建立对应任务。
+V0.1 已完成，没有自动开始的下一任务。ISSUE-UI-0001 已修复，本地完整发布门禁恢复；ISSUE-UI-0002、可选 T-0404 与其他 V0.2 候选仍然延后。创建新 Release 前仍需明确版本范围并通过 GitHub 跨平台工作流。
 
 ---
 
