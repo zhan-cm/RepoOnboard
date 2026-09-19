@@ -45,7 +45,7 @@
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1px;
   border: var(--border-thin) solid var(--color-border);
   border-radius: var(--radius-sm);

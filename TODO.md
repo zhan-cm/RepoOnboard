@@ -119,7 +119,7 @@ Legend:
 
 # 5. Current Priority
 
-V0.1 当前没有未完成的必需功能任务。`v0.1.0` 已通过 Windows、macOS、Linux 发布门禁并作为 GitHub Release 发布。当前 `master` 的 ISSUE-UI-0001 已修复并恢复本地完整 `clean verify`；ISSUE-UI-0002 继续作为后续 UI hardening 延后。可选 T-0404 和其他 V0.2 候选继续延后；开始下一阶段或新 Release 前需要明确范围与版本。
+V0.1 当前没有未完成的必需功能任务。`v0.1.0` 已通过 Windows、macOS、Linux 发布门禁并作为 GitHub Release 发布。当前 `master` 的 ISSUE-UI-0001 与 ISSUE-UI-0002 均已修复，本地完整 `clean verify` 通过；可选 T-0404 和需要独立产品/技术决策的 V0.2 候选继续延后。开始下一阶段或新 Release 前需要明确范围与版本。
 
 ---
 
@@ -2859,7 +2859,6 @@ V0.1 核心价值被验证
 V0.2
 Desktop Application technical spike and Windows-first packaging
 Settings 中提供 English / 中文界面切换；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文
-Post-release Web UI hardening：修复主题生命周期/跨会话偏好、Architecture 深色状态与 Overview 指标网格，补齐视觉回归
 
 V0.2+
 Improve Java / Spring analysis based on V0.1 validation
@@ -2973,7 +2972,10 @@ Post-release UI offline resource closure（完成）
 ISSUE-UI-0002
 
 Status:
-OPEN / DEFERRED TO NEXT UI HARDENING
+RESOLVED
+
+Resolved:
+2026-09-19
 
 Description:
 当前源码 UI 仍存在主题与布局细节缺陷：localStorage 主题偏好会因系统分配端口变化而无法跨 RepoOnboard 会话保留；ArchitectureGraph render/destroy 生命周期会断开主题观察器；Architecture 的无关系提示和状态栏仍有硬编码白底；Overview 将 6 个指标放入 5 列桌面网格。
@@ -2981,8 +2983,14 @@ Description:
 Impact:
 分析 facts、Evidence 和报告 schema 不受影响，但主题一致性、跨会话偏好、深色可读性和 Overview 视觉完整性受影响。
 
+Resolution:
+使用 host-wide、`SameSite=Strict` 的非敏感主题 cookie 跨系统分配端口保存偏好，同时保留 localStorage 兼容回退；ArchitectureGraph 改为由 Vue reactive theme prop 驱动 Cytoscape 样式刷新，不再依赖会被 render/destroy 断开的 MutationObserver；Architecture 状态表面改用语义颜色 token；Overview 桌面主指标网格改为 6 列。
+
+Validation:
+前端 89 项测试与 Java 169 项测试通过；完整 `./mvnw.cmd clean verify`、生产 JAR 与 PackagedUiVerifier 通过。真实浏览器验证深浅主题、Architecture 连线/表面刷新、Overview 6 指标完整行，并在本地服务从端口 49328 重启到 51505 后确认主题偏好保持。
+
 Related Task:
-V0.2 Web UI hardening task（未排期）
+Post-release UI hardening（完成）
 ```
 
 以后格式：
@@ -3151,7 +3159,7 @@ Remaining Issues:
 
 # 29. Current Next Action
 
-V0.1 已完成，没有自动开始的下一任务。ISSUE-UI-0001 已修复，本地完整发布门禁恢复；ISSUE-UI-0002、可选 T-0404 与其他 V0.2 候选仍然延后。创建新 Release 前仍需明确版本范围并通过 GitHub 跨平台工作流。
+V0.1 已完成，没有自动开始的下一任务。ISSUE-UI-0001 与 ISSUE-UI-0002 已修复，本地完整发布门禁通过；可选 T-0404 与需要独立决策的 V0.2 候选仍然延后。创建新 Release 前仍需明确版本范围并通过 GitHub 跨平台工作流。
 
 ---
 

@@ -5,7 +5,8 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 const props = defineProps({
   nodes: { type: Array, required: true },
   edges: { type: Array, required: true },
-  selection: { type: Object, default: null }
+  selection: { type: Object, default: null },
+  theme: { type: String, default: 'dark' }
 })
 const emit = defineEmits(['select', 'error'])
 
@@ -21,7 +22,6 @@ const CARD_HEIGHT = 88
 
 let graph = null
 let resizeObserver = null
-let themeObserver = null
 
 const connectedNodeIds = computed(() => {
   const set = new Set()
@@ -86,7 +86,7 @@ const cards = computed(() => {
 })
 
 function getGraphStyles() {
-  const isLight = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') !== 'dark'
+  const isLight = props.theme === 'light'
   return [
     {
       selector: 'node',
@@ -199,14 +199,6 @@ onMounted(() => {
   if (typeof window !== 'undefined') {
     window.addEventListener('keydown', handleKeyDown)
   }
-  if (typeof MutationObserver === 'function' && typeof document !== 'undefined') {
-    themeObserver = new MutationObserver(() => {
-      if (graph) {
-        graph.style(getGraphStyles()).update()
-      }
-    })
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-  }
 })
 
 onBeforeUnmount(() => {
@@ -218,6 +210,13 @@ onBeforeUnmount(() => {
 
 watch(() => [props.nodes, props.edges], render)
 watch(() => props.selection, applySelection)
+watch(() => props.theme, applyThemeStyles)
+
+function applyThemeStyles() {
+  if (graph && !isHeadless.value) {
+    graph.style(getGraphStyles()).update()
+  }
+}
 
 async function render() {
   await nextTick()
@@ -314,8 +313,6 @@ function applySelection() {
 }
 
 function destroy() {
-  themeObserver?.disconnect()
-  themeObserver = null
   resizeObserver?.disconnect()
   resizeObserver = null
   graph?.destroy()

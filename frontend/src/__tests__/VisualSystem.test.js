@@ -5,6 +5,8 @@ import { describe, expect, it } from 'vitest'
 const tokens = readFileSync(resolve('src/styles/tokens.css'), 'utf8')
 const shell = readFileSync(resolve('src/styles/shell.css'), 'utf8')
 const architecture = readFileSync(resolve('src/styles/architecture.css'), 'utf8')
+const overview = readFileSync(resolve('src/styles/overview.css'), 'utf8')
+const architectureGraph = readFileSync(resolve('src/components/ArchitectureGraph.vue'), 'utf8')
 
 function token(name) {
   const match = tokens.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`))
@@ -71,5 +73,15 @@ describe('visual system', () => {
 
   it('provides the positioned container required by Cytoscape UI rendering', () => {
     expect(architecture).toContain('.architecture-graph { position: relative; }')
+  })
+
+  it('keeps Architecture surfaces theme-aware and refreshes graph colors from reactive state', () => {
+    expect(architecture).not.toMatch(/background:\s*(?:#fff|rgb\(255 255 255)/i)
+    expect(architectureGraph).toContain('watch(() => props.theme, applyThemeStyles)')
+    expect(architectureGraph).not.toContain('MutationObserver')
+  })
+
+  it('lays out the six primary Overview metrics as a complete desktop row', () => {
+    expect(overview).toContain('grid-template-columns: repeat(6, minmax(0, 1fr))')
   })
 })

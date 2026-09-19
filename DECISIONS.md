@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **M7 Local Web UI — in progress**
+> **V0.1.0 — Released**
 
-M0 至 M6 及 T-0701 至 T-0704 已完成。CLI 已将统一 `AnalysisReport` 接入仅绑定 loopback 的本地只读服务；Vue 前端已有集中视觉系统、Repository Overview 和基于显式报告事实的 Module Explorer。可选 T-0404 Mapper Detection 继续按 TODO.md 的非阻塞规则延后，当前下一任务是 T-0705 Architecture Workspace。
+M0 至 M10 已完成，`v0.1.0` 已通过跨平台门禁并作为 GitHub Release 发布。当前 `master` 包含尚未发布的 workbench、Architecture 视觉更新及其 UI hardening；可选 T-0404 与需要独立决策的 V0.2 候选继续按 TODO.md 延后。
 
 ---
 
@@ -2112,13 +2112,16 @@ Implementation
 ✓ M4 Spring Boot Analysis complete
 ✓ M5 API & Dependency Analysis complete
 ✓ M6 Report Assembly & Serialization complete
-◐ M7 Local Web UI in progress (T-0701 through T-0704 complete)
+✓ M7 Local Web UI complete
+✓ M8 Start Here complete
+✓ M9 Regression & Real Repository Validation complete
+✓ M10 Release Preparation complete
 ```
 
 下一步：
 
-> 在设计和实现前完成 T-0705 — Architecture Workspace 的页面级 Data Contract Audit 与 Stitch 交接。
+> 在开始下一阶段或创建新 Release 前明确范围与版本。
 
-M0 至 M6 及 T-0701 至 T-0704 已关闭；后续前端任务先由 Codex 根据 TODO、公共模型和当前实现提供 Data Contract Audit / Stitch 设计方案，用户完成 Stitch 设计后再进入 Vue 实现与浏览器验证。
+V0.1 已关闭；后续新增前端页面仍先由 Codex 根据 TODO、公共模型和当前实现提供 Data Contract Audit / Stitch 设计方案，用户完成 Stitch 设计后再进入 Vue 实现与浏览器验证。Desktop 容器与界面双语等 V0.2 候选不得从当前架构决策中自动启动。
 
 ````

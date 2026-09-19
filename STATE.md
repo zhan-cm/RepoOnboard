@@ -23,8 +23,8 @@ RepoOnboard 已完成 **M10 — Release Preparation**，`v0.1.0` 已正式发布
 - **T-1007** 已完成；`.idea/` 与 `RepoOnboard.iml` 不再跟踪并已从可达 `master` 历史清除，`AGENTS.md` 的模板包装和真实本机路径已移除，忽略规则覆盖 IDE、环境和临时产物。已暴露的 Apifox token 由用户在服务端撤销；当前树和重写后的历史通过高置信凭据扫描，发布文件与 Markdown 本地链接完整。
 - **T-1008** 已完成；项目版本与 CLI 固定为 `0.1.0`，中英文 README 提供 Release 下载、校验与运行步骤。GitHub Actions 在 Windows、macOS、Linux 上执行 clean build、完整测试、生产 JAR 离线 fixture 分析和原生启动器检查；`v0.1.0` tag 通过门禁后自动创建含压缩包、JAR 与校验和的 GitHub Release。
 - `master` 已在 V0.1.0 发布后引入新的 workbench Shell、repository/module 导航上下文、浅色/深色切换以及带组件角色、package/module 和确认入向/出向数量的 Architecture 卡片式图谱。这些变化尚未进入新 Release。
-- V0.1 当前没有未完成的必需功能任务；当前 `master` 的外部字体回归已经修复，剩余发布后 UI hardening 债务不改变分析 facts、Evidence 或 schema。继续开发或创建新 Release 前需明确范围与版本。
-- Java 21 / Maven 3.9.16 当前运行 84 项前端测试和 169 项 Java 测试并全部通过；`clean verify` 已重新通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。T-0901 至 T-0907 均不构建或执行 fixture/目标应用。
+- V0.1 当前没有未完成的必需功能任务；当前 `master` 的外部字体回归与已知发布后主题/布局 hardening 均已完成，不改变分析 facts、Evidence 或 schema。继续开发或创建新 Release 前需明确范围与版本。
+- Java 21 / Maven 3.9.16 当前运行 89 项前端测试和 169 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。T-0901 至 T-0907 均不构建或执行 fixture/目标应用。
 
 ## 2. 已完成任务
 
@@ -198,6 +198,7 @@ RepoOnboard
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
 - README 已提供同步的中英文版本和互相跳转入口；当前 `master` 的发布后视觉方向使用已纳入仓库的 Stitch 交付图展示，旧 GIF 明确保留为 V0.1.0 时期的验证证据，不再作为当前界面演示。产品 UI 的 English / 中文切换尚未实现，仍是 V0.2 候选。
 - ISSUE-UI-0001 已移除生产 `index.html` 中四个 Google Fonts / Material Symbols 外链；系统字体 fallback 保持可用，源级前端测试与 JAR 级 PackagedUiVerifier 共同守护运行时无 CDN 的资源闭包。
+- ISSUE-UI-0002 已完成发布后 UI hardening：主题偏好通过 host-wide cookie 跨随机 loopback 端口保持，Architecture 图颜色由 reactive theme prop 刷新，深色状态表面使用语义 token，Overview 的 6 个主指标形成完整桌面行；真实浏览器已验证主题切换和跨端口保持。
 
 ## 7. 已知限制 / 技术债
 
@@ -212,17 +213,16 @@ RepoOnboard
 - **Onboarding 证据有限**：首次接触者能较快定位 API 和 Start Here 前三个文件，但入口、模块和 unresolved 依赖任务仍令人困惑；没有逐项计时、完整答案记录或手工源码对照组。英语产品文案可能是干扰变量，选择性界面翻译继续留在 V0.2 候选。V0.1 不宣称已经量化证明比手工阅读更快。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **前端包体警告**：当前单一生产 JavaScript 产物约 627 kB（gzip 约 197 kB），Vite 会提示超过 500 kB；是否拆包应在真实仓库性能数据表明必要时再决定。
-- **发布后 UI 细节缺陷**：主题偏好受系统分配端口隔离而无法跨会话保留；ArchitectureGraph 的 render/destroy 会断开主题观察器，Architecture 的无关系提示和状态栏仍有硬编码白底；Overview 的 6 个指标使用 5 列桌面网格。这些问题不改变分析 facts、Evidence 或报告 schema，延后到后续 UI hardening。
 
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文；以及发布后 Web UI hardening，包括修复已知主题/布局回归。这些候选未进入 V0.1。
+- **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。这些候选需要独立范围与决策，未进入 V0.1。
 
 ## 9. 下一步
 
-V0.1 没有未完成的必需任务。ISSUE-UI-0001 已修复且本地完整发布门禁恢复；可选 T-0404、ISSUE-UI-0002 与其他 V0.2 候选仍延后。创建新 Release 前先明确版本范围，并通过 GitHub 跨平台工作流。
+V0.1 没有未完成的必需任务。ISSUE-UI-0001 与 ISSUE-UI-0002 已修复且本地完整发布门禁通过；可选 T-0404 与需要独立决策的 V0.2 候选仍延后。创建新 Release 前先明确版本范围，并通过 GitHub 跨平台工作流。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。V0.1.0 Release 仍是通过跨平台离线门禁的已验证产物；当前 `master` 在发布后新增更紧凑的 workbench、repository/module 导航上下文、主题切换和 Architecture 卡片式图谱。ISSUE-UI-0001 已移除外部字体引用并恢复完整 `clean verify`，剩余主题/布局问题继续作为 ISSUE-UI-0002 延后，不改变分析 facts、Evidence 或 schema。项目采用 Apache License 2.0；Release 包含离线 `repoonboard.jar`、Windows/POSIX 启动脚本、SHA-256 与许可材料。V0.2 候选包括 Desktop 技术试验、Settings English / 中文界面切换（只翻译产品文案，不翻译代码与 Evidence）和发布后 Web UI hardening。V0.1 当前没有自动开始的下一任务；创建新 Release 前需明确版本范围并通过 GitHub 跨平台工作流，每个后续 T 仍应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。V0.1.0 Release 仍是通过跨平台离线门禁的已验证产物；当前 `master` 在发布后新增更紧凑的 workbench、repository/module 导航上下文、主题切换和 Architecture 卡片式图谱。ISSUE-UI-0001 已移除外部字体引用，ISSUE-UI-0002 已修复跨端口主题保持、Architecture 主题刷新/深色表面和 Overview 指标网格；本地完整 `clean verify` 通过，分析 facts、Evidence 与 schema 均未改变。项目采用 Apache License 2.0；Release 包含离线 `repoonboard.jar`、Windows/POSIX 启动脚本、SHA-256 与许可材料。V0.2 候选仅保留需要独立范围与决策的 Desktop 技术试验和 Settings English / 中文界面切换（只翻译产品文案，不翻译代码与 Evidence）；可选 T-0404 继续延后。创建新 Release 前需明确版本范围并通过 GitHub 跨平台工作流，每个后续 T 仍应独立测试、更新 TODO/STATE、提交并推送 GitHub。

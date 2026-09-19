@@ -27,6 +27,7 @@ import { createSourceDetailModel } from './lib/reportSources.js'
 import { createStartHereModel } from './lib/reportStartHere.js'
 import { createSourceNavigationHost } from './lib/sourceNavigationHost.js'
 import { CURRENT_REPORT_SCHEMA, reportSchemaCompatibility } from './lib/reportSchema.js'
+import { persistThemePreference, readThemePreference } from './lib/themePreference.js'
 
 const navigationItems = Object.freeze([
   { id: 'overview', label: 'Overview', glyph: 'O', disabled: false },
@@ -52,20 +53,14 @@ const startHereLoading = ref(false)
 const startHereExpanded = ref(false)
 const selectedStartHereSourceFileId = ref('')
 const sourceNavigationHost = createSourceNavigationHost()
-const theme = ref(typeof window !== 'undefined' && window.localStorage ? (window.localStorage.getItem('repoonboard-theme') || 'dark') : 'dark')
+const theme = ref(readThemePreference())
 
 function applyTheme(newTheme) {
   theme.value = newTheme
   if (typeof document !== 'undefined' && document.documentElement) {
     document.documentElement.setAttribute('data-theme', newTheme)
   }
-  if (typeof window !== 'undefined' && window.localStorage) {
-    try {
-      window.localStorage.setItem('repoonboard-theme', newTheme)
-    } catch {
-      // ignore storage write errors
-    }
-  }
+  persistThemePreference(newTheme)
 }
 
 function toggleTheme() {
@@ -326,6 +321,7 @@ onMounted(async () => {
         :model="architectureModel"
         :module-id="selectedArchitectureModuleId"
         :selection="architectureSelection"
+        :theme="theme"
         :scope="architectureScope"
         :exploration="architectureExploration"
         @select-module="selectArchitectureModule"

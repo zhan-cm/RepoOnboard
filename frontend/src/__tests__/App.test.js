@@ -5,6 +5,7 @@ import { flushUi, mount } from './mount.js'
 afterEach(() => {
   vi.unstubAllGlobals()
   localStorage.clear()
+  document.cookie = 'repoonboard-theme=; Max-Age=0; Path=/'
   document.documentElement.removeAttribute('data-theme')
 })
 
@@ -256,7 +257,7 @@ describe('App', () => {
     view.unmount()
   })
 
-  it('toggles theme between dark and light, persisting in localStorage and document attribute', async () => {
+  it('toggles theme between dark and light, persisting across loopback ports and in localStorage', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
       json: async () => sourceReport()
@@ -275,6 +276,7 @@ describe('App', () => {
 
     expect(document.documentElement.getAttribute('data-theme')).toBe('light')
     expect(localStorage.getItem('repoonboard-theme')).toBe('light')
+    expect(document.cookie).toContain('repoonboard-theme=light')
     expect(toggle.getAttribute('aria-label')).toBe('Switch to dark theme')
 
     toggle.click()
@@ -282,6 +284,7 @@ describe('App', () => {
 
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
     expect(localStorage.getItem('repoonboard-theme')).toBe('dark')
+    expect(document.cookie).toContain('repoonboard-theme=dark')
     expect(toggle.getAttribute('aria-label')).toBe('Switch to light theme')
     view.unmount()
   })

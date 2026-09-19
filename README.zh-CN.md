@@ -204,7 +204,7 @@ repoonboard . --profile dev,local --local-repository /path/to/local/maven/reposi
 
 ## 当前功能
 
-当前 `master` 保持 V0.1 的分析与报告契约不变，同时加入更紧凑的 IDE 风格 workbench、导航中的 repository/module 上下文、浅色/深色主题控制，以及信息更完整的 Architecture component 卡片。卡片展示组件角色、package/module 上下文和已确认的入向/出向关系数量，不改变底层 Evidence 模型。这些视觉变化属于发布后的源码工作，并非 V0.1.0 Release 内容。
+当前 `master` 保持 V0.1 的分析与报告契约不变，同时加入更紧凑的 IDE 风格 workbench、导航中的 repository/module 上下文、浅色/深色主题控制，以及信息更完整的 Architecture component 卡片。卡片展示组件角色、package/module 上下文和已确认的入向/出向关系数量，不改变底层 Evidence 模型。发布后 hardening 现已让主题偏好跨系统分配的 loopback 端口保持，图谱颜色跟随当前主题刷新，Architecture 状态表面使用主题颜色，并将 Overview 的 6 个主指标排成完整桌面行。这些视觉变化属于发布后的源码工作，并非 V0.1.0 Release 内容。
 
 - **Repository Overview**——项目身份、已报告技术版本、模块、源码根、组件/API 统计、应用入口和覆盖状态。
 - **Module Explorer**——Maven 聚合层级、元数据、源码根、精确坐标确认的内部模块依赖、组件、诊断和 Evidence。
@@ -242,7 +242,6 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - API row 与 Diagnostic 尚未虚拟化或分页。ThingsBoard 边界试验完成了 3,834 个 main Java file，但观察到 648.23 MiB 进程峰值、1,719 条诊断、581 个 API row、重复模块名歧义和仍可能不可读的图。RepoOnboard **不宣称完整支持**同等规模仓库。
 - 在 1280 px 视口下，中型仓库 Architecture 外侧标签可能裁切，API source 列可能需要横向滚动。
 - 首次接触验证中，API 定位最容易，Start Here 可以找到前三个文件，但 module、entry point、dependency 和推荐解释仍让参与者困惑。这次 5–10 分钟观察没有手工阅读对照组，因此 V0.1 不宣称相对手工探索有量化提速。
-- 当前源码 UI 仍有延后处理的细节缺陷：主题偏好按系统分配的 loopback 端口隔离，重新启动 RepoOnboard 后不会保留；切换主题后 Architecture 边线颜色可能不刷新；深色模式中的部分 Architecture 空状态/状态栏仍保留白底；Overview 的 6 个指标放入 5 列桌面网格后会留下未填满的一行。这些问题不改变分析 facts 或 Evidence。
 
 ## 验证证据
 

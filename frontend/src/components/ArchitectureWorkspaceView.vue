@@ -8,6 +8,7 @@ const props = defineProps({
   model: { type: Object, required: true },
   moduleId: { type: String, default: '' },
   selection: { type: Object, default: null },
+  theme: { type: String, default: 'dark' },
   scope: { type: Object, required: true },
   exploration: { type: Object, required: true }
 })
@@ -254,6 +255,7 @@ function relationCount(node, direction) {
           :nodes="scope.nodes"
           :edges="scope.edges"
           :selection="selection"
+          :theme="theme"
           @select="selectGraphItem"
           @error="graphError = $event"
         />
