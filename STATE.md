@@ -2,7 +2,7 @@
 
 ## 1. 当前阶段
 
-RepoOnboard 已完成 **M10 — Release Preparation**，`v0.1.0` 已正式发布。
+RepoOnboard 已完成 **M11 — V0.2 Scope & Release Contract**；`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
@@ -23,7 +23,8 @@ RepoOnboard 已完成 **M10 — Release Preparation**，`v0.1.0` 已正式发布
 - **T-1007** 已完成；`.idea/` 与 `RepoOnboard.iml` 不再跟踪并已从可达 `master` 历史清除，`AGENTS.md` 的模板包装和真实本机路径已移除，忽略规则覆盖 IDE、环境和临时产物。已暴露的 Apifox token 由用户在服务端撤销；当前树和重写后的历史通过高置信凭据扫描，发布文件与 Markdown 本地链接完整。
 - **T-1008** 已完成；项目版本与 CLI 固定为 `0.1.0`，中英文 README 提供 Release 下载、校验与运行步骤。GitHub Actions 在 Windows、macOS、Linux 上执行 clean build、完整测试、生产 JAR 离线 fixture 分析和原生启动器检查；`v0.1.0` tag 通过门禁后自动创建含压缩包、JAR 与校验和的 GitHub Release。
 - `master` 已在 V0.1.0 发布后引入新的 workbench Shell、repository/module 导航上下文、浅色/深色切换以及带组件角色、package/module 和确认入向/出向数量的 Architecture 卡片式图谱。这些变化尚未进入新 Release。
-- V0.1 当前没有未完成的必需功能任务；当前 `master` 的外部字体回归与已知发布后主题/布局 hardening 均已完成，不改变分析 facts、Evidence 或 schema。继续开发或创建新 Release 前需明确范围与版本。
+- V0.1 当前没有未完成的必需功能任务；当前 `master` 的外部字体回归与已知发布后主题/布局 hardening 均已完成，不改变分析 facts、Evidence 或 schema。
+- **T-1101** 已完成；V0.2 定位为 Accuracy & Accessible Local Experience，最低发布范围包含两项已确认分析缺口、English / 中文产品界面和完整回归发布。Desktop 必须先完成 M14 技术评估，且只有新 ACCEPTED ADR 才能激活 M15；Desktop 延后不阻塞 V0.2。
 - Java 21 / Maven 3.9.16 当前运行 89 项前端测试和 169 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。T-0901 至 T-0907 均不构建或执行 fixture/目标应用。
 
 ## 2. 已完成任务
@@ -87,6 +88,14 @@ RepoOnboard 已完成 **M10 — Release Preparation**，`v0.1.0` 已正式发布
 - **T-0905**：固定 `jhipster/jhipster-sample-app` commit `e06e87abe0be8a3a194381ce651164a734811b3f`，在空本地 Maven 模型仓库下完成中型真实仓库离线验证。30 个报告组件、24 个 Endpoint 和 7 条确认依赖均为真实事实，9 个外部注入目标保持 unresolved；修复空 Maven 属性导致的分析崩溃。3 个 wildcard-import Controller 及连带 13 个 Endpoint、7 条确认依赖记录为漏报。Architecture 按类型筛选和一阶邻域后可读，隐藏/未解析计数保持可见。完整记录见 `docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md`。
 - **T-0906**：固定 `thingsboard/thingsboard` release `v4.3.1.5` commit `2cd31ac359214f94b945546830da503ddf80070f`，在空本地 Maven 模型仓库下完成大型真实仓库边界试验。59 个 active module、3,834 个 main Java file 和 581 个 Endpoint 成功进入报告；无 Java parse failure、OOM 或 server crash。记录 25.498 秒冷启动、648.23 MiB 进程峰值、1,719 条诊断，以及 Maven/Spring 语义覆盖、重复模块名、API 全量列表和图预算内仍可能不可读的限制。完整记录见 `docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md`。
 - **T-0907**：固定 `joyheros/realworld` commit `2d944dbce5e89c6efdf59026f9b38ba014e73288` 进行 5 项首次接触任务。参与者报告总耗时 5–10 分钟，API 定位最快，能找到 Start Here 前三个文件但未发现原因；其余任务缺少可验证答案。本任务修复 Overview 暗色与其他页面不一致、Start Here 原因不易发现两个直接问题；完整记录见 `docs/validation/T-0907-ONBOARDING-VALUE.md`。
+
+### M10 — Release Preparation
+
+- **T-1001 至 T-1008**：完成离线可执行 JAR、启动脚本、错误边界、中英文 README、固定 Demo、媒体证据、Apache License 2.0、仓库清理和 Windows/macOS/Linux 发布门禁；`v0.1.0` 已正式发布。
+
+### M11 — V0.2 Scope & Release Contract
+
+- **T-1101**：冻结 V0.2 必需范围、一个 Milestone 一次执行的顺序、Desktop 评估/交付分离门禁及明确延后项；没有修改版本号、实现 M12+ 功能或引入新依赖。
 
 ## 3. 当前实现能力
 
@@ -159,8 +168,8 @@ RepoOnboard
 - **ADR-0011**：本地服务使用 JDK `HttpServer` 并只绑定 loopback；默认使用系统分配端口，固定只读路由，不提供任意文件读取。
 - **ADR-0012**：前端使用 Vue 3 + JavaScript + Vite，测试使用 Vitest，组件图使用 Cytoscape.js；所有生产资源随 JAR 提供，不使用运行时 CDN。开发/发布构建需要 Node，最终用户不需要。
 - **ADR-0013 至 ADR-0015**：Start Here 采用可解释确定性启发式；测试按 unit → fixture → integration → real repository 分层；局部失败优先返回部分成功。
-- **ADR-0016 / ADR-0017**：V0.1 交付 JAR 和启动脚本，保持 Web-first、Desktop-ready；桌面容器、安装器和自带 Runtime 延后到 V0.2 候选。
-- V0.1 继续只支持 Java + Maven + Spring Boot，不引入 LLM、RAG、云服务、数据库、遥测或自动改码能力。
+- **ADR-0016 / ADR-0017**：V0.1 交付 JAR 和启动脚本，保持 Web-first、Desktop-ready；M14 只做 Desktop 技术评估，M15 必须由新的 ACCEPTED ADR 激活。
+- V0.2 继续只支持 Java + Maven + Spring Boot，不引入 LLM、RAG、云服务、数据库、遥测或自动改码能力。
 
 ## 6. 重要变更
 
@@ -196,7 +205,7 @@ RepoOnboard
 - T-1007 识别并处理了被误提交的 IDE/插件状态：Apifox token 先在服务端撤销，再从全部可达 `master` 历史清除；其余 `.idea/`、`.iml` 和 AGENTS 模板包装同步清理。发布文件、Wrapper、前端 lockfile、许可文件、Markdown 链接、仓库对象和当前工作树均完成核验；Stitch 设计资产、验证记录和 Demo GIF 属于有意保留的产品证据，不按生成物误删。
 - T-1008 将 Maven/CLI 版本从 snapshot 固定为 `0.1.0`，补充双语二进制安装说明和正式 release notes，并以 GitHub-hosted Windows、macOS、Linux matrix 作为发布门禁。只有三平台的 clean verify、打包 JAR 离线分析和原生启动脚本检查全部通过，tag workflow 才组装带完整许可材料的压缩包并创建 GitHub Release。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
-- README 已提供同步的中英文版本和互相跳转入口；当前 `master` 的发布后视觉方向使用已纳入仓库的 Stitch 交付图展示，旧 GIF 明确保留为 V0.1.0 时期的验证证据，不再作为当前界面演示。产品 UI 的 English / 中文切换尚未实现，仍是 V0.2 候选。
+- README 已提供同步的中英文版本和互相跳转入口；当前 `master` 的发布后视觉方向使用已纳入仓库的 Stitch 交付图展示，旧 GIF 明确保留为 V0.1.0 时期的验证证据，不再作为当前界面演示。产品 UI 的 English / 中文切换已进入 M13 承诺范围，但尚未实现。
 - ISSUE-UI-0001 已移除生产 `index.html` 中四个 Google Fonts / Material Symbols 外链；系统字体 fallback 保持可用，源级前端测试与 JAR 级 PackagedUiVerifier 共同守护运行时无 CDN 的资源闭包。
 - ISSUE-UI-0002 已完成发布后 UI hardening：主题偏好通过 host-wide cookie 跨随机 loopback 端口保持，Architecture 图颜色由 reactive theme prop 刷新，深色状态表面使用语义 token，Overview 的 6 个主指标形成完整桌面行；真实浏览器已验证主题切换和跨端口保持。
 
@@ -210,19 +219,21 @@ RepoOnboard
 - **Wildcard import 组件漏报**：当前注解解析器在同一文件存在多个 wildcard import 时保守判为 ambiguous，即使只有一个 wildcard 包能提供已知 Spring 注解。JHipster Sample Application 因此漏报 3 个直接 `@RestController`、13 个 Endpoint 和 7 条项目内确认依赖；每个文件均有明确诊断，不生成误报。
 - **真实仓库 UI 密度**：中型 JHipster 仓库的 30 节点 Architecture 默认图较密且外侧标签可能裁切；按组件类型筛选会持续显示 hidden/unresolved 计数，选中组件后一阶邻域可生成清晰的小图。API 宽表的 source 列在 1280 px 下仍可能需要横向滚动。当前均不阻塞发布，但应写入 V0.1 使用说明。
 - **大型仓库边界**：ThingsBoard 试验在 3,834 个 main Java file 上完成但进程峰值达到 648.23 MiB，并产生 1,719 条诊断；当前诊断视图不适合大规模逐项 triage。重复 Maven leaf module 名在选择器中没有路径区分，581 个 API row 一次性渲染；52 节点/77 关系的预算内图仍可能不可读。V0.1 不承诺完整支持同规模仓库。
-- **Onboarding 证据有限**：首次接触者能较快定位 API 和 Start Here 前三个文件，但入口、模块和 unresolved 依赖任务仍令人困惑；没有逐项计时、完整答案记录或手工源码对照组。英语产品文案可能是干扰变量，选择性界面翻译继续留在 V0.2 候选。V0.1 不宣称已经量化证明比手工阅读更快。
+- **Onboarding 证据有限**：首次接触者能较快定位 API 和 Start Here 前三个文件，但入口、模块和 unresolved 依赖任务仍令人困惑；没有逐项计时、完整答案记录或手工源码对照组。英语产品文案可能是干扰变量，M13 将提供选择性界面翻译。V0.1 不宣称已经量化证明比手工阅读更快。
 - **构建环境**：从源码构建目前需要兼容锁定 Vite 工具链的 Node.js；发布产物的最终用户不需要 Node。
 - **前端包体警告**：当前单一生产 JavaScript 产物约 627 kB（gzip 约 197 kB），Vite 会提示超过 500 kB；是否拆包应在真实仓库性能数据表明必要时再决定。
 
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **V0.2 候选**：Desktop Application 技术试验与打包；Settings 中提供 English / 中文界面切换，只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。这些候选需要独立范围与决策，未进入 V0.1。
+- **M12**：T-1201 Spring Data Repository Inheritance、T-1202 multi-wildcard Spring annotation resolution、T-1203 回归与真实仓库复核。
+- **M13**：English / 中文产品界面；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。
+- **M14**：Desktop 技术评估与 ADR；**M15** 仅在 ADR 接受后激活；**M16** 完成 V0.2 回归与发布。
 
 ## 9. 下一步
 
-V0.1 没有未完成的必需任务。ISSUE-UI-0001 与 ISSUE-UI-0002 已修复且本地完整发布门禁通过；可选 T-0404 与需要独立决策的 V0.2 候选仍延后。创建新 Release 前先明确版本范围，并通过 GitHub 跨平台工作流。
+执行 **T-1201 — Spring Data Repository Inheritance**。只完成该任务及其最窄充分验证，不提前开始 T-1202 或 M13–M16。M12 完成并验证后再进入 M13。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.1 只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。V0.1.0 Release 仍是通过跨平台离线门禁的已验证产物；当前 `master` 在发布后新增更紧凑的 workbench、repository/module 导航上下文、主题切换和 Architecture 卡片式图谱。ISSUE-UI-0001 已移除外部字体引用，ISSUE-UI-0002 已修复跨端口主题保持、Architecture 主题刷新/深色表面和 Overview 指标网格；本地完整 `clean verify` 通过，分析 facts、Evidence 与 schema 均未改变。项目采用 Apache License 2.0；Release 包含离线 `repoonboard.jar`、Windows/POSIX 启动脚本、SHA-256 与许可材料。V0.2 候选仅保留需要独立范围与决策的 Desktop 技术试验和 Settings English / 中文界面切换（只翻译产品文案，不翻译代码与 Evidence）；可选 T-0404 继续延后。创建新 Release 前需明确版本范围并通过 GitHub 跨平台工作流，每个后续 T 仍应独立测试、更新 TODO/STATE、提交并推送 GitHub。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。当前 `master` 的发布后 workbench、主题和 Architecture hardening 已通过本地完整 `clean verify`，尚未成为新 Release。M11 / T-1101 已冻结 V0.2 路线：M12 修复两个真实仓库已确认的 Spring 分析缺口，M13 提供 English / 中文产品界面且不翻译代码与 Evidence，M14 评估 jpackage 与 Tauri 2，M15 仅在新 ACCEPTED ADR 后激活，M16 完成回归与发布；Desktop 延后不阻塞 V0.2。当前只执行 T-1201，可选 T-0404 继续延后。每个后续 T 独立测试、更新 TODO/STATE，并在发布前通过 GitHub 跨平台工作流。

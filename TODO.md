@@ -84,12 +84,13 @@ Implementation
 
 Current Phase:
 
-> **V0.1 — Released**
+> **V0.2 — Active Development**
 
 Current Product Version:
 
 ```text
-V0.1.0 — Released
+V0.1.0 — Current Release
+V0.2.0 — Planned, Not Released
 ```
 
 Current Implementation Status:
@@ -103,6 +104,11 @@ Core Analysis            ✓
 Web UI                   ✓
 Real-world Validation    ✓
 Public Release           ✓
+V0.2 Scope Contract      ✓
+V0.2 Accuracy Work       ○
+V0.2 Product Language    ○
+Desktop Evaluation       ○
+V0.2 Release             ○
 ```
 
 Legend:
@@ -119,7 +125,7 @@ Legend:
 
 # 5. Current Priority
 
-V0.1 当前没有未完成的必需功能任务。`v0.1.0` 已通过 Windows、macOS、Linux 发布门禁并作为 GitHub Release 发布。当前 `master` 的 ISSUE-UI-0001 与 ISSUE-UI-0002 均已修复，本地完整 `clean verify` 通过；可选 T-0404 和需要独立产品/技术决策的 V0.2 候选继续延后。开始下一阶段或新 Release 前需要明确范围与版本。
+M11 已冻结 V0.2 范围与发布契约。当前只进入 **M12 — Analyzer Accuracy Closure**，下一任务是 **T-1201 — Spring Data Repository Inheritance**。M13 界面双语、M14 Desktop 技术试验和条件式 M15 不得提前实现；可选 T-0404 继续延后。`v0.1.0` 在 V0.2 发布前仍是当前正式版本。
 
 ---
 
@@ -2784,9 +2790,268 @@ RepoOnboard V0.1 只有在以下条件全部基本满足时才算完成：
 
 ---
 
-# 22. Explicitly Deferred Beyond V0.1
+# 22. V0.2 Active Roadmap
 
-以下能力当前不进入主动开发队列：
+V0.2 的定位是 **Accuracy & Accessible Local Experience**。执行顺序固定为 M11 → M12 → M13 → M14 → 条件式 M15 → M16；一次只完成一个 Milestone，不并行跨里程碑。
+
+V0.2 的最低发布范围是 M12、M13 与 M16。M14 必须产出可审计的 Desktop 技术结论，但 M15 只有在新 ADR 被明确接受后才激活；Desktop 方案不成立时应延后，不阻塞 V0.2 的 Web-first 发布。
+
+## M11 — Scope & Release Contract
+
+Goal:
+
+```text
+Freeze V0.2 commitments, gates, and explicit deferrals before implementation.
+```
+
+### T-1101 — Freeze V0.2 Scope and Release Contract
+
+Status:
+
+```text
+[x] Completed — 2026-09-19
+```
+
+Scope:
+
+- 将 V0.2 定位固定为分析准确性与更可访问的本地产品体验。
+- 保持 Java + Maven + Spring Boot、Local-first、Deterministic、Explainable 边界。
+- 明确最低发布范围、Desktop 条件门禁和不阻塞规则。
+- 同步 PROJECT、TODO、DECISIONS、STATE 与中英文 README。
+- 不修改 `0.1.0` 版本号，不实现 M12+ 功能，不引入 Desktop 或 localization 依赖。
+
+Acceptance Criteria:
+
+```text
+[x] Required V0.2 release scope is explicit
+[x] Desktop evaluation and delivery gates are separate
+[x] Deferred work is explicit
+[x] Current release remains v0.1.0
+[x] Next task is singular and identified
+```
+
+## M12 — Analyzer Accuracy Closure
+
+Goal:
+
+```text
+Close the two confirmed Spring accuracy gaps without weakening conservative resolution.
+```
+
+### T-1201 — Spring Data Repository Inheritance
+
+Status:
+
+```text
+[ ]
+```
+
+Scope:
+
+- 识别仅通过可确认的 Spring Data repository 基类型继承而成立、没有直接 `@Repository` 的项目内接口。
+- 保留稳定 ID、SourceLocation、Evidence、module 归属与确定性输出。
+- 恢复由这些 Repository 支持的唯一可确认构造器注入边；不猜测歧义目标。
+- 用受控 fixture 和固定 Spring Petclinic 验证已记录的 3 个组件与 6 条关系缺口。
+
+### T-1202 — Deterministic Multi-wildcard Spring Annotation Resolution
+
+Status:
+
+```text
+[ ]
+```
+
+Scope:
+
+- 当多个 wildcard import 中只有一个可确定地提供已知 Spring 注解时完成解析。
+- 多个候选或证据不足时继续保持 ambiguous / unresolved，不降低准确性门槛。
+- 用受控 fixture 和固定 JHipster Sample Application 验证已记录的 Controller、Endpoint 与依赖缺口。
+
+### T-1203 — Accuracy Regression and Real-repository Revalidation
+
+Status:
+
+```text
+[ ]
+```
+
+Scope:
+
+- 重跑相关 unit、fixture、integration 和固定真实仓库验证。
+- 对比修复前后的组件、Endpoint、确认关系和 Diagnostic，确认没有新增推测边。
+- 更新已知限制和验证记录；不顺带实现 Mapper 或新生态支持。
+
+M12 Exit Gate:
+
+```text
+T-1201 through T-1203 complete
+Relevant tests pass
+Petclinic and JHipster gaps are revalidated
+No conservative-resolution regression is known
+```
+
+## M13 — English / 中文 Product Interface
+
+Goal:
+
+```text
+Make product-facing guidance selectable in English or Chinese without translating repository facts.
+```
+
+### T-1301 — Product Copy and Data-boundary Audit
+
+Status:
+
+```text
+[ ]
+```
+
+- 清点产品导航、说明、状态、空结果、错误提示与可访问性文本。
+- 明确代码标识符、文件路径、类名、API、框架术语和原始 Evidence 永远保持原文。
+
+### T-1302 — Settings Data Contract and Stitch Handoff
+
+Status:
+
+```text
+[ ]
+```
+
+- 先基于 TODO、公共报告模型和当前实现提交页面级 Data Contract Audit 与 Stitch 设计方案。
+- 等待用户完成并导入 Stitch 设计；在此之前不实现 Settings 页面。
+
+### T-1303 — Localization Foundation and Preference
+
+Status:
+
+```text
+[ ]
+```
+
+- 在任务内评估并选择最小本地化实现；若新增依赖，记录理由与生产闭包影响。
+- 建立 English / 中文资源、默认语言、持久化偏好和无网络回退。
+- 保持当前主题与随机 loopback 端口下的偏好行为一致。
+
+### T-1304 — Product Surface Translation
+
+Status:
+
+```text
+[ ]
+```
+
+- 覆盖现有产品 Shell、Overview、Modules、Architecture、API、Start Here、Source Detail 和 Settings。
+- 不改写报告 facts、Evidence、代码与技术标识。
+
+### T-1305 — Browser, Accessibility, and Packaging Validation
+
+Status:
+
+```text
+[ ]
+```
+
+- 验证切换、刷新、跨端口持久化、窄屏/宽屏、浅色/深色和键盘/可访问性文本。
+- 验证生产 JAR 保持离线资源闭包，不新增运行时 CDN 或远程服务。
+
+## M14 — Desktop Technical Evaluation
+
+Goal:
+
+```text
+Produce evidence for a Desktop decision without committing V0.2 to Desktop delivery.
+```
+
+### T-1401 — Desktop Experiment Contract and Metrics
+
+Status:
+
+```text
+[ ]
+```
+
+- 固定代表性输入、机器环境、测量方法与接受门槛。
+- 指标覆盖包体、冷/热启动、内存、离线、Java Runtime、进程生命周期、安装器、安全、签名和跨平台成本。
+
+### T-1402 — jpackage Baseline
+
+Status:
+
+```text
+[ ]
+```
+
+- 以现有 Java/JAR 运行闭包建立最小 Windows-first baseline。
+- 记录 runtime image、安装/卸载、更新边界和构建矩阵成本。
+
+### T-1403 — Tauri 2 Sidecar Proof of Concept
+
+Status:
+
+```text
+[ ]
+```
+
+- 验证现有 Vue UI 与 Java sidecar 的启动、关闭、端口、错误和安装闭包。
+- 不反向重写现有页面，不建立无调用方的通用 Desktop API。
+- Electron 只作为文档化能力/成本对照；没有证据要求时不安装或打包 Electron。
+
+### T-1404 — Desktop Decision and ADR
+
+Status:
+
+```text
+[ ]
+```
+
+- 基于同一指标对比 Web-first、jpackage 与 Tauri 2。
+- 明确 ACCEPT / DEFER 结论、风险、签名与维护成本。
+- 只有 ACCEPTED ADR 可以激活 M15；DEFER 结论直接跳过 M15 并进入 M16。
+
+## M15 — Conditional Desktop Delivery
+
+Status:
+
+```text
+[ ] Conditional — inactive until T-1404 accepts a Desktop architecture
+```
+
+若激活，只实现 ADR 接受的最小 Desktop 闭环、安装包和相关发布验证。不得自动加入更新服务、应用商店分发、遥测、账户系统或额外平台承诺。若 T-1404 结论为 DEFER，本 Milestone 记录为 skipped / deferred，不视为 V0.2 失败。
+
+## M16 — V0.2 Regression & Release
+
+Goal:
+
+```text
+Release the verified V0.2 scope without weakening V0.1 guarantees.
+```
+
+Planned Tasks:
+
+```text
+[ ] T-1601 — Full Regression and Fixed-repository Revalidation
+[ ] T-1602 — Documentation, Packaging, and Version Finalization
+[ ] T-1603 — Cross-platform Release Gate and V0.2.0 Release
+```
+
+Release Gate:
+
+```text
+M12 complete
+M13 complete
+M14 decision recorded
+M15 complete only when activated by an ACCEPTED ADR
+Java and frontend suites pass
+Offline packaged analysis and UI pass
+Windows/macOS/Linux release workflow passes
+Known limitations and release notes are current
+```
+
+---
+
+# 23. Explicitly Deferred Beyond V0.2
+
+以下能力不进入 V0.2 主动开发队列：
 
 ```text
 Python Analyzer
@@ -2832,37 +3097,23 @@ Team Workspace
 
 User Accounts
 
-Desktop Application
-
-Native Installer
-
-Bundled Java Runtime
 ```
 
-这些功能只有在：
+这些功能只有在未来版本基于真实需求、验证证据和明确范围重新批准后才评估，不得从 V0.2 路线自动启动。
 
 ```text
-V0.1 核心价值被验证
+Evidence + Explicit Scope Decision + Dedicated Milestone
 ```
-
-以后才重新评估。
 
 ---
 
-# 23. Future Candidate Milestones
+# 24. Future Candidate Milestones
 
-以下不是当前 Commitments。
+V0.2 已转入上方 Active Roadmap。以下不是当前 Commitments。
 
 仅作为未来候选：
 
 ```text
-V0.2
-Desktop Application technical spike and Windows-first packaging
-Settings 中提供 English / 中文界面切换；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文
-
-V0.2+
-Improve Java / Spring analysis based on V0.1 validation
-
 V0.3
 Gradle support
 
@@ -2886,7 +3137,7 @@ Stable multi-language architecture
 
 ---
 
-# 24. Known Risks
+# 25. Known Risks
 
 当前已知高层风险：
 
@@ -2923,7 +3174,7 @@ DECISIONS.md
 
 ---
 
-# 25. Known Issues
+# 26. Known Issues
 
 当前：
 
@@ -3013,7 +3264,7 @@ T-XXXX
 
 ---
 
-# 26. Work / Codex Execution Rules
+# 27. Work / Codex Execution Rules
 
 Work / Codex 每次处理 RepoOnboard 时必须：
 
@@ -3093,7 +3344,7 @@ Wait for approval
 
 ---
 
-# 27. Task Completion Rules
+# 28. Task Completion Rules
 
 Work / Codex 不应仅因为：
 
@@ -3123,7 +3374,7 @@ Status remains IN PROGRESS or BLOCKED
 
 ---
 
-# 28. Final Report Format for AI Tasks
+# 29. Final Report Format for AI Tasks
 
 每次 Work / Codex 完成任务以后，最终回复尽量保持简短。
 
@@ -3157,13 +3408,13 @@ Remaining Issues:
 
 ---
 
-# 29. Current Next Action
+# 30. Current Next Action
 
-V0.1 已完成，没有自动开始的下一任务。ISSUE-UI-0001 与 ISSUE-UI-0002 已修复，本地完整发布门禁通过；可选 T-0404 与需要独立决策的 V0.2 候选仍然延后。创建新 Release 前仍需明确版本范围并通过 GitHub 跨平台工作流。
+M11 已完成。下一任务是 **T-1201 — Spring Data Repository Inheritance**；只完成该任务及其最窄充分验证，不提前开始 T-1202 或 M13–M16。`v0.1.0` 继续是当前正式版本。
 
 ---
 
-# 30. Current Summary
+# 31. Current Summary
 
 ```text
 RepoOnboard
@@ -3195,10 +3446,18 @@ Validation
 
 Release
 ████████████████████ 100%
+
+V0.2
+M11 Scope & Release Contract — complete
+M12 Analyzer Accuracy Closure — next
+M13 English / 中文 Product Interface — not started
+M14 Desktop Technical Evaluation — not started
+M15 Conditional Desktop Delivery — inactive
+M16 Regression & Release — not started
 ```
 
 Next:
 
-> **等待明确下一阶段任务。**
+> **执行 T-1201；完成并验证 M12 后再进入 M13。**
 
 ````

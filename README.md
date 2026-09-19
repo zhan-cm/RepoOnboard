@@ -260,9 +260,11 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 
 ## Roadmap
 
-M0–M10 and the V0.1.0 public release are complete. Future work requires a separately scoped V0.2 decision; the deferred candidates remain recorded in [TODO.md](./TODO.md).
+M0–M10 and the V0.1.0 public release are complete. M11 has now frozen the V0.2 scope as **Accuracy & Accessible Local Experience**; the active milestone plan and gates are recorded in [TODO.md](./TODO.md). V0.1.0 remains the current release while V0.2 is in development.
 
-V0.1 remains Web-first and ships as an executable JAR plus Windows/POSIX launchers. A native desktop container, installer, bundled Java runtime, and selective English/中文 product-interface switch are V0.2 candidates, not V0.1 work. The language switch would translate product navigation, explanations, states, empty results, and errors while preserving code identifiers, paths, class names, APIs, framework terms, and original Evidence.
+V0.2 stays on Java + Maven + Spring Boot and keeps the local-first, deterministic, explainable analysis boundary. M12 closes the confirmed Spring Data repository-inheritance and multi-wildcard annotation-resolution gaps. M13 adds a selective English/中文 product-interface switch: product navigation, explanations, states, empty results, and errors may be translated, while code identifiers, paths, class names, APIs, framework terms, and original Evidence remain unchanged.
+
+M14 evaluates `jpackage` and Tauri 2 using package size, startup, memory, offline behavior, runtime, process lifecycle, installer, security, and signing evidence. Desktop delivery is conditional on a new accepted ADR; if no option meets the acceptance gate, V0.2 still ships through the existing Web-first executable JAR and Windows/POSIX launchers.
 
 ## Contributing
 

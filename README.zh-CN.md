@@ -258,9 +258,11 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 
 ## 路线图
 
-M0–M10 与 V0.1.0 公开发布均已完成。后续工作需要单独确定 V0.2 范围；延后候选继续记录在 [TODO.md](./TODO.md)。
+M0–M10 与 V0.1.0 公开发布均已完成。M11 已将 V0.2 范围冻结为 **Accuracy & Accessible Local Experience**；当前里程碑计划与门禁记录在 [TODO.md](./TODO.md)。V0.2 开发期间，V0.1.0 仍是当前正式版本。
 
-V0.1 继续采用 Web-first，发布物是可执行 JAR 与 Windows/POSIX 启动脚本。原生桌面容器、安装器、自带 Java Runtime 和选择性的 English/中文产品界面切换属于 V0.2 候选，不进入 V0.1。界面切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
+V0.2 继续只支持 Java + Maven + Spring Boot，并保持本地优先、确定性和可解释的分析边界。M12 修复已确认的 Spring Data Repository 继承识别与多个 wildcard import 注解解析缺口。M13 提供选择性的 English/中文产品界面切换：只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
+
+M14 将用包体、启动时间、内存、离线运行、Runtime、进程生命周期、安装器、安全和签名证据评估 `jpackage` 与 Tauri 2。Desktop 交付必须由新的 ACCEPTED ADR 激活；如果方案未通过接受门槛，V0.2 仍通过现有 Web-first 可执行 JAR 与 Windows/POSIX 启动脚本发布。
 
 ## 参与贡献
 

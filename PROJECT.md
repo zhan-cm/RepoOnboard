@@ -647,7 +647,7 @@ V0.1 采用 **Web-first, Desktop-ready** 的实现边界：
 - 需要宿主能力时，在首个真实调用方出现时建立最小、可替换的前端适配边界，不提前建立未使用的 Desktop API。
 - Repository Analysis 和受控文件访问仍属于 Java Application / Core 的责任。
 
-V0.1 的产品交付仍是本地 Web UI、可执行 JAR 和启动脚本。Desktop Application、原生安装器与自带 Java Runtime 属于 V0.2 候选范围，应在 V0.1 产品价值经真实仓库和首次发布验证后再通过技术试验决定桌面容器。
+V0.1 的产品交付仍是本地 Web UI、可执行 JAR 和启动脚本。Desktop Application、原生安装器与自带 Java Runtime 在 V0.2 中仍须先通过 M14 技术试验和新 ADR 决策；没有 ACCEPTED ADR 时不进入 M15，也不阻塞 Web-first V0.2 发布。
 
 V0.1 至少包含：
 
@@ -1255,15 +1255,49 @@ PROJECT.md 不记录具体短期实现任务。
 - 新发现的问题优先记录，而不是自动展开处理。
 - 重要分析结果必须尽量来自可验证的源码信息。
 
-## 34. Current Stage
+## 34. V0.2 Scope and Release Contract
+
+V0.2 的产品定位是：
+
+> **Accuracy & Accessible Local Experience**
+
+V0.2 继续服务 Java + Maven + Spring Boot 仓库，不扩大语言或构建系统范围。它保持本地优先、离线可用、确定性分析和来源可解释性，不引入 LLM、RAG、云服务、遥测、用户账户或自动修改代码能力。
+
+V0.2 的承诺范围分为三层：
+
+### Required for V0.2 Release
+
+- 修复真实仓库验证已确认的 Spring Data Repository 继承识别缺口。
+- 修复多个 wildcard import 场景下可确定的 Spring 注解解析缺口，同时继续拒绝无法唯一确认的结果。
+- 提供 English / 中文产品界面切换，只翻译产品导航、说明、状态、空结果和错误提示。
+- 保持代码标识符、文件路径、类名、API、框架术语和原始 Evidence 不翻译、不改写。
+- 完成回归、真实仓库复核、离线打包和跨平台发布门禁。
+
+### Required Evaluation, Conditional Delivery
+
+- 通过独立技术试验评估 `jpackage` 基线和 Tauri 2 容器；Electron 只作为成本与能力对照，除非试验证据要求，否则不引入依赖。
+- Desktop 试验必须记录包体、启动时间、内存、离线运行、Java Runtime、进程生命周期、安装器、安全与签名影响。
+- 只有新的 ACCEPTED ADR 明确选择方案后，才进入 Desktop 交付里程碑。
+- 如果 Desktop 方案未达到接受门槛，V0.2 仍以现有 Web-first JAR 与启动脚本发布；Desktop 延后，不阻塞最低发布范围。
+
+### Deferred Beyond V0.2
+
+- T-0404 Mapper Detection。
+- Gradle、其他语言生态、完整方法调用图、运行时追踪、Git 历史分析。
+- AI / RAG / Agent、自动改码、Cloud / Team Workspace、编辑器插件。
+- 自动更新、应用商店分发、通用 Desktop API，以及没有性能证据支持的前端拆包。
+
+V0.2 按 M11 至 M16 顺序执行，一个 Milestone 完成并验证后再进入下一个 Milestone。`v0.1.0` 在 V0.2 发布前继续是当前正式版本；M11 的范围冻结不修改产品版本号或发布物。
+
+## 35. Current Stage
 
 RepoOnboard 当前处于：
 
-> **M7 — Local Web UI**
+> **V0.2 / M11 — Scope & Release Contract Complete**
 
-M0 至 M6 及 **T-0701 至 T-0703** 已完成。CLI 已把统一报告交给仅绑定 loopback 的本地服务；Vue 前端已有集中视觉系统、响应式产品 Shell，以及基于报告事实的 Repository Overview。当前下一任务是 **T-0704 — Module Explorer**，只呈现可确认的模块结构和元数据，不提前实现 Architecture 或后续页面。
+M0 至 M10 和 V0.1.0 公开发布已完成。M11 已冻结 V0.2 的必需范围、Desktop 决策门禁和延后项；当前下一任务是 **T-1201 — Spring Data Repository Inheritance**。不得提前实现 M13 的界面双语、M14 的 Desktop 试验或 M15 的条件交付。
 
-## 35. Project Direction Summary
+## 36. Project Direction Summary
 
 RepoOnboard 的长期方向：
 
@@ -1295,6 +1329,20 @@ Architecture / API / Dependency Analysis
 Interactive Onboarding Map
 ```
 
+V0.2：
+
+```text
+V0.1 Verified Baseline
+↓
+Confirmed Spring Accuracy Fixes
+↓
+English / 中文 Product Interface
+↓
+Desktop Technical Decision
+↓
+Regression-verified V0.2 Release
+```
+
 核心原则始终保持：
 
 > Understand first. Modify later.
@@ -1304,5 +1352,3 @@ Interactive Onboarding Map
 > Accurate before impressive.
 
 > One ecosystem done well before many ecosystems done poorly.
-
-这版我更建议作为真正长期使用的 `PROJECT.md`：**产品层面明确是多语言，工程层面 V0.1 明确只打 Java/S

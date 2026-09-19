@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **V0.1.0 — Released**
+> **V0.2 / M11 — Scope & Release Contract Complete**
 
-M0 至 M10 已完成，`v0.1.0` 已通过跨平台门禁并作为 GitHub Release 发布。当前 `master` 包含尚未发布的 workbench、Architecture 视觉更新及其 UI hardening；可选 T-0404 与需要独立决策的 V0.2 候选继续按 TODO.md 延后。
+M0 至 M10 已完成，`v0.1.0` 已通过跨平台门禁并作为 GitHub Release 发布。M11 已在 PROJECT.md 与 TODO.md 中冻结 V0.2 产品范围和发布门禁；当前 `master` 尚未成为 V0.2 Release。下一任务是 T-1201，M13–M16 不得提前启动。
 
 ---
 
@@ -158,7 +158,7 @@ M0 至 M10 已完成，`v0.1.0` 已通过跨平台门禁并作为 GitHub Release
 
 这些决策来自 T-0001 技术方案、T-0002 架构评审及随后明确的继续执行确认。具体约束、验证门槛和重新评估条件见 Decision Index 与正式 ADR。
 
-V0.1 的 JAR 与启动脚本发布方式已由 ADR-0016 确定；Desktop 容器、原生安装器与自带运行时由 ADR-0017 延后到 V0.2 候选。精确依赖补丁版本、图阈值等可逆实现细节由对应任务在 ADR 约束内确定。
+V0.1 的 JAR 与启动脚本发布方式已由 ADR-0016 确定。ADR-0017 继续有效：M14 可以评估 `jpackage` 与 Tauri 2，但 M11 没有选择 Desktop 技术；只有 T-1404 形成新的 ACCEPTED ADR 后才可激活 M15。若结论为 DEFER，V0.2 仍以 Web-first JAR 与启动脚本发布。M11 是产品范围冻结，不新增或暗中替换架构决策。
 
 ---
 
@@ -2096,6 +2096,9 @@ Product Direction
 V0.1 Scope
 ✓ Defined
 
+V0.2 Scope and Release Contract
+✓ Defined
+
 Architecture Constraints
 ✓ Defined
 
@@ -2116,12 +2119,20 @@ Implementation
 ✓ M8 Start Here complete
 ✓ M9 Regression & Real Repository Validation complete
 ✓ M10 Release Preparation complete
+
+V0.2 Execution
+✓ M11 Scope & Release Contract complete
+○ M12 Analyzer Accuracy Closure next
+○ M13 English / 中文 Product Interface not started
+○ M14 Desktop Technical Evaluation not started
+○ M15 Conditional Desktop Delivery inactive
+○ M16 Regression & Release not started
 ```
 
 下一步：
 
-> 在开始下一阶段或创建新 Release 前明确范围与版本。
+> 执行 T-1201；完成并验证 M12 后再进入 M13。
 
-V0.1 已关闭；后续新增前端页面仍先由 Codex 根据 TODO、公共模型和当前实现提供 Data Contract Audit / Stitch 设计方案，用户完成 Stitch 设计后再进入 Vue 实现与浏览器验证。Desktop 容器与界面双语等 V0.2 候选不得从当前架构决策中自动启动。
+V0.1 已关闭，`v0.1.0` 仍是当前正式版本。V0.2 保持 Java + Maven + Spring Boot、Local-first、Deterministic 和 Explainable 边界。M13 新增 Settings 页面时仍须先由 Codex 根据 TODO、公共模型和当前实现提供 Data Contract Audit / Stitch 设计方案，用户完成 Stitch 设计后再进入 Vue 实现与浏览器验证。M14 的技术试验不代表 M15 已获授权，Desktop 交付必须由新的 ACCEPTED ADR 激活。
 
 ````
