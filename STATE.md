@@ -2,7 +2,7 @@
 
 ## 1. 当前阶段
 
-RepoOnboard 已完成 **M11 — V0.2 Scope & Release Contract**；`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
+RepoOnboard 已完成 **M12 — Analyzer Accuracy Closure**；`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
@@ -25,7 +25,8 @@ RepoOnboard 已完成 **M11 — V0.2 Scope & Release Contract**；`v0.1.0` 仍�
 - `master` 已在 V0.1.0 发布后引入新的 workbench Shell、repository/module 导航上下文、浅色/深色切换以及带组件角色、package/module 和确认入向/出向数量的 Architecture 卡片式图谱。这些变化尚未进入新 Release。
 - V0.1 当前没有未完成的必需功能任务；当前 `master` 的外部字体回归与已知发布后主题/布局 hardening 均已完成，不改变分析 facts、Evidence 或 schema。
 - **T-1101** 已完成；V0.2 定位为 Accuracy & Accessible Local Experience，最低发布范围包含两项已确认分析缺口、English / 中文产品界面和完整回归发布。Desktop 必须先完成 M14 技术评估，且只有新 ACCEPTED ADR 才能激活 M15；Desktop 延后不阻塞 V0.2。
-- Java 21 / Maven 3.9.16 当前运行 89 项前端测试和 169 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。T-0901 至 T-0907 均不构建或执行 fixture/目标应用。
+- **T-1201 至 T-1203** 已完成；Spring Data 直接基类继承和唯一已知 Spring wildcard annotation 现在可以确定性确认。固定 Petclinic 补回 3 个 Repository 和 6 条确认边；固定 JHipster 补回 3 个 REST Controller、14 个 Endpoint 和 7 条确认边。旧记录的 13 个 Endpoint 实为人工少算一个双路径 mapping。
+- Java 21 / Maven 3.9.16 当前运行 89 项前端测试和 172 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。Fixture 与固定真实目标均未构建或执行。
 
 ## 2. 已完成任务
 
@@ -96,6 +97,12 @@ RepoOnboard 已完成 **M11 — V0.2 Scope & Release Contract**；`v0.1.0` 仍�
 ### M11 — V0.2 Scope & Release Contract
 
 - **T-1101**：冻结 V0.2 必需范围、一个 Milestone 一次执行的顺序、Desktop 评估/交付分离门禁及明确延后项；没有修改版本号、实现 M12+ 功能或引入新依赖。
+
+### M12 — Analyzer Accuracy Closure
+
+- **T-1201**：Java facts 新增带 SourceLocation 的直接父类型；Spring 组件分析器仅对 interface 直接继承的已知 Spring Data core / JPA repository base 生成 Repository，Evidence 位于继承子句。固定 Petclinic 的 3 个 Repository 和 6 条确认依赖已补回。
+- **T-1202**：多个 wildcard import 下，只要已知 Spring qualified-name 候选唯一即可确认；显式或已知多候选仍保持 ambiguous。固定 JHipster 的 3 个 REST Controller、14 个 Endpoint 和 7 条确认依赖已补回。
+- **T-1203**：新增 `spring-accuracy-project` 端到端回归并复核两个固定真实仓库；结果、Diagnostic 变化和旧 Endpoint 计数修正记录在 `docs/validation/T-1203-ACCURACY-REVALIDATION.md`。
 
 ## 3. 当前实现能力
 
@@ -215,8 +222,8 @@ RepoOnboard
 - **分析范围有限**：不支持 Java/Maven/Spring Boot 以外的生态；Maven 不联网、不执行插件/生命周期、不计算传递依赖；Java/Spring 采用保守静态分析，不覆盖运行时代理、反射和动态注册。
 - **Source Navigation 边界**：Source Navigation 已作为 Architecture / API 的跨页面辅助表面交付，不是独立一级导航，也不读取源码正文或提供 IDE 动作。
 - **图规模受限**：筛选后的范围超过 60 个组件或 120 条确认关系时，页面明确显示匹配与隐藏数量并停止绘图；用户可继续通过完整搜索列表选择组件，或用组件类型与所选组件一阶邻域缩小范围。
-- **Spring Data Repository 识别缺口**：当前组件规则不把仅继承 Spring Data repository 基类且无直接 `@Repository` 的接口识别为 Repository；Spring Petclinic 因此漏报 3 个组件，6 条真实构造器注入边只保留为 unresolved。
-- **Wildcard import 组件漏报**：当前注解解析器在同一文件存在多个 wildcard import 时保守判为 ambiguous，即使只有一个 wildcard 包能提供已知 Spring 注解。JHipster Sample Application 因此漏报 3 个直接 `@RestController`、13 个 Endpoint 和 7 条项目内确认依赖；每个文件均有明确诊断，不生成误报。
+- **Spring Data Repository 继承边界**：M12 支持 interface 直接继承保守白名单内的 Spring Data core / JPA repository base；任意项目内中间 repository 层级和未列入的 store-specific base 不自动推断，避免依赖外部 classpath 猜测。
+- **Wildcard annotation 边界**：M12 在多个 wildcard import 中仅确认唯一的已知 Spring qualified-name 候选；显式冲突或多个已知候选仍保持 ambiguous，不尝试扫描外部 classpath。
 - **真实仓库 UI 密度**：中型 JHipster 仓库的 30 节点 Architecture 默认图较密且外侧标签可能裁切；按组件类型筛选会持续显示 hidden/unresolved 计数，选中组件后一阶邻域可生成清晰的小图。API 宽表的 source 列在 1280 px 下仍可能需要横向滚动。当前均不阻塞发布，但应写入 V0.1 使用说明。
 - **大型仓库边界**：ThingsBoard 试验在 3,834 个 main Java file 上完成但进程峰值达到 648.23 MiB，并产生 1,719 条诊断；当前诊断视图不适合大规模逐项 triage。重复 Maven leaf module 名在选择器中没有路径区分，581 个 API row 一次性渲染；52 节点/77 关系的预算内图仍可能不可读。V0.1 不承诺完整支持同规模仓库。
 - **Onboarding 证据有限**：首次接触者能较快定位 API 和 Start Here 前三个文件，但入口、模块和 unresolved 依赖任务仍令人困惑；没有逐项计时、完整答案记录或手工源码对照组。英语产品文案可能是干扰变量，M13 将提供选择性界面翻译。V0.1 不宣称已经量化证明比手工阅读更快。
@@ -226,14 +233,13 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M12**：T-1201 Spring Data Repository Inheritance、T-1202 multi-wildcard Spring annotation resolution、T-1203 回归与真实仓库复核。
 - **M13**：English / 中文产品界面；只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。
 - **M14**：Desktop 技术评估与 ADR；**M15** 仅在 ADR 接受后激活；**M16** 完成 V0.2 回归与发布。
 
 ## 9. 下一步
 
-执行 **T-1201 — Spring Data Repository Inheritance**。只完成该任务及其最窄充分验证，不提前开始 T-1202 或 M13–M16。M12 完成并验证后再进入 M13。
+执行 **T-1301 — Product Copy and Data-boundary Audit**，随后完成 **T-1302 — Settings Data Contract and Stitch Handoff**。用户完成并导入 Stitch 设计前，不开始 T-1303 localization foundation 或 Settings Vue 实现；M14–M16 不提前启动。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 与 T-1001 至 T-1008 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告为 schema `1.2` 且兼容读取 `1.0` / `1.1`。当前 `master` 的发布后 workbench、主题和 Architecture hardening 已通过本地完整 `clean verify`，尚未成为新 Release。M11 / T-1101 已冻结 V0.2 路线：M12 修复两个真实仓库已确认的 Spring 分析缺口，M13 提供 English / 中文产品界面且不翻译代码与 Evidence，M14 评估 jpackage 与 Tauri 2，M15 仅在新 ACCEPTED ADR 后激活，M16 完成回归与发布；Desktop 延后不阻塞 V0.2。当前只执行 T-1201，可选 T-0404 继续延后。每个后续 T 独立测试、更新 TODO/STATE，并在发布前通过 GitHub 跨平台工作流。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告仍为 schema `1.2`，兼容读取 `1.0` / `1.1`。M11 已冻结 V0.2 路线；M12 / T-1201 至 T-1203 已完成，新增内部 direct-supertype fact，但未改变公共 schema。固定 Petclinic 现为 13 component / 6 confirmed component edge，固定 JHipster 现为 33 component / 38 endpoint / 14 confirmed component edge；完整记录见 T-1203 validation。下一步只完成 T-1301 产品文案边界审计和 T-1302 Settings Data Contract / Stitch handoff，等待用户设计后再实现 T-1303+；M14 评估 jpackage 与 Tauri 2，M15 仍须新 ACCEPTED ADR 激活，M16 完成回归与发布。可选 T-0404 继续延后。

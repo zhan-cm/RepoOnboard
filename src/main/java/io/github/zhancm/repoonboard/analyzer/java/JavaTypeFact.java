@@ -12,6 +12,7 @@ public record JavaTypeFact(
         Optional<String> enclosingType,
         JavaTypeKind kind,
         List<JavaAnnotationFact> annotations,
+        List<JavaTypeReferenceFact> directSuperTypes,
         List<JavaFieldFact> fields,
         List<JavaConstructorFact> constructors,
         List<JavaMethodFact> methods,
@@ -26,6 +27,7 @@ public record JavaTypeFact(
         }
         kind = Objects.requireNonNull(kind, "kind");
         annotations = List.copyOf(Objects.requireNonNull(annotations, "annotations"));
+        directSuperTypes = List.copyOf(Objects.requireNonNull(directSuperTypes, "directSuperTypes"));
         fields = List.copyOf(Objects.requireNonNull(fields, "fields"));
         constructors = List.copyOf(Objects.requireNonNull(constructors, "constructors"));
         methods = List.copyOf(Objects.requireNonNull(methods, "methods"));

@@ -105,7 +105,7 @@ Web UI                   ✓
 Real-world Validation    ✓
 Public Release           ✓
 V0.2 Scope Contract      ✓
-V0.2 Accuracy Work       ○
+V0.2 Accuracy Work       ✓
 V0.2 Product Language    ○
 Desktop Evaluation       ○
 V0.2 Release             ○
@@ -125,7 +125,7 @@ Legend:
 
 # 5. Current Priority
 
-M11 已冻结 V0.2 范围与发布契约。当前只进入 **M12 — Analyzer Accuracy Closure**，下一任务是 **T-1201 — Spring Data Repository Inheritance**。M13 界面双语、M14 Desktop 技术试验和条件式 M15 不得提前实现；可选 T-0404 继续延后。`v0.1.0` 在 V0.2 发布前仍是当前正式版本。
+M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。当前进入 **M13 — English / 中文 Product Interface** 的设计阶段；下一任务是 **T-1301 — Product Copy and Data-boundary Audit**，随后完成 T-1302 Data Contract / Stitch handoff。在用户完成并导入 Stitch 设计前，不实现 Settings 页面或 T-1303+。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
 
 ---
 
@@ -2843,7 +2843,7 @@ Close the two confirmed Spring accuracy gaps without weakening conservative reso
 Status:
 
 ```text
-[ ]
+[x] Completed — 2026-09-19
 ```
 
 Scope:
@@ -2853,12 +2853,14 @@ Scope:
 - 恢复由这些 Repository 支持的唯一可确认构造器注入边；不猜测歧义目标。
 - 用受控 fixture 和固定 Spring Petclinic 验证已记录的 3 个组件与 6 条关系缺口。
 
+Validation: 新增直接父类型 Java fact 和保守的 Spring Data base matcher；固定 Petclinic 现报告 13 个组件，3 个 Repository 均带继承 Evidence，6 条构造器注入全部转为 confirmed，相关 unresolved Diagnostic 清零。
+
 ### T-1202 — Deterministic Multi-wildcard Spring Annotation Resolution
 
 Status:
 
 ```text
-[ ]
+[x] Completed — 2026-09-19
 ```
 
 Scope:
@@ -2867,12 +2869,14 @@ Scope:
 - 多个候选或证据不足时继续保持 ambiguous / unresolved，不降低准确性门槛。
 - 用受控 fixture 和固定 JHipster Sample Application 验证已记录的 Controller、Endpoint 与依赖缺口。
 
+Validation: 唯一已知 Spring wildcard 候选可确认，多候选仍拒绝。固定 JHipster 现报告 33 个组件、38 个 Endpoint、14 条 confirmed 组件依赖；3 条 annotation ambiguous Diagnostic 清零。旧记录的 13 个 Endpoint 漏报实际为 14 个，因为一个 `@PutMapping` 声明两个最终路径。
+
 ### T-1203 — Accuracy Regression and Real-repository Revalidation
 
 Status:
 
 ```text
-[ ]
+[x] Completed — 2026-09-19
 ```
 
 Scope:
@@ -2881,13 +2885,15 @@ Scope:
 - 对比修复前后的组件、Endpoint、确认关系和 Diagnostic，确认没有新增推测边。
 - 更新已知限制和验证记录；不顺带实现 Mapper 或新生态支持。
 
+Validation: `spring-accuracy-project` 重复分析结果一致，固定两个真实仓库未修改、未构建、未运行；完整 `clean verify` 运行 89 项前端测试和 172 项 Java 测试，生产 UI、可执行 JAR、离线 fixture、报告路由与 PackagedUiVerifier 全部通过。复核记录见 `docs/validation/T-1203-ACCURACY-REVALIDATION.md`。
+
 M12 Exit Gate:
 
 ```text
-T-1201 through T-1203 complete
-Relevant tests pass
-Petclinic and JHipster gaps are revalidated
-No conservative-resolution regression is known
+[x] T-1201 through T-1203 complete
+[x] Relevant tests pass
+[x] Petclinic and JHipster gaps are revalidated
+[x] No conservative-resolution regression is known
 ```
 
 ## M13 — English / 中文 Product Interface
@@ -3410,7 +3416,7 @@ Remaining Issues:
 
 # 30. Current Next Action
 
-M11 已完成。下一任务是 **T-1201 — Spring Data Repository Inheritance**；只完成该任务及其最窄充分验证，不提前开始 T-1202 或 M13–M16。`v0.1.0` 继续是当前正式版本。
+M12 已完成。下一任务是 **T-1301 — Product Copy and Data-boundary Audit**，随后完成 **T-1302 — Settings Data Contract and Stitch Handoff**。必须等待用户完成并导入 Stitch 设计后，才可开始 T-1303 localization foundation 或 Settings Vue 实现；M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
 
 ---
 
@@ -3449,8 +3455,8 @@ Release
 
 V0.2
 M11 Scope & Release Contract — complete
-M12 Analyzer Accuracy Closure — next
-M13 English / 中文 Product Interface — not started
+M12 Analyzer Accuracy Closure — complete
+M13 English / 中文 Product Interface — design handoff next
 M14 Desktop Technical Evaluation — not started
 M15 Conditional Desktop Delivery — inactive
 M16 Regression & Release — not started
@@ -3458,6 +3464,6 @@ M16 Regression & Release — not started
 
 Next:
 
-> **执行 T-1201；完成并验证 M12 后再进入 M13。**
+> **执行 T-1301 与 T-1302；提交 Data Contract Audit / Stitch 方案后等待用户设计。**
 
 ````

@@ -224,6 +224,7 @@ public final class JavaSourceParser {
                 enclosingType,
                 kind(declaration),
                 annotations(sourceFile, declaration),
+                directSuperTypes(sourceFile, declaration),
                 fields,
                 constructors,
                 methods,
@@ -234,6 +235,24 @@ public final class JavaSourceParser {
                 collectType(sourceFile, packageName, Optional.of(qualifiedName), nested, types);
             }
         }
+    }
+
+    private static List<JavaTypeReferenceFact> directSuperTypes(
+            JavaSourceFile sourceFile, TypeDeclaration<?> declaration) {
+        List<ClassOrInterfaceType> superTypes = new ArrayList<>();
+        if (declaration instanceof ClassOrInterfaceDeclaration classOrInterface) {
+            superTypes.addAll(classOrInterface.getExtendedTypes());
+            superTypes.addAll(classOrInterface.getImplementedTypes());
+        } else if (declaration instanceof EnumDeclaration enumDeclaration) {
+            superTypes.addAll(enumDeclaration.getImplementedTypes());
+        } else if (declaration instanceof RecordDeclaration recordDeclaration) {
+            superTypes.addAll(recordDeclaration.getImplementedTypes());
+        }
+        return superTypes.stream()
+                .map(type -> JavaTypeReferenceFact.unresolved(
+                        type.getNameWithScope(),
+                        location(sourceFile, type, type.getNameWithScope())))
+                .toList();
     }
 
     private static JavaTypeKind kind(TypeDeclaration<?> declaration) {

@@ -28,7 +28,7 @@ V0.1 公开 Demo 目标是固定 commit [`e06e87abe0be8a3a194381ce651164a734811b
 
 这段 14.4 秒 GIF 记录的是已发布的 V0.1.0 时期 UI 和固定 Demo 输入；它作为 Release 证据保留，不再作为当前 `master` 的界面展示。录制全程保留 `PARTIAL`，压缩展示已验证的运行过程，不宣称扫描只需 14.4 秒。精确哈希和画面证据见[录制记录](./docs/demo/V0.1-DEMO-MEDIA.md)。
 
-完整的固定 checkout、空缓存分析命令、预期计数、限制和四页面演示路径见 [V0.1 Demo Repository 指南](./docs/demo/V0.1-DEMO.md)。固定运行会如实产生 `PARTIAL` 报告：1 个 module、81 个 source file、30 个 component、24 个 endpoint、7 条 confirmed component edge 和 24 项 Start Here。Partial 状态和已知 wildcard-import 漏报属于演示内容，不会被隐藏。
+完整的固定 checkout、空缓存分析命令、Release 预期计数、限制和四页面演示路径见 [V0.1 Demo Repository 指南](./docs/demo/V0.1-DEMO.md)。不可变的 V0.1.0 Release 证据包含 1 个 module、81 个 source file、30 个 component、24 个 endpoint、7 条 confirmed component edge 和 24 项 Start Here。M12 后的当前 `master` 对同一 commit 报告 33 个 component、38 个 endpoint 和 14 条 confirmed component edge；源码可核对的差异见 [M12 准确性复核](./docs/validation/T-1203-ACCURACY-REVALIDATION.md)。两个结果都继续如实保持 `PARTIAL`，因为其他 Maven 与外部目标限制仍存在。
 
 如需更快的合成 smoke test，先[从源码构建](#从源码安装)，再运行仓库内的[小型确定性 Spring fixture](./src/test/resources/fixtures/spring-analysis-project)：
 
@@ -236,8 +236,8 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - V0.1 只支持 Java + Maven + Spring Boot，不支持 Gradle 和其他语言/框架。
 - 类型解析仅覆盖唯一确认的项目内声明。运行时装配、反射、生成式注册、代理和完整方法级调用图不属于 V0.1。
 - MyBatis/MyBatis-Plus Mapper 专用分类仍延后。
-- 仅继承 Spring Data repository 基类且没有直接 `@Repository` 的接口目前会漏报。固定 Petclinic 验证中因此缺少 3 个 Repository 组件，并使后续 6 条注入关系保持 unresolved。
-- 多个 wildcard import 可能使已知 Spring 注解被保守判为 ambiguous。固定 JHipster 验证中因此漏报 3 个 Controller、13 个 Endpoint 和 7 条确认依赖，而没有补造事实。
+- M12 已支持 interface 直接继承保守白名单内的 Spring Data core/JPA repository base。任意项目内中间 repository 层级和未列入的 store-specific base 不会在缺少外部 classpath 时被推断。
+- 多个 wildcard import 下，只有唯一已知 Spring qualified-name 候选会被确认；显式冲突或多个已知候选仍保持 ambiguous。
 - 筛选范围超过 60 个组件或 120 条确认边时，Architecture 会停止绘图；但预算内图仍可能在语义上过密。组件列表始终可用。
 - API row 与 Diagnostic 尚未虚拟化或分页。ThingsBoard 边界试验完成了 3,834 个 main Java file，但观察到 648.23 MiB 进程峰值、1,719 条诊断、581 个 API row、重复模块名歧义和仍可能不可读的图。RepoOnboard **不宣称完整支持**同等规模仓库。
 - 在 1280 px 视口下，中型仓库 Architecture 外侧标签可能裁切，API source 列可能需要横向滚动。
@@ -250,6 +250,7 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 - [最小确定性 Spring 回归 fixture](./src/test/resources/fixtures/spring-analysis-project)
 - [小型仓库：Spring Petclinic](./docs/validation/T-0904-SPRING-PETCLINIC.md)
 - [中型仓库：JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
+- [V0.2 M12 准确性复核](./docs/validation/T-1203-ACCURACY-REVALIDATION.md)
 - [大型边界试验：ThingsBoard](./docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
 - [首次接触上手观察](./docs/validation/T-0907-ONBOARDING-VALUE.md)
 - [Windows/macOS/Linux 发布门禁](https://github.com/zhan-cm/RepoOnboard/actions/workflows/release.yml)
@@ -260,7 +261,7 @@ Spring Boot 检测使用声明的 `spring-boot-starter-parent`、导入的 `spri
 
 M0–M10 与 V0.1.0 公开发布均已完成。M11 已将 V0.2 范围冻结为 **Accuracy & Accessible Local Experience**；当前里程碑计划与门禁记录在 [TODO.md](./TODO.md)。V0.2 开发期间，V0.1.0 仍是当前正式版本。
 
-V0.2 继续只支持 Java + Maven + Spring Boot，并保持本地优先、确定性和可解释的分析边界。M12 修复已确认的 Spring Data Repository 继承识别与多个 wildcard import 注解解析缺口。M13 提供选择性的 English/中文产品界面切换：只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
+V0.2 继续只支持 Java + Maven + Spring Boot，并保持本地优先、确定性和可解释的分析边界。M12 已通过受控 fixture 和固定真实仓库关闭 Spring Data Repository 继承识别与多个 wildcard import 注解解析缺口。下一步 M13 先完成产品文案/数据边界审计和 Settings Data Contract / Stitch handoff，等待用户审阅设计后才实现。English/中文切换只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、路径、类名、API、框架术语和原始 Evidence 保持原文。
 
 M14 将用包体、启动时间、内存、离线运行、Runtime、进程生命周期、安装器、安全和签名证据评估 `jpackage` 与 Tauri 2。Desktop 交付必须由新的 ACCEPTED ADR 激活；如果方案未通过接受门槛，V0.2 仍通过现有 Web-first 可执行 JAR 与 Windows/POSIX 启动脚本发布。
 

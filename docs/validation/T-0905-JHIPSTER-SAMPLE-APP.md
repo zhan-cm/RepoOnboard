@@ -1,5 +1,9 @@
 # T-0905 — JHipster Sample Application Validation
 
+> Historical V0.1 snapshot. The wildcard-import false negatives recorded here were
+> closed and revalidated in [T-1203](./T-1203-ACCURACY-REVALIDATION.md); that audit
+> also corrects the affected Endpoint count from 13 to 14.
+
 ## Validation target
 
 - Repository: <https://github.com/jhipster/jhipster-sample-app>

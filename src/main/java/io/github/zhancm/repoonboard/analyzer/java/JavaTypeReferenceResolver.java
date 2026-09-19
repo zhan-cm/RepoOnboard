@@ -51,8 +51,32 @@ public final class JavaTypeReferenceResolver {
         List<JavaTypeReferenceFact> references = unit.typeReferences().stream()
                 .map(reference -> resolveReference(reference, unit, index, visibleModules))
                 .toList();
+        List<JavaTypeFact> types = unit.types().stream()
+                .map(type -> resolveType(type, unit, index, visibleModules))
+                .toList();
         return new JavaCompilationUnitFact(
-                unit.sourceFile(), unit.packageName(), unit.imports(), unit.types(), references);
+                unit.sourceFile(), unit.packageName(), unit.imports(), types, references);
+    }
+
+    private static JavaTypeFact resolveType(
+            JavaTypeFact type,
+            JavaCompilationUnitFact unit,
+            JavaDeclarationIndex index,
+            Set<String> visibleModules) {
+        List<JavaTypeReferenceFact> directSuperTypes = type.directSuperTypes().stream()
+                .map(reference -> resolveReference(reference, unit, index, visibleModules))
+                .toList();
+        return new JavaTypeFact(
+                type.simpleName(),
+                type.qualifiedName(),
+                type.enclosingType(),
+                type.kind(),
+                type.annotations(),
+                directSuperTypes,
+                type.fields(),
+                type.constructors(),
+                type.methods(),
+                type.location());
     }
 
     private static JavaTypeReferenceFact resolveReference(

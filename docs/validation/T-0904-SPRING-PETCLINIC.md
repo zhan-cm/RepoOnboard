@@ -1,5 +1,8 @@
 # T-0904 — Spring Petclinic Validation
 
+> Historical V0.1 snapshot. The Spring Data false negatives recorded here were
+> closed and revalidated in [T-1203](./T-1203-ACCURACY-REVALIDATION.md).
+
 ## Validation target
 
 - Repository: <https://github.com/spring-projects/spring-petclinic>

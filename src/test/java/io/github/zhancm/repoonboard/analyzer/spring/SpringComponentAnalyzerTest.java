@@ -71,8 +71,8 @@ class SpringComponentAnalyzerTest {
                 """);
         write("src/main/java/demo/Ambiguous.java", """
                 package demo;
-                import org.springframework.stereotype.*;
-                import example.other.*;
+                import org.springframework.stereotype.Service;
+                import example.other.Service;
                 @Service class Ambiguous {}
                 """);
         write("src/main/java/demo/Conflicting.java", """
@@ -99,6 +99,63 @@ class SpringComponentAnalyzerTest {
                 diagnostic.code().equals("SPRING_COMPONENT_KIND_AMBIGUOUS")));
         assertTrue(analysis.diagnostics().stream().anyMatch(diagnostic ->
                 diagnostic.code().equals("SPRING_COMPONENT_NAME_UNRESOLVED")));
+    }
+
+    @Test
+    void confirmsUniqueSpringWildcardAndSpringDataRepositoryInheritance() throws IOException {
+        Files.writeString(temporaryDirectory.resolve("pom.xml"), """
+                <project><modelVersion>4.0.0</modelVersion><groupId>fixture</groupId>
+                <artifactId>accuracy</artifactId><version>1</version></project>
+                """);
+        write("src/main/java/demo/OwnerRepository.java", """
+                package demo;
+                import org.springframework.data.repository.Repository;
+                interface OwnerRepository extends Repository<Owner, Long> {}
+                """);
+        write("src/main/java/demo/VisitRepository.java", """
+                package demo;
+                import java.util.*;
+                import org.springframework.data.repository.*;
+                interface VisitRepository extends CrudRepository<Visit, Long> {}
+                """);
+        write("src/main/java/demo/NotARepository.java", """
+                package demo;
+                class NotARepository implements org.springframework.data.repository.Repository<Object, Long> {}
+                """);
+        write("src/main/java/demo/LocalRepository.java", """
+                package demo;
+                interface LocalRepository extends example.Repository<Object, Long> {}
+                """);
+        write("src/main/java/demo/OwnerController.java", """
+                package demo;
+                import java.util.*;
+                import org.springframework.web.bind.annotation.*;
+                @RestController class OwnerController {}
+                """);
+
+        SpringComponentAnalysis analysis = new SpringComponentAnalyzer().analyze(
+                parse(temporaryDirectory, temporaryDirectory.resolve("cache")));
+
+        assertEquals(AnalysisStatus.SUCCESS, analysis.status());
+        Map<String, SpringComponentFact> components = analysis.components().stream()
+                .collect(Collectors.toMap(SpringComponentFact::qualifiedName, Function.identity()));
+        assertEquals(3, components.size());
+        assertComponent(components, "demo.OwnerRepository", SpringComponentKind.REPOSITORY,
+                "ownerRepository");
+        assertComponent(components, "demo.VisitRepository", SpringComponentKind.REPOSITORY,
+                "visitRepository");
+        assertComponent(components, "demo.OwnerController", SpringComponentKind.REST_CONTROLLER,
+                "ownerController");
+        assertFalse(components.containsKey("demo.NotARepository"));
+        assertFalse(components.containsKey("demo.LocalRepository"));
+
+        SpringComponentFact repository = components.get("demo.OwnerRepository");
+        assertEquals("SPRING_DATA_REPOSITORY_INHERITANCE",
+                repository.evidence().getFirst().type());
+        assertEquals(
+                "spring.component.repository_inheritance:org.springframework.data.repository.Repository",
+                repository.evidence().getFirst().ruleId());
+        assertEquals(3, repository.evidence().getFirst().location().startLine().orElseThrow());
     }
 
     @Test

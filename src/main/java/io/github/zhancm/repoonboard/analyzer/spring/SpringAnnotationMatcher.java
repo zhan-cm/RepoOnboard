@@ -19,20 +19,28 @@ final class SpringAnnotationMatcher {
             JavaCompilationUnitFact unit,
             Set<String> knownQualifiedNames) {
         Objects.requireNonNull(annotation, "annotation");
+        return resolve(annotation.name(), unit, knownQualifiedNames);
+    }
+
+    static SpringAnnotationResolution resolve(
+            String name,
+            JavaCompilationUnitFact unit,
+            Set<String> knownQualifiedNames) {
+        Objects.requireNonNull(name, "name");
         Objects.requireNonNull(unit, "unit");
         Objects.requireNonNull(knownQualifiedNames, "knownQualifiedNames");
 
-        if (knownQualifiedNames.contains(annotation.name())) {
-            return SpringAnnotationResolution.confirmed(annotation.name());
+        if (knownQualifiedNames.contains(name)) {
+            return SpringAnnotationResolution.confirmed(name);
         }
-        if (annotation.name().contains(".")) {
+        if (name.contains(".")) {
             return SpringAnnotationResolution.notConfirmed();
         }
 
         List<String> explicitImports = unit.imports().stream()
                 .filter(importFact -> !importFact.wildcard())
                 .map(JavaImportFact::name)
-                .filter(name -> simpleName(name).equals(annotation.name()))
+                .filter(importedName -> simpleName(importedName).equals(name))
                 .distinct()
                 .toList();
         if (!explicitImports.isEmpty()) {
@@ -52,7 +60,7 @@ final class SpringAnnotationMatcher {
                 .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
         Set<String> candidates = new LinkedHashSet<>();
         for (String packageName : wildcardPackages) {
-            String candidate = packageName + "." + annotation.name();
+            String candidate = packageName + "." + name;
             if (knownQualifiedNames.contains(candidate)) {
                 candidates.add(candidate);
             }
@@ -60,7 +68,7 @@ final class SpringAnnotationMatcher {
         if (candidates.isEmpty()) {
             return SpringAnnotationResolution.notConfirmed();
         }
-        if (candidates.size() == 1 && wildcardPackages.size() == 1) {
+        if (candidates.size() == 1) {
             return SpringAnnotationResolution.confirmed(candidates.iterator().next());
         }
         return SpringAnnotationResolution.ambiguous();

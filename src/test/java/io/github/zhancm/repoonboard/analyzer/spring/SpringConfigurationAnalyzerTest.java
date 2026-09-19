@@ -52,28 +52,29 @@ class SpringConfigurationAnalyzerTest {
     }
 
     @Test
-    void ambiguousWildcardConfigurationAnnotationIsNotGuessed() throws IOException {
+    void uniqueKnownWildcardConfigurationAnnotationIsConfirmed() throws IOException {
         Files.writeString(temporaryDirectory.resolve("pom.xml"), """
                 <project><modelVersion>4.0.0</modelVersion><groupId>fixture</groupId>
                 <artifactId>ambiguous-config</artifactId><version>1</version></project>
                 """);
-        Path source = temporaryDirectory.resolve("src/main/java/demo/AmbiguousConfiguration.java");
+        Path source = temporaryDirectory.resolve("src/main/java/demo/MultiWildcardConfiguration.java");
         Files.createDirectories(source.getParent());
         Files.writeString(source, """
                 package demo;
                 import org.springframework.context.annotation.*;
                 import example.other.*;
-                @Configuration class AmbiguousConfiguration {}
+                @Configuration class MultiWildcardConfiguration {}
                 """);
 
         SpringConfigurationAnalysis analysis = new SpringConfigurationAnalyzer().analyze(
                 parse(temporaryDirectory, temporaryDirectory.resolve("cache")));
 
-        assertEquals(AnalysisStatus.PARTIAL, analysis.status());
-        assertTrue(analysis.configurations().isEmpty());
+        assertEquals(AnalysisStatus.SUCCESS, analysis.status());
+        assertEquals(1, analysis.configurations().size());
+        assertEquals("demo.MultiWildcardConfiguration",
+                analysis.configurations().getFirst().qualifiedName());
         assertTrue(analysis.entryPoints().isEmpty());
-        assertTrue(analysis.diagnostics().stream().anyMatch(diagnostic ->
-                diagnostic.code().equals("SPRING_CONFIGURATION_ANNOTATION_AMBIGUOUS")));
+        assertTrue(analysis.diagnostics().isEmpty());
     }
 
     @Test

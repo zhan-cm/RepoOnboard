@@ -144,9 +144,9 @@ TODO 不能自行改变架构。
 
 当前 RepoOnboard 处于：
 
-> **V0.2 / M11 — Scope & Release Contract Complete**
+> **V0.2 / M12 — Analyzer Accuracy Closure Complete**
 
-M0 至 M10 已完成，`v0.1.0` 已通过跨平台门禁并作为 GitHub Release 发布。M11 已在 PROJECT.md 与 TODO.md 中冻结 V0.2 产品范围和发布门禁；当前 `master` 尚未成为 V0.2 Release。下一任务是 T-1201，M13–M16 不得提前启动。
+M0 至 M10 已完成，`v0.1.0` 已通过跨平台门禁并作为 GitHub Release 发布。M11 已冻结 V0.2 产品范围，M12 已关闭两个真实仓库确认的分析缺口；当前 `master` 尚未成为 V0.2 Release。下一任务是 T-1301 / T-1302 设计交付，用户导入 Stitch 设计前不得实现 T-1303+，M14–M16 不得提前启动。
 
 ---
 
@@ -2122,8 +2122,8 @@ Implementation
 
 V0.2 Execution
 ✓ M11 Scope & Release Contract complete
-○ M12 Analyzer Accuracy Closure next
-○ M13 English / 中文 Product Interface not started
+✓ M12 Analyzer Accuracy Closure complete
+○ M13 English / 中文 Product Interface design handoff next
 ○ M14 Desktop Technical Evaluation not started
 ○ M15 Conditional Desktop Delivery inactive
 ○ M16 Regression & Release not started
@@ -2131,7 +2131,7 @@ V0.2 Execution
 
 下一步：
 
-> 执行 T-1201；完成并验证 M12 后再进入 M13。
+> 执行 T-1301 / T-1302；完成 Data Contract Audit / Stitch handoff 后等待用户设计。
 
 V0.1 已关闭，`v0.1.0` 仍是当前正式版本。V0.2 保持 Java + Maven + Spring Boot、Local-first、Deterministic 和 Explainable 边界。M13 新增 Settings 页面时仍须先由 Codex 根据 TODO、公共模型和当前实现提供 Data Contract Audit / Stitch 设计方案，用户完成 Stitch 设计后再进入 Vue 实现与浏览器验证。M14 的技术试验不代表 M15 已获授权，Desktop 交付必须由新的 ACCEPTED ADR 激活。
 

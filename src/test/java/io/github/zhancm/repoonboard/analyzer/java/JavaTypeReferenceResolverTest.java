@@ -132,6 +132,32 @@ class JavaTypeReferenceResolverTest {
                 .allMatch(reference -> reference.status() == JavaTypeReferenceStatus.UNRESOLVED));
     }
 
+    @Test
+    void preservesAndResolvesDirectSuperTypeFacts() throws IOException {
+        pom("", "app", "");
+        java("src/main/java/demo/Subject.java", """
+                package demo;
+                import shared.ImportedBase;
+                interface Subject extends LocalBase, ImportedBase, MissingBase {}
+                interface LocalBase {}
+                """);
+        java("src/main/java/shared/ImportedBase.java",
+                "package shared; public interface ImportedBase {}\n");
+
+        JavaTypeFact subject = resolved().compilationUnits().stream()
+                .flatMap(unit -> unit.types().stream())
+                .filter(type -> type.qualifiedName().equals("demo.Subject"))
+                .findFirst()
+                .orElseThrow();
+        Map<String, JavaTypeReferenceFact> superTypes = subject.directSuperTypes().stream()
+                .collect(Collectors.toMap(JavaTypeReferenceFact::name, Function.identity()));
+
+        assertEquals(3, superTypes.size());
+        assertResolved(superTypes, "LocalBase", "demo.LocalBase");
+        assertResolved(superTypes, "ImportedBase", "shared.ImportedBase");
+        assertEquals(JavaTypeReferenceStatus.UNRESOLVED, superTypes.get("MissingBase").status());
+    }
+
     private JavaParseAnalysis resolved() {
         var moduleAnalysis = new MavenModuleAnalyzer().analyze(
                 root,

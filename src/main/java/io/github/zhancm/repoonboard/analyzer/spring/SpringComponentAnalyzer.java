@@ -9,6 +9,7 @@ import io.github.zhancm.repoonboard.analyzer.java.JavaTypeKind;
 import io.github.zhancm.repoonboard.core.model.Diagnostic;
 import io.github.zhancm.repoonboard.core.model.DiagnosticSeverity;
 import io.github.zhancm.repoonboard.core.model.Evidence;
+import io.github.zhancm.repoonboard.core.model.SourceLocation;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -52,7 +53,7 @@ public final class SpringComponentAnalyzer {
             return;
         }
 
-        Map<SpringComponentKind, List<ResolvedAnnotation>> matches = new LinkedHashMap<>();
+        Map<SpringComponentKind, List<ResolvedComponentMatch>> matches = new LinkedHashMap<>();
         boolean ambiguousComposition = false;
         for (JavaAnnotationFact annotation : type.annotations()) {
             SpringAnnotationResolution resolution = SpringAnnotationMatcher.resolve(
@@ -68,7 +69,7 @@ public final class SpringComponentAnalyzer {
                 String qualifiedName = resolution.qualifiedName().orElseThrow();
                 SpringComponentKind kind = COMPONENT_ANNOTATIONS.get(qualifiedName);
                 matches.computeIfAbsent(kind, ignored -> new ArrayList<>())
-                        .add(ResolvedAnnotation.direct(annotation, qualifiedName));
+                        .add(ResolvedComponentMatch.direct(annotation, qualifiedName, type.location()));
             } else {
                 SpringComposedAnnotationResolver.Resolution composed = composedResolver.resolve(
                         unit, annotation, COMPONENT_ANNOTATIONS.keySet());
@@ -84,53 +85,61 @@ public final class SpringComponentAnalyzer {
                 for (SpringComposedAnnotationResolver.Match composedMatch : composed.matches()) {
                     SpringComponentKind kind = COMPONENT_ANNOTATIONS.get(composedMatch.qualifiedName());
                     matches.computeIfAbsent(kind, ignored -> new ArrayList<>())
-                            .add(ResolvedAnnotation.composed(annotation, composedMatch));
+                            .add(ResolvedComponentMatch.composed(annotation, composedMatch, type.location()));
                 }
             }
         }
         if (ambiguousComposition) {
             return;
         }
+
+        SpringDataRepositoryMatcher.Resolution repositoryInheritance =
+                SpringDataRepositoryMatcher.resolve(unit, type);
+        if (repositoryInheritance.ambiguous()) {
+            diagnostics.add(diagnostic(
+                    "SPRING_DATA_REPOSITORY_INHERITANCE_AMBIGUOUS",
+                    unit,
+                    type,
+                    type.location(),
+                    "A Spring Data repository base type could not be confirmed because its imports are ambiguous."));
+        }
+        for (SpringDataRepositoryMatcher.Match inherited : repositoryInheritance.matches()) {
+            matches.computeIfAbsent(SpringComponentKind.REPOSITORY, ignored -> new ArrayList<>())
+                    .add(ResolvedComponentMatch.inherited(inherited, type.location()));
+        }
         if (matches.isEmpty()) {
             return;
         }
         if (matches.size() > 1) {
-            JavaAnnotationFact annotation = matches.values().iterator().next().getFirst().annotation();
+            ResolvedComponentMatch first = matches.values().iterator().next().getFirst();
             diagnostics.add(diagnostic(
                     "SPRING_COMPONENT_KIND_AMBIGUOUS",
                     unit,
                     type,
-                    annotation,
+                    first.evidence().location(),
                     "Multiple Spring component roles are declared or composed; no single role was selected."));
             return;
         }
 
-        Map.Entry<SpringComponentKind, List<ResolvedAnnotation>> match = matches.entrySet().iterator().next();
-        ResolvedAnnotation primary = match.getValue().getFirst();
-        Optional<String> componentName = primary.composed()
-                ? Optional.of(defaultComponentName(type.simpleName()))
-                : componentName(type, primary.annotation());
-        if (!primary.composed() && hasUnresolvedExplicitName(primary.annotation())) {
+        Map.Entry<SpringComponentKind, List<ResolvedComponentMatch>> match =
+                matches.entrySet().iterator().next();
+        Optional<JavaAnnotationFact> namingAnnotation = match.getValue().stream()
+                .flatMap(item -> item.namingAnnotation().stream())
+                .findFirst();
+        Optional<String> componentName = namingAnnotation
+                .map(annotation -> componentName(type, annotation))
+                .orElseGet(() -> Optional.of(defaultComponentName(type.simpleName())));
+        if (namingAnnotation.isPresent()
+                && hasUnresolvedExplicitName(namingAnnotation.orElseThrow())) {
             diagnostics.add(diagnostic(
                     "SPRING_COMPONENT_NAME_UNRESOLVED",
                     unit,
                     type,
-                    primary.annotation(),
+                    namingAnnotation.orElseThrow(),
                     "The explicit component name is not a directly readable string literal."));
         }
         List<Evidence> evidence = match.getValue().stream()
-                .map(annotation -> new Evidence(
-                        annotation.composed()
-                                ? "SPRING_COMPOSED_COMPONENT_ANNOTATION"
-                                : "SPRING_COMPONENT_ANNOTATION",
-                        annotation.annotation().location(),
-                        annotation.composed()
-                                ? List.of(type.location(), annotation.metaAnnotationLocation().orElseThrow())
-                                : List.of(type.location()),
-                        (annotation.composed()
-                                ? "spring.component.composed_annotation:"
-                                : "spring.component.direct_annotation:")
-                                + annotation.qualifiedName()))
+                .map(ResolvedComponentMatch::evidence)
                 .toList();
         components.add(new SpringComponentFact(
                 unit.sourceFile().modulePomFileId(),
@@ -179,30 +188,62 @@ public final class SpringComponentAnalyzer {
             JavaTypeFact type,
             JavaAnnotationFact annotation,
             String message) {
+        return diagnostic(code, unit, type, annotation.location(), message);
+    }
+
+    private static Diagnostic diagnostic(
+            String code,
+            JavaCompilationUnitFact unit,
+            JavaTypeFact type,
+            SourceLocation location,
+            String message) {
         return new Diagnostic(
                 code,
                 DiagnosticSeverity.WARNING,
                 STAGE,
                 Optional.of(unit.sourceFile().modulePomFileId()),
                 Optional.of(type.location().sourceFileId()),
-                Optional.of(annotation.location()),
+                Optional.of(location),
                 message);
     }
 
-    private record ResolvedAnnotation(
-            JavaAnnotationFact annotation,
-            String qualifiedName,
-            boolean composed,
-            Optional<io.github.zhancm.repoonboard.core.model.SourceLocation> metaAnnotationLocation) {
+    private record ResolvedComponentMatch(
+            Optional<JavaAnnotationFact> namingAnnotation,
+            Evidence evidence) {
 
-        static ResolvedAnnotation direct(JavaAnnotationFact annotation, String qualifiedName) {
-            return new ResolvedAnnotation(annotation, qualifiedName, false, Optional.empty());
+        static ResolvedComponentMatch direct(
+                JavaAnnotationFact annotation, String qualifiedName, SourceLocation typeLocation) {
+            return new ResolvedComponentMatch(
+                    Optional.of(annotation),
+                    new Evidence(
+                            "SPRING_COMPONENT_ANNOTATION",
+                            annotation.location(),
+                            List.of(typeLocation),
+                            "spring.component.direct_annotation:" + qualifiedName));
         }
 
-        static ResolvedAnnotation composed(
-                JavaAnnotationFact annotation, SpringComposedAnnotationResolver.Match match) {
-            return new ResolvedAnnotation(
-                    annotation, match.qualifiedName(), true, Optional.of(match.metaAnnotationLocation()));
+        static ResolvedComponentMatch composed(
+                JavaAnnotationFact annotation,
+                SpringComposedAnnotationResolver.Match match,
+                SourceLocation typeLocation) {
+            return new ResolvedComponentMatch(
+                    Optional.empty(),
+                    new Evidence(
+                            "SPRING_COMPOSED_COMPONENT_ANNOTATION",
+                            annotation.location(),
+                            List.of(typeLocation, match.metaAnnotationLocation()),
+                            "spring.component.composed_annotation:" + match.qualifiedName()));
+        }
+
+        static ResolvedComponentMatch inherited(
+                SpringDataRepositoryMatcher.Match match, SourceLocation typeLocation) {
+            return new ResolvedComponentMatch(
+                    Optional.empty(),
+                    new Evidence(
+                            "SPRING_DATA_REPOSITORY_INHERITANCE",
+                            match.location(),
+                            List.of(typeLocation),
+                            "spring.component.repository_inheritance:" + match.qualifiedName()));
         }
     }
 }

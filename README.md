@@ -28,7 +28,7 @@ The V0.1 public demo target is [`jhipster/jhipster-sample-app`](https://github.c
 
 The 14.4-second GIF records the published V0.1.0-era UI and fixed demo input; it is retained as release evidence rather than presented as the current `master` interface. It keeps `PARTIAL` visible and condenses the verified run rather than claiming a 14.4-second scan. See the [capture record](./docs/demo/V0.1-DEMO-MEDIA.md) for exact hashes and scene evidence.
 
-See the [V0.1 Demo Repository guide](./docs/demo/V0.1-DEMO.md) for the exact checkout, empty-cache analysis command, expected counts, limitations, and four-page walkthrough. The fixed run produces a transparent `PARTIAL` report with one module, 81 source files, 30 components, 24 endpoints, 7 confirmed component edges, and 24 Start Here items. The partial status and known wildcard-import omissions are part of the demo, not hidden.
+See the [V0.1 Demo Repository guide](./docs/demo/V0.1-DEMO.md) for the exact checkout, empty-cache analysis command, expected release counts, limitations, and four-page walkthrough. The immutable V0.1.0 release evidence contains one module, 81 source files, 30 components, 24 endpoints, 7 confirmed component edges, and 24 Start Here items. Current `master` after M12 reports 33 components, 38 endpoints and 14 confirmed component edges for the same commit; the source-backed delta is documented in the [M12 revalidation](./docs/validation/T-1203-ACCURACY-REVALIDATION.md). Both runs remain transparently `PARTIAL` because unrelated Maven and external-target limitations remain.
 
 For a faster synthetic smoke test, first [build from source](#install-from-source), then run the repository's [small deterministic Spring fixture](./src/test/resources/fixtures/spring-analysis-project):
 
@@ -238,8 +238,8 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 - V0.1 supports only Java + Maven + Spring Boot. Gradle and other languages/frameworks are not supported.
 - Type resolution is limited to uniquely confirmed project-local declarations. Runtime wiring, reflection, generated registrations, proxies, and a full method-level call graph are outside V0.1.
 - MyBatis/MyBatis-Plus Mapper-specific classification is deferred.
-- Spring Data interfaces that only inherit a repository base type and have no direct `@Repository` are currently missed. In the fixed Petclinic validation this omitted 3 repository components and left 6 downstream injection relationships unresolved.
-- Multiple wildcard imports can make a known Spring annotation conservatively ambiguous. In the fixed JHipster validation this omitted 3 controllers, 13 endpoints, and 7 confirmed dependency edges rather than inventing facts.
+- M12 recognizes interfaces that directly inherit a conservative set of well-known Spring Data core/JPA repository bases. Arbitrary project-local intermediate repository hierarchies and unlisted store-specific bases are not inferred from an unavailable external classpath.
+- With multiple wildcard imports, a Spring annotation is confirmed only when exactly one known Spring qualified-name candidate matches. Explicit conflicts or multiple known candidates remain ambiguous.
 - The Architecture graph stops drawing when the filtered scope exceeds 60 components or 120 confirmed edges, but a graph inside that budget can still be semantically dense. The component list remains available.
 - API rows and diagnostics are not virtualized or paginated. The ThingsBoard boundary trial completed 3,834 main Java files but observed 648.23 MiB peak process memory, 1,719 diagnostics, 581 API rows, ambiguous duplicate module labels, and graphs that could remain unreadable. RepoOnboard does **not** claim complete support for repositories of that scale.
 - At a 1280 px viewport, medium-repository Architecture labels may clip and the API source column may require horizontal scrolling.
@@ -252,6 +252,7 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 - [Minimal deterministic Spring regression fixture](./src/test/resources/fixtures/spring-analysis-project)
 - [Small repository: Spring Petclinic](./docs/validation/T-0904-SPRING-PETCLINIC.md)
 - [Medium repository: JHipster Sample Application](./docs/validation/T-0905-JHIPSTER-SAMPLE-APP.md)
+- [V0.2 M12 accuracy revalidation](./docs/validation/T-1203-ACCURACY-REVALIDATION.md)
 - [Large boundary trial: ThingsBoard](./docs/validation/T-0906-THINGSBOARD-LARGE-TRIAL.md)
 - [First-contact onboarding observation](./docs/validation/T-0907-ONBOARDING-VALUE.md)
 - [Windows/macOS/Linux release gate](https://github.com/zhan-cm/RepoOnboard/actions/workflows/release.yml)
@@ -262,7 +263,7 @@ Spring Boot detection uses a declared `spring-boot-starter-parent`, an imported 
 
 M0–M10 and the V0.1.0 public release are complete. M11 has now frozen the V0.2 scope as **Accuracy & Accessible Local Experience**; the active milestone plan and gates are recorded in [TODO.md](./TODO.md). V0.1.0 remains the current release while V0.2 is in development.
 
-V0.2 stays on Java + Maven + Spring Boot and keeps the local-first, deterministic, explainable analysis boundary. M12 closes the confirmed Spring Data repository-inheritance and multi-wildcard annotation-resolution gaps. M13 adds a selective English/中文 product-interface switch: product navigation, explanations, states, empty results, and errors may be translated, while code identifiers, paths, class names, APIs, framework terms, and original Evidence remain unchanged.
+V0.2 stays on Java + Maven + Spring Boot and keeps the local-first, deterministic, explainable analysis boundary. M12 has closed the confirmed Spring Data repository-inheritance and multi-wildcard annotation-resolution gaps against controlled and fixed real repositories. M13 is next and starts with a product-copy/data-boundary audit plus a Settings Data Contract and Stitch handoff; implementation waits for the user-reviewed design. The selective English/中文 switch may translate product navigation, explanations, states, empty results, and errors, while code identifiers, paths, class names, APIs, framework terms, and original Evidence remain unchanged.
 
 M14 evaluates `jpackage` and Tauri 2 using package size, startup, memory, offline behavior, runtime, process lifecycle, installer, security, and signing evidence. Desktop delivery is conditional on a new accepted ADR; if no option meets the acceptance gate, V0.2 still ships through the existing Web-first executable JAR and Windows/POSIX launchers.
 
