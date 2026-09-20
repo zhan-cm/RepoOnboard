@@ -1293,9 +1293,9 @@ V0.2 按 M11 至 M16 顺序执行，一个 Milestone 完成并验证后再进入
 
 RepoOnboard 当前处于：
 
-> **V0.2 / M12 — Analyzer Accuracy Closure Complete**
+> **V0.2 / M13 — Settings Design Handoff Awaiting User Prototype**
 
-M0 至 M10 和 V0.1.0 公开发布已完成，M11 已冻结 V0.2 范围。M12 已补齐已确认的 Spring Data Repository 继承和 multi-wildcard Spring annotation 漏报，并通过受控 fixture 与固定真实仓库复核。当前下一任务是 **T-1301 — Product Copy and Data-boundary Audit**，随后完成 Settings 的 Data Contract / Stitch handoff；用户设计导入前不得实现 T-1303+，M14 与 M15 也不得提前启动。
+M0 至 M10 和 V0.1.0 公开发布已完成，M11 已冻结 V0.2 范围。M12 已补齐已确认的 Spring Data Repository 继承和 multi-wildcard Spring annotation 漏报，并通过受控 fixture 与固定真实仓库复核。M13 的 T-1301 文案/数据边界审计与 T-1302 Settings Data Contract / Stitch handoff 已提交；当前等待用户完成并导入 Stitch 原型。用户设计导入前不得实现 T-1303+，M14 与 M15 也不得提前启动。
 
 ## 36. Project Direction Summary
 

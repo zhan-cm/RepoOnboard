@@ -125,7 +125,7 @@ Legend:
 
 # 5. Current Priority
 
-M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。当前进入 **M13 — English / 中文 Product Interface** 的设计阶段；下一任务是 **T-1301 — Product Copy and Data-boundary Audit**，随后完成 T-1302 Data Contract / Stitch handoff。在用户完成并导入 Stitch 设计前，不实现 Settings 页面或 T-1303+。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
+M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。M13 的 **T-1301 — Product Copy and Data-boundary Audit** 已完成，T-1302 已提交 Settings Data Contract / Stitch handoff，当前等待用户完成并导入 Stitch 设计。在此之前不实现 Settings 页面或 T-1303+。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
 
 ---
 
@@ -2909,8 +2909,12 @@ Make product-facing guidance selectable in English or Chinese without translatin
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-20
+
+Deliverable: [Product Copy and Data-boundary Audit](docs/ui/T-1301-PRODUCT-COPY-DATA-BOUNDARY-AUDIT.md)
 
 - 清点产品导航、说明、状态、空结果、错误提示与可访问性文本。
 - 明确代码标识符、文件路径、类名、API、框架术语和原始 Evidence 永远保持原文。
@@ -2920,8 +2924,19 @@ Status:
 Status:
 
 ```text
-[ ]
+[-]
 ```
+
+Design Handoff:
+
+```text
+[x] Product Copy and Data-boundary Audit
+[x] Settings UI Data Contract and Stitch Design Brief
+[ ] User-reviewed Stitch prototype imported
+[ ] Localization foundation, Vue implementation and browser validation
+```
+
+Deliverable: [Settings UI Data Contract and Stitch Handoff](docs/ui/T-1302-SETTINGS-UI-DATA-CONTRACT.md)
 
 - 先基于 TODO、公共报告模型和当前实现提交页面级 Data Contract Audit 与 Stitch 设计方案。
 - 等待用户完成并导入 Stitch 设计；在此之前不实现 Settings 页面。
@@ -3416,7 +3431,7 @@ Remaining Issues:
 
 # 30. Current Next Action
 
-M12 已完成。下一任务是 **T-1301 — Product Copy and Data-boundary Audit**，随后完成 **T-1302 — Settings Data Contract and Stitch Handoff**。必须等待用户完成并导入 Stitch 设计后，才可开始 T-1303 localization foundation 或 Settings Vue 实现；M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
+M13 的 T-1301 已完成，T-1302 Data Contract / Stitch 方案已提交。当前下一动作是用户完成并导入 `docs/ui/stitch/T-1302/` 原型；导入并审阅前不开始 T-1303 localization foundation 或 Settings Vue 实现，M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
 
 ---
 
@@ -3456,7 +3471,7 @@ Release
 V0.2
 M11 Scope & Release Contract — complete
 M12 Analyzer Accuracy Closure — complete
-M13 English / 中文 Product Interface — design handoff next
+M13 English / 中文 Product Interface — awaiting user-reviewed Stitch import
 M14 Desktop Technical Evaluation — not started
 M15 Conditional Desktop Delivery — inactive
 M16 Regression & Release — not started
@@ -3464,6 +3479,6 @@ M16 Regression & Release — not started
 
 Next:
 
-> **执行 T-1301 与 T-1302；提交 Data Contract Audit / Stitch 方案后等待用户设计。**
+> **等待用户完成并导入 T-1302 Settings Stitch 设计；随后从 T-1303 继续。**
 
 ````
