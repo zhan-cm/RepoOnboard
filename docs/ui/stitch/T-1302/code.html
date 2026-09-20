@@ -1,0 +1,285 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Settings — RepoOnboard</title>
+<!-- Tailwind CSS v3 with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- Typography & Foundational Rules -->
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" data-snapdom="injected-import"></head>
+<body class="min-h-screen bg-[#fcfcfd] flex flex-col antialiased text-[13px] leading-normal overflow-x-hidden">
+<!-- BEGIN: TopBar -->
+<header class="h-10 border-b border-slate-200 bg-white px-4 flex items-center justify-between text-xs text-slate-500 font-mono-code shrink-0 z-10" data-purpose="top-navigation-bar">
+<div class="flex items-center space-x-2">
+<div class="flex items-center space-x-1.5 text-slate-900 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+<span class="">Settings</span>
+</div>
+</div>
+<div class="flex items-center">
+<!-- Single-button theme toggle -->
+<button aria-label="Toggle theme" class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 text-xs font-mono-code" type="button">
+<span class="material-symbols-outlined text-[15px]">dark_mode</span>
+<span class="">Theme</span>
+</button>
+</div>
+</header>
+<!-- END: TopBar -->
+<!-- BEGIN: MainWorkbenchLayout -->
+<div class="flex-1 flex min-h-0">
+<!-- BEGIN: LeftSidebar -->
+<aside class="w-64 border-r border-slate-200 bg-white flex flex-col justify-between shrink-0 select-none" data-purpose="primary-sidebar">
+<div class="p-3">
+<!-- Brand identity (no fake repo names) -->
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+<div class="flex items-center space-x-2">
+<div class="w-5 h-5 rounded bg-sky-600 flex items-center justify-center text-white font-bold text-xs">R</div>
+<span class="font-bold text-slate-900 tracking-tight text-sm">RepoOnboard</span>
+</div>
+<span class="font-mono-code text-[11px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200">v0.1.0-local</span>
+</div>
+<!-- Perspectives Group -->
+<div>
+<div class="text-[10px] font-mono-code tracking-wider text-slate-400 uppercase font-semibold px-2 mb-1.5">
+            Perspectives
+          </div>
+<nav aria-label="Perspectives Navigation" class="space-y-0.5">
+<a class="flex items-center px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded transition-colors group" href="#">
+<svg class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              Overview
+            </a>
+<a class="flex items-center px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded transition-colors group" href="#">
+<svg class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              Modules
+            </a>
+<a class="flex items-center px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded transition-colors group" href="#">
+<svg class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              Architecture
+            </a>
+<a class="flex items-center px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded transition-colors group" href="#">
+<svg class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              API Map
+            </a>
+<a class="flex items-center px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded transition-colors group" href="#">
+<svg class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="">Start Here</span>
+</a>
+</nav>
+</div>
+<!-- Divider separating perspectives and preferences -->
+<div class="my-3 border-t border-slate-100"></div>
+<!-- Preferences Group -->
+<div>
+<div class="text-[10px] font-mono-code tracking-wider text-slate-400 uppercase font-semibold px-2 mb-1.5">
+            Preferences
+          </div>
+<nav aria-label="Preferences Navigation">
+<!-- Active Settings Item -->
+<a aria-current="page" class="flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-sky-900 bg-sky-50 border border-sky-200 rounded transition-colors shadow-xs" href="#settings">
+<div class="flex items-center">
+<svg class="w-4 h-4 mr-2 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="">Settings</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span>
+</a>
+</nav>
+</div>
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- BEGIN: WorkbenchContentArea -->
+<main class="flex-1 overflow-y-auto bg-slate-50/40 p-8 flex justify-center" data-purpose="settings-main-container">
+<div class="flex flex-col w-full max-w-[760px] mx-auto py-2">
+<!-- Header Block -->
+<div class="flex flex-col mb-8">
+<h1 class="text-xl font-semibold text-slate-900 tracking-tight">Settings</h1>
+<p class="text-[13px] text-slate-600 mt-1.5">
+      Control how RepoOnboard presents product guidance on this device.
+    </p>
+</div>
+<!-- Main Settings Workspace -->
+<div class="space-y-6">
+<!-- Section 1: Product Language -->
+<fieldset class="bg-white rounded-lg border border-slate-200/80 p-6 shadow-sm"><legend class="text-sm font-medium text-slate-500 mb-3 block">Product language</legend>
+<p class="text-xs text-slate-500 mb-4">
+Changes navigation, guidance, states, and accessibility text.
+</p>
+<!-- Language Selectors Matrix -->
+<div aria-label="Product language selection" class="space-y-3" role="radiogroup">
+<!-- Option 1: English (Selected) -->
+<label class="group relative flex items-center justify-between p-3.5 rounded-lg border transition-all cursor-pointer border-sky-400 bg-sky-50/50 shadow-xs" id="card-en">
+<div class="flex items-center space-x-3.5">
+<input checked="" class="h-4 w-4 text-sky-600 border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none" id="lang-en" name="product_language" onchange="handleLanguageChange('en')" type="radio" value="en">
+<div class="flex flex-col">
+<div class="flex items-center space-x-2">
+<span class="text-xs font-semibold text-slate-900" id="name-en">English</span>
+<span class="text-[11px] font-medium text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full" id="badge-en">Current</span>
+</div>
+<span class="text-xs text-slate-600 mt-0.5">
+Use the English product interface.
+</span>
+</div>
+</div>
+</label>
+<!-- Option 2: Chinese (Unselected) -->
+<label class="group relative flex items-center justify-between p-3.5 rounded-lg border transition-all cursor-pointer border-slate-200 bg-white hover:bg-slate-50/60" id="card-zh">
+<div class="flex items-center space-x-3.5">
+<input class="h-4 w-4 text-sky-600 border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none" id="lang-zh" name="product_language" onchange="handleLanguageChange('zh')" type="radio" value="zh-CN">
+<div class="flex flex-col">
+<div class="flex items-center space-x-2">
+<span class="text-xs font-medium text-slate-900" id="name-zh">中文</span>
+<span class="hidden text-[11px] font-medium text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full" id="badge-zh">Current</span>
+</div>
+<span class="text-xs text-slate-600 mt-0.5">
+使用中文产品界面。
+</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Live Mutation Verification Note with aria-live polite -->
+<div aria-live="polite" aria-atomic="true" class="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-1.5 text-xs text-slate-500">
+<span class="text-sky-600 font-semibold" aria-hidden="true">✓</span>
+<span id="lang-feedback" class="">Changes apply immediately.</span>
+</div></fieldset>
+<!-- Section 2: Local Preference Notice -->
+<section aria-labelledby="local-pref-title" class="bg-white rounded-lg border border-slate-200/80 p-6 shadow-sm">
+<div class="mb-4">
+<h2 class="text-sm font-semibold text-slate-900 flex items-center gap-2" id="local-pref-title">
+<span class="material-symbols-outlined text-slate-500 text-[18px]">verified_user</span>
+          Local preference guarantees
+        </h2>
+<p class="text-xs text-slate-500 mt-1">
+          Settings are strictly constrained to this local workstation.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+<!-- Guarantee 1 -->
+<div class="p-4 rounded-lg bg-slate-50 border border-slate-100 flex flex-col justify-start">
+<div class="w-7 h-7 rounded bg-white border border-slate-200 flex items-center justify-center text-sky-600 mb-3 shadow-xs">
+<span class="material-symbols-outlined text-[18px]">devices</span>
+</div>
+<div class="text-xs font-semibold text-slate-900 mb-1">
+            Saved on this device
+          </div>
+<p class="text-xs text-slate-600">
+            Stored locally in your client preferences so your chosen configuration is retained across sessions.
+          </p>
+</div>
+<!-- Guarantee 2 -->
+<div class="p-4 rounded-lg bg-slate-50 border border-slate-100 flex flex-col justify-start">
+<div class="w-7 h-7 rounded bg-white border border-slate-200 flex items-center justify-center text-sky-600 mb-3 shadow-xs">
+<span class="material-symbols-outlined text-[18px]">wifi_off</span>
+</div>
+<div class="text-xs font-semibold text-slate-900 mb-1">
+            Works offline
+          </div>
+<p class="text-xs text-slate-600">
+            Functions without requiring internet connectivity or continuous external services.
+          </p>
+</div>
+<!-- Guarantee 3 -->
+<div class="p-4 rounded-lg bg-slate-50 border border-slate-100 flex flex-col justify-start">
+<div class="w-7 h-7 rounded bg-white border border-slate-200 flex items-center justify-center text-sky-600 mb-3 shadow-xs">
+<span class="material-symbols-outlined text-[18px]">shield</span>
+</div>
+<div class="text-xs font-semibold text-slate-900 mb-1">
+            No cloud upload
+          </div>
+<p class="text-xs text-slate-600">
+            No accounts, cloud sync, telemetry, or repository upload. Everything remains strictly on your machine.
+          </p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<script>
+  function handleLanguageChange(lang) {
+    const cardEn = document.getElementById('card-en');
+    const cardZh = document.getElementById('card-zh');
+    const nameEn = document.getElementById('name-en');
+    const nameZh = document.getElementById('name-zh');
+    const badgeEn = document.getElementById('badge-en');
+    const badgeZh = document.getElementById('badge-zh');
+    const feedback = document.getElementById('lang-feedback');
+
+    if (lang === 'en') {
+      cardEn.className = "group relative flex items-center justify-between p-3.5 rounded-lg border transition-all cursor-pointer border-sky-400 bg-sky-50/50 shadow-xs";
+      nameEn.className = "text-xs font-semibold text-slate-900";
+      badgeEn.classList.remove('hidden');
+
+      cardZh.className = "group relative flex items-center justify-between p-3.5 rounded-lg border transition-all cursor-pointer border-slate-200 bg-white hover:bg-slate-50/60";
+      nameZh.className = "text-xs font-medium text-slate-900";
+      badgeZh.classList.add('hidden');
+
+      feedback.textContent = "Changes apply immediately.";
+    } else {
+      cardZh.className = "group relative flex items-center justify-between p-3.5 rounded-lg border transition-all cursor-pointer border-sky-400 bg-sky-50/50 shadow-xs";
+      nameZh.className = "text-xs font-semibold text-slate-900";
+      badgeZh.classList.remove('hidden');
+
+      cardEn.className = "group relative flex items-center justify-between p-3.5 rounded-lg border transition-all cursor-pointer border-slate-200 bg-white hover:bg-slate-50/60";
+      nameEn.className = "text-xs font-medium text-slate-900";
+      badgeEn.classList.add('hidden');
+
+      feedback.textContent = "变更已立即生效。";
+    }
+  }
+</script>
+</main>
+<!-- END: WorkbenchContentArea -->
+</div>
+<!-- END: MainWorkbenchLayout -->
+
+
+</body></html>

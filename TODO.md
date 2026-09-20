@@ -125,7 +125,7 @@ Legend:
 
 # 5. Current Priority
 
-M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。M13 的 **T-1301 — Product Copy and Data-boundary Audit** 已完成，T-1302 已提交 Settings Data Contract / Stitch handoff，当前等待用户完成并导入 Stitch 设计。在此之前不实现 Settings 页面或 T-1303+。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
+M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。M13 的 **T-1301 — Product Copy and Data-boundary Audit** 与 **T-1302 — Settings Data Contract and Stitch Handoff** 已完成；下一任务是 **T-1303 — Localization Foundation and Preference**。T-1303 只建立已审计的本地化资源与偏好边界，不提前合并 T-1304 全产品翻译或 T-1305 浏览器/打包验收。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
 
 ---
 
@@ -2924,17 +2924,21 @@ Deliverable: [Product Copy and Data-boundary Audit](docs/ui/T-1301-PRODUCT-COPY-
 Status:
 
 ```text
-[-]
+[x]
 ```
+
+Completed: 2026-09-20
 
 Design Handoff:
 
 ```text
 [x] Product Copy and Data-boundary Audit
 [x] Settings UI Data Contract and Stitch Design Brief
-[ ] User-reviewed Stitch prototype imported
-[ ] Localization foundation, Vue implementation and browser validation
+[x] User-reviewed Stitch prototype imported
+[ ] T-1303–T-1305 localization implementation and validation
 ```
+
+Imported prototype: [T-1302 Stitch Design](docs/ui/stitch/T-1302/DESIGN.md)
 
 Deliverable: [Settings UI Data Contract and Stitch Handoff](docs/ui/T-1302-SETTINGS-UI-DATA-CONTRACT.md)
 
@@ -3431,7 +3435,7 @@ Remaining Issues:
 
 # 30. Current Next Action
 
-M13 的 T-1301 已完成，T-1302 Data Contract / Stitch 方案已提交。当前下一动作是用户完成并导入 `docs/ui/stitch/T-1302/` 原型；导入并审阅前不开始 T-1303 localization foundation 或 Settings Vue 实现，M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
+M13 的 T-1301 与 T-1302 已完成，用户导入的 Settings Stitch 原型已通过数据边界和无障碍门禁。当前下一任务是 **T-1303 — Localization Foundation and Preference**；仅完成 English / 中文资源、默认语言、本地偏好与离线回退，T-1304 产品表面翻译和 T-1305 浏览器/打包验收不提前合并，M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
 
 ---
 
@@ -3471,7 +3475,7 @@ Release
 V0.2
 M11 Scope & Release Contract — complete
 M12 Analyzer Accuracy Closure — complete
-M13 English / 中文 Product Interface — awaiting user-reviewed Stitch import
+M13 English / 中文 Product Interface — T-1303 next
 M14 Desktop Technical Evaluation — not started
 M15 Conditional Desktop Delivery — inactive
 M16 Regression & Release — not started
@@ -3479,6 +3483,6 @@ M16 Regression & Release — not started
 
 Next:
 
-> **等待用户完成并导入 T-1302 Settings Stitch 设计；随后从 T-1303 继续。**
+> **执行 T-1303 — Localization Foundation and Preference。**
 
 ````

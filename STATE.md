@@ -2,7 +2,7 @@
 
 ## 1. 当前阶段
 
-RepoOnboard 已进入 **M13 — English / 中文 Product Interface** 的设计门禁；T-1301 已完成，T-1302 等待用户导入并审阅 Stitch 原型。`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
+RepoOnboard 正在执行 **M13 — English / 中文 Product Interface**；T-1301 与 T-1302 已完成，用户导入的 Settings Stitch 原型已通过门禁，下一任务是 T-1303。`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
@@ -26,7 +26,7 @@ RepoOnboard 已进入 **M13 — English / 中文 Product Interface** 的设计�
 - V0.1 当前没有未完成的必需功能任务；当前 `master` 的外部字体回归与已知发布后主题/布局 hardening 均已完成，不改变分析 facts、Evidence 或 schema。
 - **T-1101** 已完成；V0.2 定位为 Accuracy & Accessible Local Experience，最低发布范围包含两项已确认分析缺口、English / 中文产品界面和完整回归发布。Desktop 必须先完成 M14 技术评估，且只有新 ACCEPTED ADR 才能激活 M15；Desktop 延后不阻塞 V0.2。
 - **T-1201 至 T-1203** 已完成；Spring Data 直接基类继承和唯一已知 Spring wildcard annotation 现在可以确定性确认。固定 Petclinic 补回 3 个 Repository 和 6 条确认边；固定 JHipster 补回 3 个 REST Controller、14 个 Endpoint 和 7 条确认边。旧记录的 13 个 Endpoint 实为人工少算一个双路径 mapping。
-- **T-1301** 已完成，明确产品文案与 repository/report 原始事实的翻译边界；**T-1302** 已提交 Settings UI Data Contract 与 Stitch 设计方案，当前等待用户完成并导入原型。Settings 不需要新后端接口或 report schema 变更。
+- **T-1301** 已完成，明确产品文案与 repository/report 原始事实的翻译边界；**T-1302** 已完成，用户导入的 Settings 原型通过 utility navigation、双语言 radio、即时反馈、本地/离线说明、无 report 依赖和基础无障碍门禁。Settings 不需要新后端接口或 report schema 变更。
 - Java 21 / Maven 3.9.16 当前运行 89 项前端测试和 172 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。Fixture 与固定真实目标均未构建或执行。
 
 ## 2. 已完成任务
@@ -234,13 +234,13 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M13**：T-1302 等待用户审阅并导入 Settings Stitch 原型；随后实现 English / 中文产品界面。只翻译产品导航、说明、状态、空结果和错误提示，代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。
+- **M13**：下一任务为 T-1303 Localization Foundation and Preference；随后由 T-1304 实现已审计产品表面翻译，T-1305 完成浏览器、无障碍与打包验证。代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。
 - **M14**：Desktop 技术评估与 ADR；**M15** 仅在 ADR 接受后激活；**M16** 完成 V0.2 回归与发布。
 
 ## 9. 下一步
 
-等待用户完成并导入 **T-1302 — Settings Data Contract and Stitch Handoff** 的 Stitch 原型。用户设计导入并审阅前，不开始 T-1303 localization foundation 或 Settings Vue 实现；M14–M16 不提前启动。
+执行 **T-1303 — Localization Foundation and Preference**。仅建立 English / 中文资源、默认语言、跨随机 loopback 端口的本地偏好和无网络回退；T-1304–T-1305 与 M14–M16 不提前启动。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告仍为 schema `1.2`，兼容读取 `1.0` / `1.1`。M11 已冻结 V0.2 路线；M12 / T-1201 至 T-1203 已完成，新增内部 direct-supertype fact，但未改变公共 schema。固定 Petclinic 现为 13 component / 6 confirmed component edge，固定 JHipster 现为 33 component / 38 endpoint / 14 confirmed component edge；完整记录见 T-1203 validation。M13 的 T-1301 审计和 T-1302 Settings Data Contract / Stitch handoff 已提交，下一步等待用户在 `docs/ui/stitch/T-1302/` 导入原型，之后从 T-1303 继续；M14 评估 jpackage 与 Tauri 2，M15 仍须新 ACCEPTED ADR 激活，M16 完成回归与发布。可选 T-0404 继续延后。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告仍为 schema `1.2`，兼容读取 `1.0` / `1.1`。M11 已冻结 V0.2 路线；M12 / T-1201 至 T-1203 已完成，新增内部 direct-supertype fact，但未改变公共 schema。固定 Petclinic 现为 13 component / 6 confirmed component edge，固定 JHipster 现为 33 component / 38 endpoint / 14 confirmed component edge；完整记录见 T-1203 validation。M13 的 T-1301 与 T-1302 已完成，Settings Stitch 原型已导入并通过门禁；下一步只执行 T-1303 Localization Foundation and Preference，之后再分别执行 T-1304 与 T-1305。M14 评估 jpackage 与 Tauri 2，M15 仍须新 ACCEPTED ADR 激活，M16 完成回归与发布。可选 T-0404 继续延后。
