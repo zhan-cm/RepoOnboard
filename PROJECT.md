@@ -1293,9 +1293,9 @@ V0.2 按 M11 至 M16 顺序执行，一个 Milestone 完成并验证后再进入
 
 RepoOnboard 当前处于：
 
-> **V0.2 / M13 — Localization Foundation Next**
+> **V0.2 / M13 — Product Surface Translation Next**
 
-M0 至 M10 和 V0.1.0 公开发布已完成，M11 已冻结 V0.2 范围。M12 已补齐已确认的 Spring Data Repository 继承和 multi-wildcard Spring annotation 漏报，并通过受控 fixture 与固定真实仓库复核。M13 的 T-1301 文案/数据边界审计与 T-1302 Settings Data Contract / Stitch handoff 已完成，用户导入的原型已通过门禁；当前下一任务是 T-1303 Localization Foundation and Preference。T-1304、T-1305、M14 与 M15 不得提前启动。
+M0 至 M10 和 V0.1.0 公开发布已完成，M11 已冻结 V0.2 范围。M12 已补齐已确认的 Spring Data Repository 继承和 multi-wildcard Spring annotation 漏报，并通过受控 fixture 与固定真实仓库复核。M13 的 T-1301 文案/数据边界审计、T-1302 Settings Data Contract / Stitch handoff 与 T-1303 Localization Foundation and Preference 已完成；当前下一任务是 T-1304 Product Surface Translation。T-1305、M14 与 M15 不得提前启动。
 
 ## 36. Project Direction Summary
 

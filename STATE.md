@@ -2,7 +2,7 @@
 
 ## 1. 当前阶段
 
-RepoOnboard 正在执行 **M13 — English / 中文 Product Interface**；T-1301 与 T-1302 已完成，用户导入的 Settings Stitch 原型已通过门禁，下一任务是 T-1303。`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
+RepoOnboard 正在执行 **M13 — English / 中文 Product Interface**；T-1301 至 T-1303 已完成，用户导入的 Settings Stitch 原型已通过门禁，本地化基础与偏好契约已建立，下一任务是 T-1304。`v0.1.0` 仍是当前正式版本，V0.2 尚未发布。
 
 - M0 至 M7 已完成。
 - **T-0701 至 T-0709** 已完成，本地 UI 运行闭环、视觉系统、Repository Overview、Module Explorer、Architecture Workspace、探索筛选能力、API Map、跨页面 Source Navigation，以及本地 Web / 打包安全边界已建立。
@@ -27,7 +27,8 @@ RepoOnboard 正在执行 **M13 — English / 中文 Product Interface**；T-1301
 - **T-1101** 已完成；V0.2 定位为 Accuracy & Accessible Local Experience，最低发布范围包含两项已确认分析缺口、English / 中文产品界面和完整回归发布。Desktop 必须先完成 M14 技术评估，且只有新 ACCEPTED ADR 才能激活 M15；Desktop 延后不阻塞 V0.2。
 - **T-1201 至 T-1203** 已完成；Spring Data 直接基类继承和唯一已知 Spring wildcard annotation 现在可以确定性确认。固定 Petclinic 补回 3 个 Repository 和 6 条确认边；固定 JHipster 补回 3 个 REST Controller、14 个 Endpoint 和 7 条确认边。旧记录的 13 个 Endpoint 实为人工少算一个双路径 mapping。
 - **T-1301** 已完成，明确产品文案与 repository/report 原始事实的翻译边界；**T-1302** 已完成，用户导入的 Settings 原型通过 utility navigation、双语言 radio、即时反馈、本地/离线说明、无 report 依赖和基础无障碍门禁。Settings 不需要新后端接口或 report schema 变更。
-- Java 21 / Maven 3.9.16 当前运行 89 项前端测试和 172 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。Fixture 与固定真实目标均未构建或执行。
+- **T-1303** 已完成；English / `zh-CN` 静态资源、默认 English、English 缺项回退、插值/单复数、显式语言切换与 `<html lang>` 同步已经建立。语言偏好使用 host-wide Cookie 与 localStorage 双写、Cookie 优先，保持随机 loopback 端口行为且不读取浏览器语言、不访问网络。实现复用 Vue，不新增生产依赖；现有产品表面翻译与 Settings Vue 页面留给 T-1304。
+- Java 21 / Maven 3.9.16 当前运行 104 项前端测试和 172 项 Java 测试并全部通过；`clean verify` 已通过生产 UI、可执行 JAR、PackagedUiVerifier、离线 fixture 报告路由和 SHA-256 门禁。V0.1.0 Release 的已验证产物不受发布后改动影响；新 Release 仍需通过 GitHub 跨平台工作流。Fixture 与固定真实目标均未构建或执行。
 
 ## 2. 已完成任务
 
@@ -105,6 +106,11 @@ RepoOnboard 正在执行 **M13 — English / 中文 Product Interface**；T-1301
 - **T-1202**：多个 wildcard import 下，只要已知 Spring qualified-name 候选唯一即可确认；显式或已知多候选仍保持 ambiguous。固定 JHipster 的 3 个 REST Controller、14 个 Endpoint 和 7 条确认依赖已补回。
 - **T-1203**：新增 `spring-accuracy-project` 端到端回归并复核两个固定真实仓库；结果、Diagnostic 变化和旧 Endpoint 计数修正记录在 `docs/validation/T-1203-ACCURACY-REVALIDATION.md`。
 
+### M13 — English / 中文 Product Interface
+
+- **T-1301 至 T-1302**：完成产品文案/数据边界审计、Settings Data Contract 与用户导入 Stitch 原型门禁。
+- **T-1303**：用仓库内静态 English / `zh-CN` 资源和轻量 Vue localization service 建立离线翻译基础；语言偏好按既定 Cookie/localStorage 契约跨随机 loopback 端口保持，默认 English 且不自动读取浏览器语言。
+
 ## 3. 当前实现能力
 
 项目已经能够在本地、离线优先地分析 Java 21 / Maven / Spring Boot 仓库，并通过响应式 Web 产品 Shell 交付结果：
@@ -123,6 +129,7 @@ RepoOnboard 正在执行 **M13 — English / 中文 Product Interface**；T-1301
 - API Map 能按模块和 HTTP method 精确筛选，并按 path、handler、controller、module 或 source 搜索。列表明确呈现 `ANY`、未解析 method/path、已知 mapping conditions 和未解析条件；Inspector 展示 Endpoint 报告原值、handler 源码位置以及方法级和类级 mapping Evidence，不补造原始分层 path、方法签名、请求响应模型、鉴权或调用链。
 - Source Navigation 从选中的 Architecture Component 或 API Endpoint 进入统一详情，展示扫描根相对 SourceLocation、真实 1-based 行列、可选 symbol、所属模块、SourceFile 元数据和原始 Evidence；related facts 只使用 exact ID/path 与两端确认的组件依赖，Endpoint 明确说明组件关系不是 handler 调用链。返回后保留原页面选择，不读取源码正文，也不提供虚假的 Open / IDE 动作。
 - loading、empty、warning、error、ready 具有统一组件、文案层级和 live-region 语义；键盘用户可使用 skip link 和清晰的 `:focus-visible` 状态。
+- 前端已提供 English / `zh-CN` 静态资源、确定性查找/插值/单复数和 English 回退；语言偏好可跨随机 loopback 端口恢复并同步文档语言。现有产品表面仍待 T-1304 接入翻译资源。
 - 集中 tokens 管理色彩、字体、间距、边框、圆角、阴影和布局尺寸；Overview 与其他主页面统一使用浅色工作区，响应式布局覆盖宽屏、紧凑桌面与窄屏模式。
 - 浏览器无法自动打开时服务保持运行并给出地址；Ctrl+C 后服务线程和端口释放。
 
@@ -163,6 +170,7 @@ RepoOnboard
 - **`frontend/src/lib/reportArchitecture.js`**：从公共报告构造组件图展示模型，仅接受有真实源/目标组件的确认注入边；确定性组合模块、组件类型、关系类型和一阶邻域，派生可搜索列表、隐藏数量、未确认关系覆盖和筛选后图规模预算，并保持 Unavailable 与 0 的区别。
 - **`frontend/src/lib/reportEndpoints.js`**：用精确 `moduleId` / `componentId` 连接 Endpoint、模块和 Controller，集中派生筛选选项、可搜索文本、条件状态、handler 来源、Evidence 分组和不可用/已知空语义；`ANY` 只作为精确 method 值，不作为通配符。
 - **`frontend/src/lib/reportSources.js` / `sourceNavigationHost.js`**：前者用精确身份连接选中实体、模块、SourceFile、Evidence、同文件实体、诊断和确认依赖邻居；后者隔离 Clipboard 宿主能力，并统一返回 copied / unavailable / failed 状态。
+- **`frontend/src/lib/localization.js` / `languagePreference.js` 与 `frontend/src/locales`**：提供 English / `zh-CN` 静态资源、Vue localization 注入边界、确定性 English 回退、显式语言切换，以及 host-wide Cookie 优先、localStorage 兼容回退的偏好持久化；运行时不加载远程资源。
 - **`frontend/src/styles`**：`tokens.css` 集中视觉变量，`base.css` 提供全局与无障碍基础，`shell.css` 负责通用组件，`overview.css`、`modules.css`、`architecture.css`、`api.css` 和 `source.css` 分别定义业务页面及响应式降级。
 - **前端构建与测试**：Vue 3 + JavaScript + Vite；Vitest + happy-dom 测试在 Maven `generate-resources` 阶段随锁文件安装、测试和生产构建，产物复制到 JAR classpath。
 - **发布构建**：Maven Shade 生成带 CLI `Main-Class` 的单一 `target/repoonboard.jar`；verify 阶段验证 JAR 内 UI、运行依赖、离线 fixture 报告路由和 SHA-256。根目录 Windows/POSIX 启动脚本要求 Java 21，可用于发布目录或源码 checkout。
@@ -177,6 +185,7 @@ RepoOnboard
 - **ADR-0012**：前端使用 Vue 3 + JavaScript + Vite，测试使用 Vitest，组件图使用 Cytoscape.js；所有生产资源随 JAR 提供，不使用运行时 CDN。开发/发布构建需要 Node，最终用户不需要。
 - **ADR-0013 至 ADR-0015**：Start Here 采用可解释确定性启发式；测试按 unit → fixture → integration → real repository 分层；局部失败优先返回部分成功。
 - **ADR-0016 / ADR-0017**：V0.1 交付 JAR 和启动脚本，保持 Web-first、Desktop-ready；M14 只做 Desktop 技术评估，M15 必须由新的 ACCEPTED ADR 激活。
+- T-1303 的两种静态语言和简单插值/单复数不需要新的国际化依赖；复用 Vue 响应式能力能维持最小生产闭包，若后续范围出现复杂复数规则或动态 locale 加载，再以实际证据重新评估。
 - V0.2 继续只支持 Java + Maven + Spring Boot，不引入 LLM、RAG、云服务、数据库、遥测或自动改码能力。
 
 ## 6. 重要变更
@@ -211,9 +220,10 @@ RepoOnboard
 - T-1005 从当前 `target/repoonboard.jar` 和 T-1004 固定输入捕获本地 UI，将扫描摘要与四个主要页面压缩为 14.4 秒循环 GIF。Architecture 聚焦 `UserService` 的两条确认边，API 选中 `POST /api/bank-accounts`，Start Here 显示推荐原因与 Evidence；所有页面保留 `PARTIAL`，录制记录固定源码/JAR/GIF 哈希并声明不是性能基准。
 - T-1006 为项目确立 Apache License 2.0，并用 Maven runtime tree 与前端 production lockfile 核对实际分发闭包。JavaParser 明确选择其 Apache-2.0 选项，Eclipse Sisu 的 EPL-2.0 源码入口及 EPL/MIT/BSD/ISC 文本均随 JAR 提供；构建测试同时守护根文件、README 说明和包内固定路径。
 - T-1007 识别并处理了被误提交的 IDE/插件状态：Apifox token 先在服务端撤销，再从全部可达 `master` 历史清除；其余 `.idea/`、`.iml` 和 AGENTS 模板包装同步清理。发布文件、Wrapper、前端 lockfile、许可文件、Markdown 链接、仓库对象和当前工作树均完成核验；Stitch 设计资产、验证记录和 Demo GIF 属于有意保留的产品证据，不按生成物误删。
+- T-1303 采用与主题一致的 host-wide Cookie + localStorage 偏好模型，避免随机 loopback 端口使语言选择丢失；默认固定 English，不根据 `Accept-Language` 或浏览器设置自动猜测。资源作为 JAR 内生产资产构建，缺项只回退 English，不显示资源 key，也不发起网络请求。
 - T-1008 将 Maven/CLI 版本从 snapshot 固定为 `0.1.0`，补充双语二进制安装说明和正式 release notes，并以 GitHub-hosted Windows、macOS、Linux matrix 作为发布门禁。只有三平台的 clean verify、打包 JAR 离线分析和原生启动脚本检查全部通过，tag workflow 才组装带完整许可材料的压缩包并创建 GitHub Release。
 - 后续前端页面统一采用“Codex 数据契约审计与 Stitch 方案 → 用户 Stitch 设计 → Codex Vue 实现 → Browser Validation”，用户设计完成前不提前编码页面。
-- README 已提供同步的中英文版本和互相跳转入口；当前 `master` 的发布后视觉方向使用已纳入仓库的 Stitch 交付图展示，旧 GIF 明确保留为 V0.1.0 时期的验证证据，不再作为当前界面演示。产品 UI 的 English / 中文切换已进入 M13 承诺范围，但尚未实现。
+- README 已提供同步的中英文版本和互相跳转入口；当前 `master` 的发布后视觉方向使用已纳入仓库的 Stitch 交付图展示，旧 GIF 明确保留为 V0.1.0 时期的验证证据，不再作为当前界面演示。产品 UI 的 English / 中文资源与偏好基础已实现，但现有产品表面和 Settings 页面要到 T-1304 才接入。
 - ISSUE-UI-0001 已移除生产 `index.html` 中四个 Google Fonts / Material Symbols 外链；系统字体 fallback 保持可用，源级前端测试与 JAR 级 PackagedUiVerifier 共同守护运行时无 CDN 的资源闭包。
 - ISSUE-UI-0002 已完成发布后 UI hardening：主题偏好通过 host-wide cookie 跨随机 loopback 端口保持，Architecture 图颜色由 reactive theme prop 刷新，深色状态表面使用语义 token，Overview 的 6 个主指标形成完整桌面行；真实浏览器已验证主题切换和跨端口保持。
 
@@ -234,13 +244,13 @@ RepoOnboard
 ## 8. 未完成任务
 
 - **可选延后**：T-0404 — Mapper Detection。
-- **M13**：下一任务为 T-1303 Localization Foundation and Preference；随后由 T-1304 实现已审计产品表面翻译，T-1305 完成浏览器、无障碍与打包验证。代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。
+- **M13**：下一任务为 T-1304 Product Surface Translation；T-1305 随后完成浏览器、无障碍与打包验证。代码标识符、文件路径、类名、API、框架术语及原始 Evidence 保持原文。
 - **M14**：Desktop 技术评估与 ADR；**M15** 仅在 ADR 接受后激活；**M16** 完成 V0.2 回归与发布。
 
 ## 9. 下一步
 
-执行 **T-1303 — Localization Foundation and Preference**。仅建立 English / 中文资源、默认语言、跨随机 loopback 端口的本地偏好和无网络回退；T-1304–T-1305 与 M14–M16 不提前启动。
+执行 **T-1304 — Product Surface Translation**。覆盖已审计产品 Shell、Overview、Modules、Architecture、API、Start Here、Source Detail 与 Settings，只翻译产品文案；repository/report facts、Evidence、代码和技术标识保持原文。T-1305 与 M14–M16 不提前启动。
 
 ## 10. 给下一次开发会话的上下文
 
-RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告仍为 schema `1.2`，兼容读取 `1.0` / `1.1`。M11 已冻结 V0.2 路线；M12 / T-1201 至 T-1203 已完成，新增内部 direct-supertype fact，但未改变公共 schema。固定 Petclinic 现为 13 component / 6 confirmed component edge，固定 JHipster 现为 33 component / 38 endpoint / 14 confirmed component edge；完整记录见 T-1203 validation。M13 的 T-1301 与 T-1302 已完成，Settings Stitch 原型已导入并通过门禁；下一步只执行 T-1303 Localization Foundation and Preference，之后再分别执行 T-1304 与 T-1305。M14 评估 jpackage 与 Tauri 2，M15 仍须新 ACCEPTED ADR 激活，M16 完成回归与发布。可选 T-0404 继续延后。
+RepoOnboard 是本地优先、确定性、可解释的陌生代码库理解工具；V0.2 继续只支持 Java 21 + Maven + Spring Boot，不使用 LLM、云服务、遥测或数据库。工作前按 `PROJECT.md` → `DECISIONS.md` → `TODO.md` → `AGENTS.md` → `STATE.md` → 当前代码阅读。M0–M10 已完成，`v0.1.0` 已作为 GitHub Release 发布；公共报告仍为 schema `1.2`，兼容读取 `1.0` / `1.1`。M11 已冻结 V0.2 路线；M12 / T-1201 至 T-1203 已完成，新增内部 direct-supertype fact，但未改变公共 schema。固定 Petclinic 现为 13 component / 6 confirmed component edge，固定 JHipster 现为 33 component / 38 endpoint / 14 confirmed component edge；完整记录见 T-1203 validation。M13 的 T-1301 至 T-1303 已完成，Settings Stitch 原型已导入并通过门禁，English / `zh-CN` 离线资源和跨随机端口语言偏好已建立；下一步只执行 T-1304 Product Surface Translation，之后再执行 T-1305。M14 评估 jpackage 与 Tauri 2，M15 仍须新 ACCEPTED ADR 激活，M16 完成回归与发布。可选 T-0404 继续延后。

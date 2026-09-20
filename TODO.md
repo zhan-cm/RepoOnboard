@@ -106,7 +106,7 @@ Real-world Validation    ✓
 Public Release           ✓
 V0.2 Scope Contract      ✓
 V0.2 Accuracy Work       ✓
-V0.2 Product Language    ○
+V0.2 Product Language    ◐
 Desktop Evaluation       ○
 V0.2 Release             ○
 ```
@@ -125,7 +125,7 @@ Legend:
 
 # 5. Current Priority
 
-M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。M13 的 **T-1301 — Product Copy and Data-boundary Audit** 与 **T-1302 — Settings Data Contract and Stitch Handoff** 已完成；下一任务是 **T-1303 — Localization Foundation and Preference**。T-1303 只建立已审计的本地化资源与偏好边界，不提前合并 T-1304 全产品翻译或 T-1305 浏览器/打包验收。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
+M12 已完成并通过受控 fixture、固定 Spring Petclinic、固定 JHipster Sample Application 和完整离线门禁验证。M13 的 **T-1301 — Product Copy and Data-boundary Audit**、**T-1302 — Settings Data Contract and Stitch Handoff** 与 **T-1303 — Localization Foundation and Preference** 已完成；下一任务是 **T-1304 — Product Surface Translation**。T-1304 只翻译已审计的产品文案并实现 Settings，不改写 repository/report facts、Evidence、代码或技术标识，也不提前合并 T-1305 浏览器/打包验收。可选 T-0404 继续延后，`v0.1.0` 仍是当前正式版本。
 
 ---
 
@@ -2950,12 +2950,18 @@ Deliverable: [Settings UI Data Contract and Stitch Handoff](docs/ui/T-1302-SETTI
 Status:
 
 ```text
-[ ]
+[x]
 ```
+
+Completed: 2026-09-20
 
 - 在任务内评估并选择最小本地化实现；若新增依赖，记录理由与生产闭包影响。
 - 建立 English / 中文资源、默认语言、持久化偏好和无网络回退。
 - 保持当前主题与随机 loopback 端口下的偏好行为一致。
+
+Implementation: 采用现有 Vue 响应式能力与仓库内静态资源实现，不新增生产依赖。English / `zh-CN` 资源树保持同键完整性；默认固定为 English，不读取浏览器语言。显式选择使用 `repoonboard-language` host-wide Cookie 与 localStorage 双写，读取时 Cookie 优先，并同步 `<html lang>`；资源缺失时确定性回退 English，运行时不访问网络。
+
+Validation: 语言资源完整性、默认/非法值、Cookie 优先与 localStorage 回退、双写持久化、文档语言同步、English 缺项回退、插值/单复数、未知 key 安全结果、无 HTML 资源和 App 初始化均有自动化覆盖。完整 `clean verify` 运行 104 项前端测试和 172 项 Java 测试，生产 UI、可执行 JAR 与 PackagedUiVerifier 全部通过。
 
 ### T-1304 — Product Surface Translation
 
@@ -3435,7 +3441,7 @@ Remaining Issues:
 
 # 30. Current Next Action
 
-M13 的 T-1301 与 T-1302 已完成，用户导入的 Settings Stitch 原型已通过数据边界和无障碍门禁。当前下一任务是 **T-1303 — Localization Foundation and Preference**；仅完成 English / 中文资源、默认语言、本地偏好与离线回退，T-1304 产品表面翻译和 T-1305 浏览器/打包验收不提前合并，M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
+M13 的 T-1301 至 T-1303 已完成，用户导入的 Settings Stitch 原型已通过数据边界和无障碍门禁，本地化基础与偏好契约已由完整门禁验证。当前下一任务是 **T-1304 — Product Surface Translation**；只翻译已审计产品文案并实现 Settings，repository/report facts、Evidence、代码与技术标识保持原文，T-1305 浏览器/打包验收和 M14–M16 不提前启动。`v0.1.0` 继续是当前正式版本。
 
 ---
 
@@ -3475,7 +3481,7 @@ Release
 V0.2
 M11 Scope & Release Contract — complete
 M12 Analyzer Accuracy Closure — complete
-M13 English / 中文 Product Interface — T-1303 next
+M13 English / 中文 Product Interface — T-1304 next
 M14 Desktop Technical Evaluation — not started
 M15 Conditional Desktop Delivery — inactive
 M16 Regression & Release — not started
@@ -3483,6 +3489,6 @@ M16 Regression & Release — not started
 
 Next:
 
-> **执行 T-1303 — Localization Foundation and Preference。**
+> **执行 T-1304 — Product Surface Translation。**
 
 ````

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import ArchitectureInspector from './components/ArchitectureInspector.vue'
 import ArchitectureWorkspaceView from './components/ArchitectureWorkspaceView.vue'
@@ -27,6 +27,12 @@ import { createSourceDetailModel } from './lib/reportSources.js'
 import { createStartHereModel } from './lib/reportStartHere.js'
 import { createSourceNavigationHost } from './lib/sourceNavigationHost.js'
 import { CURRENT_REPORT_SCHEMA, reportSchemaCompatibility } from './lib/reportSchema.js'
+import {
+  applyDocumentLanguage,
+  persistLanguagePreference,
+  readLanguagePreference
+} from './lib/languagePreference.js'
+import { createLocalization, LOCALIZATION_KEY } from './lib/localization.js'
 import { persistThemePreference, readThemePreference } from './lib/themePreference.js'
 
 const navigationItems = Object.freeze([
@@ -54,6 +60,15 @@ const startHereExpanded = ref(false)
 const selectedStartHereSourceFileId = ref('')
 const sourceNavigationHost = createSourceNavigationHost()
 const theme = ref(readThemePreference())
+const localization = createLocalization(readLanguagePreference(), {
+  onLanguageChange(language) {
+    applyDocumentLanguage(language)
+    persistLanguagePreference(language)
+  }
+})
+
+applyDocumentLanguage(localization.language.value)
+provide(LOCALIZATION_KEY, localization)
 
 function applyTheme(newTheme) {
   theme.value = newTheme

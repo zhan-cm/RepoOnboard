@@ -6,10 +6,23 @@ afterEach(() => {
   vi.unstubAllGlobals()
   localStorage.clear()
   document.cookie = 'repoonboard-theme=; Max-Age=0; Path=/'
+  document.cookie = 'repoonboard-language=; Max-Age=0; Path=/'
   document.documentElement.removeAttribute('data-theme')
+  document.documentElement.removeAttribute('lang')
 })
 
 describe('App', () => {
+  it('restores the language preference and synchronizes the document language', () => {
+    document.cookie = 'repoonboard-language=zh-CN; Path=/; SameSite=Strict'
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})))
+
+    const view = mount(App)
+
+    expect(document.documentElement.lang).toBe('zh-CN')
+    expect(view.container.textContent).toContain('Preparing workspace')
+    view.unmount()
+  })
+
   it('shows the shared loading pattern while the report is pending', () => {
     vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})))
 
